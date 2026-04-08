@@ -175,7 +175,7 @@ fieldset[disabled] .btn-xl.active {
 }
 
 .navbar-default .navbar-brand {
-    font-family: "Kaushan Script","Helvetica Neue",Helvetica,Arial,cursive;
+    font-family: Montserrat;
     color: #fed136;
 }
 
@@ -661,6 +661,16 @@ section#contact {
 section#contact .section-heading {
     color: #fff;
 }
+
+section#contact .section-subheading {
+    color: #fff;
+    font-weight: 700;
+}
+
+section#contact .section-subheading a {
+    color: #fff;
+}
+
 
 section#contact .form-group {
     margin-bottom: 25px;
