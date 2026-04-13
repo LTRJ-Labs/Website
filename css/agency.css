@@ -633,8 +633,29 @@ section h3.section-subheading {
 }
 
 .team-member img {
+    display: block;
+    width: 100%;
+    max-width: 210px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
     margin: 0 auto;
+    /* margin-top: 25px; */
+    /* margin-bottom: 0; */
     border: 7px solid #fff;
+}
+
+@media(max-width:767px) {
+    .team-member img {
+        max-width: 190px;
+    }
+}
+
+@media(min-width:992px) {
+    .team-member img {
+        max-width: 180px;
+    }
 }
 
 .team-member h4 {
