@@ -4,6 +4,13 @@
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
 body {
     overflow-x: hidden;
     font-family: "Roboto Slab","Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -262,62 +269,93 @@ fieldset[disabled] .btn-xl.active {
 }
 
 header {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
     text-align: center;
     color: #fff;
-    background-attachment: scroll;
-    background-image: url(../img/header2-bg.png);
-    background-position: center center;
-    background-repeat: none;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
-    -o-background-size: cover;
+    background: url(../img/header2-bg.png) center center / cover no-repeat;
+}
+
+header .container-fluid,
+header .container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 header .intro-text {
-    padding-top: 100px;
-    padding-bottom: 50px;
+    width: 100%;
+    max-width: 900px;
+    padding: 120px 15px;
+    margin: 0 auto;
 }
 
 header .intro-text .intro-lead-in {
     margin-bottom: 25px;
     font-family: "Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 22px;
+    font-size: clamp(1.75rem, 3.5vw, 40px);
     font-style: italic;
-    line-height: 22px;
+    line-height: 1.2;
 }
 
 header .intro-text .intro-heading {
     margin-bottom: 25px;
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 50px;
+    font-size: clamp(2.75rem, 7vw, 75px);
     font-weight: 700;
-    line-height: 50px;
+    line-height: 1.05;
 }
 
 @media(min-width:768px) {
     header .intro-text {
-        padding-top: 300px;
-        padding-bottom: 200px;
+        padding-top: 0;
+        padding-bottom: 0;
     }
 
     header .intro-text .intro-lead-in {
         margin-bottom: 25px;
         font-family: "Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;
-        font-size: 40px;
+        font-size: clamp(2.25rem, 3vw, 40px);
         font-style: italic;
-        line-height: 40px;
+        line-height: 1.1;
     }
 
     header .intro-text .intro-heading {
-        margin-bottom: 50px;
+        margin-bottom: 35px;
         text-transform: uppercase;
         font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-        font-size: 75px;
+        font-size: clamp(4rem, 6vw, 75px);
         font-weight: 700;
-        line-height: 75px;
+        line-height: 1.05;
     }
+}
+
+@media(max-width:1199px) {
+    .fa-stack.fa-4x {
+        font-size: clamp(3rem, 5vw, 4rem);
+    }
+}
+
+@media(max-width:767px) {
+    .fa-stack.fa-4x {
+        font-size: clamp(2.5rem, 8vw, 3.5rem);
+    }
+}
+
+section#services .service-heading {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+}
+
+section#services p {
+    font-size: clamp(0.95rem, 1.7vw, 1rem);
+    line-height: 1.8;
 }
 
 section {
