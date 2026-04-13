@@ -350,12 +350,15 @@ header .intro-text .intro-heading {
 }
 
 section#services .service-heading {
-    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+    margin-bottom: 0.75rem;
 }
 
 section#services p {
-    font-size: clamp(0.95rem, 1.7vw, 1rem);
-    line-height: 1.8;
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    line-height: 1.9;
+    max-width: 340px;
+    margin: 0.75rem auto 0;
 }
 
 section {
