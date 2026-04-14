@@ -352,15 +352,35 @@ header .intro-text .intro-heading {
 }
 
 section#services .service-heading {
-    font-size: clamp(1.75rem, 3.5vw, 2.25rem);
-    margin-bottom: 0.75rem;
+    font-size: clamp(2.4rem, 5vw, 3.5rem);
+    margin-bottom: 1rem;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: keep-all;
+}
+
+section#services .section-subheading {
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    margin-bottom: 1.5rem;
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+section#services .row.text-center {
+    margin-top: 2rem;
+}
+
+section#services .row.text-center > div {
+    padding: 0 1rem;
+    margin-bottom: 2rem;
 }
 
 section#services p {
-    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    font-size: clamp(1.3rem, 2.8vw, 1.6rem);
     line-height: 1.9;
-    max-width: 340px;
-    margin: 0.75rem auto 0;
+    max-width: 100%;
+    margin: 1rem auto 0;
 }
 
 section {
