@@ -204,15 +204,6 @@ fieldset[disabled] .btn-xl.active {
     display: block;
 }
 
-@media(min-width:768px) {
-    .navbar-default .navbar-brand {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-}
-
 .navbar-default .navbar-toggle .icon-bar {
     background-color: #fff;
 }
