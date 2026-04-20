@@ -957,6 +957,17 @@ section#contact .section-subheading a:focus {
     color: #FF6600;
 }
 
+section#contact .section-subheading .email-copy {
+    cursor: pointer;
+    border-bottom: 2px solid #FF6600;
+    transition: all 0.3s ease;
+}
+
+section#contact .section-subheading .email-copy:hover {
+    border-bottom: 2px solid #FF6600;
+    opacity: 0.8;
+}
+
 
 section#contact .form-group {
     margin-bottom: 25px;
