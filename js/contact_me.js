@@ -68,3 +68,37 @@ $(function() {
 $('#name').focus(function() {
     $('#success').html('');
 });
+
+// Copy email to clipboard
+$(document).on('click', '.email-copy', function(e) {
+    e.preventDefault();
+    var email = $(this).data('email');
+    
+    // Use the Clipboard API if available
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(email).then(function() {
+            // Show feedback
+            var originalText = $(this).text();
+            $(this).text('Copied!');
+            var $this = $(this);
+            setTimeout(function() {
+                $this.text(originalText);
+            }, 2000);
+        }.bind(this));
+    } else {
+        // Fallback for older browsers
+        var $temp = $('<input>');
+        $('body').append($temp);
+        $temp.val(email).select();
+        document.execCommand('copy');
+        $temp.remove();
+        
+        // Show feedback
+        var originalText = $(this).text();
+        $(this).text('Copied!');
+        var $this = $(this);
+        setTimeout(function() {
+            $this.text(originalText);
+        }, 2000);
+    }
+});
