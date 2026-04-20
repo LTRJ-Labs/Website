@@ -16,14 +16,25 @@ body {
     overflow-x: hidden;
     font-family: "Roboto Slab","Helvetica Neue",Helvetica,Arial,sans-serif;
     background-color: #222;
+    color: #fff;
+    padding-top: 70px;
+}
+
+body.light-mode {
+    background-color: #fff;
+    color: #000;
 }
 
 .text-muted {
     color: #777;
 }
 
+body.dark-mode .text-muted {
+    color: #aaa;
+}
+
 .text-primary {
-    color: #fed136;
+    color: #FF6600;
 }
 
 p {
@@ -44,14 +55,14 @@ a.active {
 }
 
 a {
-    color: #fed136;
+    color: #FF6600;
 }
 
 a:hover,
 a:focus,
 a:active,
 a.active {
-    color: #fec503;
+    color: #FF6600;
 }
 
 h1,
@@ -73,17 +84,21 @@ h6 {
     background-color: #f7f7f7;
 }
 
+body.dark-mode .bg-light-gray {
+    background-color: #2a2a2a;
+}
+
 .bg-darkest-gray {
     background-color: #222;
 }
 
 .btn-primary {
-    border-color: #fed136;
+    border-color: #FF6600;
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight: 700;
     color: #fff;
-    background-color: #fed136;
+    background-color: #FF6600;
 }
 
 .btn-primary:hover,
@@ -93,7 +108,7 @@ h6 {
 .open .dropdown-toggle.btn-primary {
     border-color: #f6bf01;
     color: #fff;
-    background-color: #fec503;
+    background-color: #FF6600;
 }
 
 .btn-primary:active,
@@ -117,25 +132,25 @@ fieldset[disabled] .btn-primary:active,
 .btn-primary.disabled.active,
 .btn-primary[disabled].active,
 fieldset[disabled] .btn-primary.active {
-    border-color: #fed136;
-    background-color: #fed136;
+    border-color: #FF6600;
+    background-color: #FF6600;
 }
 
 .btn-primary .badge {
-    color: #fed136;
+    color: #FF6600;
     background-color: #fff;
 }
 
 .btn-xl {
     padding: 20px 40px;
-    border-color: #fed136;
+    border-color: #FF6600;
     border-radius: 3px;
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 18px;
     font-weight: 700;
     color: #fff;
-    background-color: #fed136;
+    background-color: #FF6600;
 }
 
 .btn-xl:hover,
@@ -145,7 +160,7 @@ fieldset[disabled] .btn-primary.active {
 .open .dropdown-toggle.btn-xl {
     border-color: #f6bf01;
     color: #fff;
-    background-color: #fec503;
+    background-color: #FF6600;
 }
 
 .btn-xl:active,
@@ -169,39 +184,46 @@ fieldset[disabled] .btn-xl:active,
 .btn-xl.disabled.active,
 .btn-xl[disabled].active,
 fieldset[disabled] .btn-xl.active {
-    border-color: #fed136;
-    background-color: #fed136;
+    border-color: #FF6600;
+    background-color: #FF6600;
 }
 
 .btn-xl .badge {
-    color: #fed136;
+    color: #FF6600;
     background-color: #fff;
 }
 
 .navbar-default {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1030;
     border-color: transparent;
     background-color: #222;
 }
 
 .navbar-default .navbar-brand {
+    position: relative;
     font-family: Montserrat;
-    color: #fed136;
+    color: #FF6600;
+    padding: 0;
 }
 
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus,
 .navbar-default .navbar-brand:active,
 .navbar-default .navbar-brand.active {
-    color: #fec503;
+    color: #FF6600;
 }
 
-.navbar-default .navbar-collapse {
-    border-color: rgba(255,255,255,.02);
+.navbar-default .navbar-brand img {
+    max-height: 45px;
+    width: auto;
+    display: block;
 }
 
 .navbar-default .navbar-toggle {
-    border-color: #fed136;
-    background-color: #fed136;
+    border-color: #FF6600;
 }
 
 .navbar-default .navbar-toggle .icon-bar {
@@ -210,7 +232,7 @@ fieldset[disabled] .btn-xl.active {
 
 .navbar-default .navbar-toggle:hover,
 .navbar-default .navbar-toggle:focus {
-    background-color: #fed136;
+    background-color: #FF6600;
 }
 
 .navbar-default .nav li a {
@@ -224,29 +246,83 @@ fieldset[disabled] .btn-xl.active {
 .navbar-default .nav li a:hover,
 .navbar-default .nav li a:focus {
     outline: 0;
-    color: #fed136;
+    color: #FF6600;
 }
 
 .navbar-default .navbar-nav>.active>a {
     border-radius: 0;
     color: #fff;
-    background-color: #fed136;
+    background-color: #FF6600;
 }
 
 .navbar-default .navbar-nav>.active>a:hover,
 .navbar-default .navbar-nav>.active>a:focus {
     color: #fff;
-    background-color: #fec503;
+    background-color: #FF6600;
+}
+
+#theme-toggle {
+    background-color: transparent !important;
+    border: none !important;
+    color: #fff !important;
+    font-size: 20px !important;
+    padding: 10px 15px !important;
+    cursor: pointer;
+    text-decoration: none !important;
+    vertical-align: middle !important;
+    font-weight: 400;
+    position: relative;
+    top: -9px;
+}
+
+#theme-toggle:hover {
+    color: #FF6600 !important;
+}
+
+body.light-mode .navbar-default {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+body.light-mode .navbar-default .nav li a {
+    color: #000 !important;
+}
+
+body.light-mode .navbar-default .nav li a:hover,
+body.light-mode .navbar-default .nav li a:focus {
+    color: #FF6600 !important;
+}
+
+body.light-mode .navbar-default .navbar-brand {
+    color: #000 !important;
+}
+
+body.light-mode #theme-toggle {
+    color: #000 !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+body.light-mode #theme-toggle:hover {
+    color: #FF6600 !important;
+}
+
+body.light-mode .navbar-default .navbar-toggle .icon-bar {
+    background-color: #000 !important;
+}
+
+body.light-mode .navbar-default .navbar-toggle {
+    border-color: #000 !important;
 }
 
 @media(min-width:768px) {
     .navbar-default {
         padding: 25px 0;
-        border: 0;
-        background-color: transparent;
-        -webkit-transition: padding .3s;
-        -moz-transition: padding .3s;
-        transition: padding .3s;
+        background-color: rgba(34, 34, 34, 0.9);
+        -webkit-transition: padding .3s, background-color .3s;
+        -moz-transition: padding .3s, background-color .3s;
+        transition: padding .3s, background-color .3s;
     }
 
     .navbar-default .navbar-brand {
@@ -268,6 +344,14 @@ fieldset[disabled] .btn-xl.active {
     .navbar-default.navbar-shrink .navbar-brand {
         font-size: 1.5em;
     }
+
+    body.light-mode .navbar-default {
+        background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    body.light-mode .navbar-default.navbar-shrink {
+        background-color: #fff;
+    }
 }
 
 header {
@@ -278,7 +362,7 @@ header {
     padding: 0;
     text-align: center;
     color: #fff;
-    background: url(../img/header2-bg.png) center center / cover no-repeat;
+    background: url(../img/pcb-banner-3.png) center center / cover no-repeat;
 }
 
 header .container-fluid,
@@ -304,6 +388,7 @@ header .intro-text .intro-lead-in {
     font-size: clamp(1.75rem, 3.5vw, 40px);
     font-style: italic;
     line-height: 1.2;
+    text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.6);
 }
 
 header .intro-text .intro-heading {
@@ -313,6 +398,7 @@ header .intro-text .intro-heading {
     font-size: clamp(2.75rem, 7vw, 75px);
     font-weight: 700;
     line-height: 1.05;
+    text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.6);
 }
 
 @media(min-width:768px) {
@@ -327,6 +413,7 @@ header .intro-text .intro-heading {
         font-size: clamp(2.25rem, 3vw, 40px);
         font-style: italic;
         line-height: 1.1;
+        text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.6);
     }
 
     header .intro-text .intro-heading {
@@ -336,6 +423,7 @@ header .intro-text .intro-heading {
         font-size: clamp(4rem, 6vw, 75px);
         font-weight: 700;
         line-height: 1.05;
+        text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.6);
     }
 }
 
@@ -388,8 +476,34 @@ section {
     background-color: #fff;
 }
 
+section:nth-of-type(even) {
+    background-color: #f7f7f7;
+}
+
 section#contact {
     background-color: #222;
+}
+
+/* Dark mode alternating sections */
+body.dark-mode section {
+    background-color: #222;
+    color: #fff;
+}
+
+body.dark-mode section:nth-of-type(even) {
+    background-color: #2a2a2a;
+}
+
+body.dark-mode section#contact {
+    background-color: #222;
+}
+
+body.dark-mode section#contact .section-heading {
+    color: #fff;
+}
+
+body.dark-mode section#contact .section-subheading {
+    color: #fff;
 }
 
 section h2.section-heading {
@@ -405,6 +519,18 @@ section h3.section-subheading {
     font-size: 16px;
     font-style: italic;
     font-weight: 400;
+}
+
+section#services .section-subheading {
+    color: #999;
+}
+
+body.dark-mode .section-subheading {
+    color: #aaa;
+}
+
+body.light-mode .section-subheading {
+    color: #666;
 }
 
 @media(min-width:768px) {
@@ -435,7 +561,7 @@ section h3.section-subheading {
     width: 100%;
     height: 100%;
     opacity: 0;
-    background: rgba(254,209,54,.9);
+    background: rgba(255,102,0,.9);
     -webkit-transition: all ease .5s;
     -moz-transition: all ease .5s;
     transition: all ease .5s;
@@ -561,7 +687,7 @@ section h3.section-subheading {
     border-radius: 100%;
     text-align: center;
     color: #fff;
-    background-color: #fed136;
+    background-color: #FF6600;
 }
 
 .timeline>li .timeline-image h4 {
@@ -764,7 +890,7 @@ section#contact .section-subheading a {
 
 section#contact .section-subheading a:hover,
 section#contact .section-subheading a:focus {
-    color: #fed136;
+    color: #FF6600;
 }
 
 
@@ -786,7 +912,7 @@ section#contact .form-group textarea.form-control {
 }
 
 section#contact .form-control:focus {
-    border-color: #fed136;
+    border-color: #FF6600;
     box-shadow: none;
 }
 
@@ -872,7 +998,7 @@ ul.social-buttons li a {
 ul.social-buttons li a:hover,
 ul.social-buttons li a:focus,
 ul.social-buttons li a:active {
-    background-color: #fed136;
+    background-color: #FF6600;
 }
 
 .btn:focus,
@@ -960,12 +1086,12 @@ ul.social-buttons li a:active {
 
 ::-moz-selection {
     text-shadow: none;
-    background: #fed136;
+    background: #FF6600;
 }
 
 ::selection {
     text-shadow: none;
-    background: #fed136;
+    background: #FF6600;
 }
 
 img::selection {
@@ -977,5 +1103,138 @@ img::-moz-selection {
 }
 
 body {
-    webkit-tap-highlight-color: #fed136;
+    webkit-tap-highlight-color: #FF6600;
+}
+/* Light Mode Styles */
+body.light-mode section {
+    background-color: #fff !important;
+    color: #000 !important;
+}
+
+body.light-mode .text-muted {
+    color: #666 !important;
+}
+
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode h4,
+body.light-mode h5,
+body.light-mode h6 {
+    color: #000 !important;
+}
+
+body.light-mode .section-heading {
+    color: #000 !important;
+}
+
+body.light-mode .service-heading {
+    color: #000 !important;
+}
+
+body.light-mode .section-subheading {
+    color: #666 !important;
+}
+
+body.light-mode p {
+    color: #000 !important;
+}
+
+body.light-mode a {
+    color: #FF6600 !important;
+}
+
+body.light-mode .btn-primary {
+    background-color: #FF6600 !important;
+    border-color: #FF6600 !important;
+    color: #fff !important;
+}
+
+body.light-mode .btn-primary:hover {
+    background-color: #e55a00 !important;
+    border-color: #e55a00 !important;
+}
+
+body.light-mode .btn-xl {
+    background-color: #FF6600 !important;
+    border-color: #FF6600 !important;
+    color: #fff !important;
+}
+
+body.light-mode header {
+    background-color: #fff !important;
+    color: #000 !important;
+}
+
+body.light-mode header .intro-text .intro-lead-in {
+    text-shadow: 3px 3px 12px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+body.light-mode .intro-text .intro-heading {
+    text-shadow: 3px 3px 12px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+body.light-mode .intro-text .intro-lead-in,
+body.light-mode .intro-text .intro-heading {
+    color: #000 !important;
+}
+
+body.light-mode section#contact {
+    background-color: #f5f5f5 !important;
+    background-image: none !important;
+    color: #000 !important;
+}
+
+body.light-mode section#contact .section-heading,
+body.light-mode section#contact .section-subheading {
+    color: #000 !important;
+}
+
+body.light-mode section#contact .form-control {
+    background-color: #fff !important;
+    color: #000 !important;
+    border-color: #ddd !important;
+}
+
+body.light-mode .portfolio-caption {
+    background-color: #fff !important;
+    color: #000 !important;
+}
+
+body.light-mode .portfolio-caption h4 {
+    color: #000 !important;
+}
+
+body.light-mode .portfolio-caption p {
+    color: #666 !important;
+}
+
+body.light-mode footer {
+    background-color: #f5f5f5 !important;
+    color: #000 !important;
+}
+
+body.light-mode footer span.copyright {
+    color: #000 !important;
+}
+
+body.light-mode .timeline:before {
+    background-color: #ddd !important;
+}
+
+body.light-mode .timeline .timeline-image {
+    background-color: #FF6600 !important;
+    border-color: #fff !important;
+}
+
+body.light-mode .team-member img {
+    border-color: #ddd !important;
+}
+
+body.light-mode .team-member h4 {
+    color: #000 !important;
+}
+
+body.light-mode .team-member p {
+    color: #666 !important;
 }
