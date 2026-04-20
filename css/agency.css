@@ -372,12 +372,12 @@ header::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.6);
     z-index: 1;
 }
 
 body.dark-mode header::before {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 header .container-fluid,
@@ -399,9 +399,12 @@ header .intro-text {
     margin: 0 auto;
 }
 
+body.light-mode header .intro-text {
+}
+
 header .intro-text .intro-lead-in {
     margin-bottom: 25px;
-    font-family: "Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: clamp(1.75rem, 3.5vw, 40px);
     font-style: italic;
     line-height: 1.2;
@@ -426,7 +429,7 @@ header .intro-text .intro-heading {
 
     header .intro-text .intro-lead-in {
         margin-bottom: 25px;
-        font-family: "Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
         font-size: clamp(2.25rem, 3vw, 40px);
         font-style: italic;
         line-height: 1.1;
@@ -490,7 +493,7 @@ section#services p {
 
 section {
     padding: 100px 0;
-    background-color: #fff;
+    background-color: #f7f7f7;
 }
 
 section:nth-of-type(even) {
@@ -498,12 +501,30 @@ section:nth-of-type(even) {
 }
 
 section#contact {
-    background-color: #222;
+    background-color: #f7f7f7;
+    background-image: url(../img/map-image.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-bottom: 0;
+}
+
+section#contact .container {
+    background-color: transparent !important;
+}
+
+section#contact .row {
+    background-color: transparent !important;
+}
+
+section#contact .section-heading,
+section#contact .section-subheading {
+    background-color: transparent !important;
 }
 
 /* Dark mode alternating sections */
 body.dark-mode section {
-    background-color: #222;
+    background-color: #2a2a2a;
     color: #fff;
 }
 
@@ -512,7 +533,7 @@ body.dark-mode section:nth-of-type(even) {
 }
 
 body.dark-mode section#contact {
-    background-color: #222;
+    background-color: #2a2a2a;
 }
 
 body.dark-mode section#contact .section-heading {
@@ -901,7 +922,7 @@ section#contact .section-subheading {
 }
 
 section#contact .section-subheading a {
-    color: #fff;
+    color: #FF6600;
     text-decoration: none;
 }
 
@@ -1015,7 +1036,8 @@ ul.social-buttons li a {
 ul.social-buttons li a:hover,
 ul.social-buttons li a:focus,
 ul.social-buttons li a:active {
-    background-color: #FF6600;
+    background-color: #222;
+    color: #FF6600;
 }
 
 .btn:focus,
@@ -1124,7 +1146,7 @@ body {
 }
 /* Light Mode Styles */
 body.light-mode section {
-    background-color: #fff !important;
+    background-color: #f7f7f7 !important;
     color: #000 !important;
 }
 
@@ -1197,14 +1219,33 @@ body.light-mode .intro-text .intro-heading {
 }
 
 body.light-mode section#contact {
-    background-color: #f5f5f5 !important;
-    background-image: none !important;
+    background-color: #f7f7f7 !important;
+    background-image: url(../img/map-image.png) !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
     color: #000 !important;
+}
+
+body.light-mode section#contact .container {
+    background-color: transparent !important;
+}
+
+body.light-mode section#contact .row {
+    background-color: transparent !important;
 }
 
 body.light-mode section#contact .section-heading,
 body.light-mode section#contact .section-subheading {
+    background-color: transparent !important;
+}
+
+body.light-mode section#contact .section-heading {
     color: #000 !important;
+}
+
+body.light-mode section#contact .section-subheading a {
+    color: #FF6600 !important;
 }
 
 body.light-mode section#contact .form-control {
@@ -1254,4 +1295,16 @@ body.light-mode .team-member h4 {
 
 body.light-mode .team-member p {
     color: #666 !important;
+}
+
+body.light-mode ul.social-buttons li a {
+    color: #fff !important;
+    background-color: #222 !important;
+}
+
+body.light-mode ul.social-buttons li a:hover,
+body.light-mode ul.social-buttons li a:focus,
+body.light-mode ul.social-buttons li a:active {
+    background-color: #222 !important;
+    color: #FF6600 !important;
 }
