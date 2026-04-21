@@ -73,18 +73,19 @@ $('#name').focus(function() {
 $(document).on('click', '.email-copy', function(e) {
     e.preventDefault();
     var email = $(this).data('email');
+    var $link = $(this);
     
     // Use the Clipboard API if available
     if (navigator.clipboard) {
         navigator.clipboard.writeText(email).then(function() {
-            // Show feedback
-            var originalText = $(this).text();
-            $(this).text('Copied!');
-            var $this = $(this);
+            // Show visual feedback
+            $link.attr('data-original-title', 'Email copied!').tooltip('show');
+            $link.addClass('copied');
             setTimeout(function() {
-                $this.text(originalText);
+                $link.removeClass('copied');
+                $link.attr('data-original-title', 'Click to copy email address');
             }, 2000);
-        }.bind(this));
+        });
     } else {
         // Fallback for older browsers
         var $temp = $('<input>');
@@ -93,12 +94,12 @@ $(document).on('click', '.email-copy', function(e) {
         document.execCommand('copy');
         $temp.remove();
         
-        // Show feedback
-        var originalText = $(this).text();
-        $(this).text('Copied!');
-        var $this = $(this);
+        // Show visual feedback
+        $link.attr('data-original-title', 'Email copied!').tooltip('show');
+        $link.addClass('copied');
         setTimeout(function() {
-            $this.text(originalText);
+            $link.removeClass('copied');
+            $link.attr('data-original-title', 'Click to copy email address');
         }, 2000);
     }
 });
