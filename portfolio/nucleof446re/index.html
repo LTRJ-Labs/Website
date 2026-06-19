@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Detailed engineering specifications for the custom STM32 Nucleo LCD daughterboard designed for Camosun College's ECET 260 course.">
+    <meta name="author" content="">
+
+    <title>STM32 Nucleo F446RE LCD Board - LTRJ Labs</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../../img/SVGLogos/Small_Logo.svg">
+    <link rel="icon" type="image/png" href="../../img/HiResLogos/Small_Logo.png">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../../css/agency.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styling for the project details section -->
+    <style>
+        .project-detail-img {
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            background: #2a2a2a;
+            max-width: 100%;
+            height: auto;
+            margin: 30px auto;
+            display: block;
+        }
+        body.light-mode .project-detail-img {
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: #eaeaea;
+        }
+        .project-details-fallback {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 350px;
+            background: #2a2a2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            margin: 30px auto;
+        }
+        body.light-mode .project-details-fallback {
+            background: #eaeaea;
+            color: #555;
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../"><img src="../../img/logos/ltrj-logo.png" alt="LTRJ Labs Ltd Logo"></a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a href="../../services/#_services">Services</a>
+                    </li>
+                    <li>
+                        <a href="../../portfolio/#_portfolio">Portfolio</a>
+                    </li>
+                    <li>
+                        <a href="../../team/#_team">Team</a>
+                    </li>
+                    <li>
+                        <a href="../../contact/">Contact</a>
+                    </li>
+                    <li>
+                        <button id="theme-toggle" class="btn btn-link navbar-btn">🌙</button>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Project Details Section -->
+    <section id="project-details" style="padding-top: 150px; padding-bottom: 80px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" style="text-transform: none;">STM32 Nucleo-F446RE LCD Board</h2>
+                    <h3 class="section-subheading text-muted" style="margin-bottom: 30px;"><strong>Camosun College - ECET 260</strong></h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <!-- Project Image / Fallback -->
+                    <img src="../../img/portfolio/nucleo_f446re.png" alt="STM32 Nucleo F446RE LCD Board" class="img-responsive project-detail-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="project-details-fallback">
+                        <i class="fa fa-microchip fa-5x" style="color: #FF6600; margin-bottom: 20px;"></i>
+                        <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 16px; letter-spacing: 1px;">STM32 Nucleo Board Image</span>
+                        <span style="font-size: 12px; margin-top: 10px; opacity: 0.7;">Place image at: img/portfolio/nucleo_f446re.png</span>
+                    </div>
+
+                    <!-- Tech Badges -->
+                    <div class="tech-badge-container">
+                        <span class="tech-badge">KiCad</span>
+                        <span class="tech-badge">STM32CubeIDE</span>
+                        <span class="tech-badge">C / C++</span>
+                        <span class="tech-badge">PCB Layout</span>
+                        <span class="tech-badge">GPIO Drivers</span>
+                        <span class="tech-badge">I2C / SPI</span>
+                        <span class="tech-badge">Hardware Testing</span>
+                    </div>
+
+                    <!-- Project Description -->
+                    <div class="project-description text-muted" style="font-size: 16px; line-height: 1.8; margin-top: 40px;">
+                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-bottom: 15px;">Project Overview</h4>
+                        <p style="margin-bottom: 20px;">The scope of this project is to simplify and streamline the integration of an LCD screen with the STM32 Nucleo-F446RE development board. Designed specifically as a 2nd-year engineering tool for Camosun College, this custom daughterboard (shield) eliminates the need for students to manually trace and wire individual connections between the screen and the microcontroller.</p>
+                        
+                        <p style="margin-bottom: 20px;">Instead, the LCD and Nucleo board work together seamlessly by plugging directly into a combination of a <strong>14-pin header</strong> and a <strong>28-pin header</strong>. This hardware design makes debugging and system state display highly convenient, letting students focus on programming and core system logic rather than wiring issues.</p>
+                        
+                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-top: 30px; margin-bottom: 15px;">Key Improvements & Features</h4>
+                        <ul style="margin-bottom: 30px; padding-left: 20px;">
+                            <li><strong>Direct Header Interface:</strong> Uses 14-pin and 28-pin header layouts to establish a secure, plug-and-play connection between the LCD and Nucleo board.</li>
+                            <li><strong>Multi-Protocol Swapping:</strong> A key iteration over previous generation boards is the implementation of a selectable path to easily swap between <strong>I2C</strong> and <strong>SPI</strong> display interfaces.</li>
+                            <li><strong>Improved Learning UX:</strong> Greatly reduces setup complexity for second-year students by removing standard jumper-wire debugging steps.</li>
+                            <li><strong>Robust Routing Schemas:</strong> Custom PCB trace routing engineered to fit the standard Nucleo form-factor seamlessly.</li>
+                        </ul>
+                        <div class="theme-info-box">
+                            <strong>Status: In Progress</strong><br>
+                            Our team is currently testing prototypes and finalizing firmware layouts. Check back soon for structural schematic drawings and source files!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="../../js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../../js/bootstrap.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="../../js/agency.js"></script>
+
+    <!-- Theme Toggle Script -->
+    <script src="../../js/theme.js"></script>
+
+</body>
+
+</html>

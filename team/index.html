@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
+    <meta name="description" content="Meet the founders of LTRJ Labs, a group of ambitious electronics engineering technology students in Victoria, BC providing custom design services.">
     <meta name="author" content="">
 
-    <title>Meet The Team - LTRJ Labs</title>
+    <title>About Our Team - LTRJ Labs</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="../img/SVGLogos/Small_Logo.svg">
@@ -31,9 +31,6 @@
     <!-- Custom Fonts -->
     <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -41,6 +38,74 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <!-- Custom styles for Story Image Gallery layout -->
+    <style>
+        .story-image-frame {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            background: #2a2a2a;
+            position: relative;
+            aspect-ratio: 4/3;
+            width: 100%;
+        }
+        body.light-mode .story-image-frame {
+            border-color: #fff;
+            background: #eaeaea;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .story-image-frame .image-fallback {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #333;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+        }
+        body.light-mode .story-image-frame .image-fallback {
+            background: #eaeaea;
+            color: #555;
+        }
+        .story-image-frame.main-frame {
+            margin-bottom: 20px;
+        }
+        .story-image-frame.sub-frame {
+            margin-bottom: 20px;
+        }
+        /* Overlapping elements style for a premium modern feel */
+        @media(min-width: 992px) {
+            .story-image-gallery {
+                height: 380px;
+                position: relative;
+            }
+            .story-image-frame.main-frame {
+                width: 75%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+                margin-bottom: 0;
+            }
+            .story-image-frame.sub-frame {
+                width: 60%;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                z-index: 3;
+                margin-bottom: 0;
+                transform: translate(5px, 5px);
+            }
+        }
+    </style>
 
 </head>
 
@@ -67,10 +132,10 @@
                         <a href="#page-top"></a>
                     </li>
                     <li>
-                        <a href="../services/">Services</a>
+                        <a href="../services/#_services">Services</a>
                     </li>
                     <li>
-                        <a href="../portfolio/">Portfolio</a>
+                        <a href="../portfolio/#_portfolio">Portfolio</a>
                     </li>
                     <li>
                         <a href="#team" class="page-scroll">Team</a>
@@ -102,6 +167,45 @@
     <section id="team" class="bg-light-gray">
         <div class="container">
             <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Our Story</h2>
+                    <h3 class="section-subheading text-muted" style="margin-bottom: 40px;">The journey of LTRJ Labs</h3>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 60px;">
+                <div class="col-md-7 text-left text-muted" style="font-size: 16px; line-height: 1.8; margin-bottom: 30px;">
+                    <p style="margin-bottom: 20px;">LTRJ Labs began with a simple, shared realization: the world of hardware is changing rapidly, and bringing an idea to life requires more than just standard templates—it requires relentless execution.</p>
+                    <p style="margin-bottom: 20px;">Founded in Victoria BC, we are a small group of ambitious electronics enthusiasts and entrepreneurs ready to start our journey in electronics design, and we are willing to put in the work to make a lasting impact in this industry.</p>
+                    <p style="margin-bottom: 20px;">For us, this isn't just theory. We wanted a way to take the design principles and testing methods we were mastering in our labs and classes and immediately apply them to practical hardware challenges. What started as pushing our own lab projects to the next level quickly turned into a business. We realized that by combining our strengths in hardware layout, microcontroller programming, and prototyping, we could help local businesses and makers get their ideas off the ground and working reliably.</p>
+                    <p style="margin-bottom: 0;">At LTRJ Labs, we don't just engineer boards; we bridge the gap between a conceptual circuit diagram and a robust, functional reality. We tackle every project with the discipline of modern engineering technology and the drive of hungry entrepreneurs. We're ready to design the future—one layer at a time.</p>
+                    <div style="margin-top: 25px;">
+                        <a href="../contact/#_contact" class="btn btn-primary" style="padding: 12px 24px; font-size: 14px;">Partner With Us</a>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="story-image-gallery">
+                        <!-- Main Image Frame -->
+                        <div class="story-image-frame main-frame">
+                            <img src="../img/story_workbench.png" alt="LTRJ Labs Workbench" class="img-responsive" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="image-fallback">
+                                <i class="fa fa-picture-o fa-3x" style="margin-bottom: 10px; color: #FF6600;"></i>
+                                <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">Primary Story Image</span>
+                                <span style="font-size: 9px; margin-top: 5px; opacity: 0.7;">Place image at: img/story_workbench.png</span>
+                            </div>
+                        </div>
+                        <!-- Secondary Image Frame (Overlapping/Smaller) -->
+                        <div class="story-image-frame sub-frame">
+                            <img src="../img/story_prototyping.png" alt="LTRJ Labs Prototyping" class="img-responsive" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="image-fallback">
+                                <i class="fa fa-flask fa-3x" style="margin-bottom: 10px; color: #FF6600;"></i>
+                                <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">Prototyping Image</span>
+                                <span style="font-size: 9px; margin-top: 5px; opacity: 0.7;">Place image at: img/story_prototyping.png</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 40px;">
                 <div class="col-lg-12 text-center">
                     <h2 class="section-heading">Meet The Team</h2>
                 </div>
@@ -152,11 +256,6 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 text-center">
-                    <p class="large text-muted">We are a small group of ambitious electronics enthusiasts and entrepreneurs ready to start our journey in electronics design, and are willing to put in the work to make an impact in this industry. </p>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -201,25 +300,8 @@
     <!-- Custom Theme JavaScript -->
     <script src="../js/agency.js"></script>
 
-    <!-- Theme Toggle and Smooth Scroll Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('theme-toggle');
-            const body = document.body;
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            body.classList.add(currentTheme + '-mode');
-            toggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
-
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
-                body.classList.remove('dark-mode', 'light-mode');
-                body.classList.add(newTheme + '-mode');
-                localStorage.setItem('theme', newTheme);
-                toggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
-            });
-        });
-    </script>
+    <!-- Theme Toggle Script -->
+    <script src="../js/theme.js"></script>
 
 </body>
 

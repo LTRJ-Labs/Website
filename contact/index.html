@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
+    <meta name="description" content="Request a consultation with LTRJ Labs. Let us help you design, prototype, and debug your custom hardware and embedded firmware solutions.">
     <meta name="author" content="">
 
     <title>Contact Us - LTRJ Labs</title>
@@ -31,9 +31,6 @@
     <!-- Custom Fonts -->
     <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -154,13 +151,13 @@
                         <a href="#page-top"></a>
                     </li>
                     <li>
-                        <a href="../services/">Services</a>
+                        <a href="../services/#_services">Services</a>
                     </li>
                     <li>
-                        <a href="../portfolio/">Portfolio</a>
+                        <a href="../portfolio/#_portfolio">Portfolio</a>
                     </li>
                     <li>
-                        <a href="../team/">Team</a>
+                        <a href="../team/#_team">Team</a>
                     </li>
                     <li>
                         <a href="#contact" class="page-scroll">Contact</a>
@@ -272,25 +269,11 @@
     <!-- Custom Theme JavaScript -->
     <script src="../js/agency.js"></script>
 
-    <!-- Theme Toggle and Custom Form Submit Script -->
+    <!-- Theme Toggle Script -->
+    <script src="../js/theme.js"></script>
+
+    <!-- Custom Form Submit Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('theme-toggle');
-            const body = document.body;
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            body.classList.add(currentTheme + '-mode');
-            toggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
-
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
-                body.classList.remove('dark-mode', 'light-mode');
-                body.classList.add(newTheme + '-mode');
-                localStorage.setItem('theme', newTheme);
-                toggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
-            });
-        });
-
         $(document).ready(function() {
             $("#contactForm input, #contactForm textarea, #contactForm select").jqBootstrapValidation({
                 preventSubmit: true,

@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Explore LTRJ Labs' past and current electronics design projects, including custom STM32 shields, PCB breakout boards, and advanced prototyping work.">
+    <meta name="author" content="LTRJ Labs">
 
-    <title>Portfolio - LTRJ Labs</title>
+    <title>Project Portfolio - LTRJ Labs</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="../img/SVGLogos/Small_Logo.svg">
@@ -31,9 +31,6 @@
     <!-- Custom Fonts -->
     <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -41,6 +38,27 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <!-- Custom style for Portfolio Image Fallbacks -->
+    <style>
+        .portfolio-image-fallback {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 260px;
+            background: #2a2a2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+        body.light-mode .portfolio-image-fallback {
+            background: #eaeaea;
+            color: #555;
+        }
+    </style>
 
 </head>
 
@@ -67,13 +85,13 @@
                         <a href="#page-top"></a>
                     </li>
                     <li>
-                        <a href="../services/">Services</a>
+                        <a href="../services/#_services">Services</a>
                     </li>
                     <li>
                         <a href="#portfolio" class="page-scroll">Portfolio</a>
                     </li>
                     <li>
-                        <a href="../team/">Team</a>
+                        <a href="../team/#_team">Team</a>
                     </li>
                     <li>
                         <a href="../contact/">Contact</a>
@@ -104,12 +122,49 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2 class="section-heading">Portfolio</h2>
-                    <h3 class="section-subheading text-muted">A collection of our past projects. (Coming Soon)</h3>
+                    <h3 class="section-subheading text-muted">A collection of our past and current projects.</h3>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12 text-center">
-                    <p class="large text-muted">We are currently working on exciting new projects. Check back soon!</p>
+                <!-- Camosun College Project -->
+                <div class="col-md-4 col-md-offset-2 col-sm-6 portfolio-item">
+                    <a href="nucleof446re/" class="portfolio-link">
+                        <div class="portfolio-hover">
+                            <div class="portfolio-hover-content">
+                                <i class="fa fa-plus fa-3x"></i>
+                            </div>
+                        </div>
+                        <img src="../img/portfolio/nucleo_f446re.png" class="img-responsive" alt="Camosun College Nucleo F446RE LCD Board" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="portfolio-image-fallback">
+                            <i class="fa fa-microchip fa-4x" style="color: #FF6600; margin-bottom: 10px;"></i>
+                            <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">STM32 Nucleo Project</span>
+                            <span style="font-size: 10px; margin-top: 5px; opacity: 0.7;">Save image to: img/portfolio/nucleo_f446re.png</span>
+                        </div>
+                    </a>
+                    <div class="portfolio-caption">
+                        <h4><strong>Camosun College</strong></h4>
+                        <p class="text-muted" style="font-size: 13px; margin-top: 5px;">Nucleo-F446RE LCD Board</p>
+                    </div>
+                </div>
+                <!-- Pink Pigeon Project -->
+                <div class="col-md-4 col-sm-6 portfolio-item">
+                    <a href="pinkpigeon/" class="portfolio-link">
+                        <div class="portfolio-hover">
+                            <div class="portfolio-hover-content">
+                                <i class="fa fa-plus fa-3x"></i>
+                            </div>
+                        </div>
+                        <img src="../img/portfolio/pink_pigeon_breakout.png" class="img-responsive" alt="Pink Pigeon Breakout Board" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="portfolio-image-fallback">
+                            <i class="fa fa-plug fa-4x" style="color: #FF6600; margin-bottom: 10px;"></i>
+                            <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Breakout Board Project</span>
+                            <span style="font-size: 10px; margin-top: 5px; opacity: 0.7;">Save image to: img/portfolio/pink_pigeon_breakout.png</span>
+                        </div>
+                    </a>
+                    <div class="portfolio-caption">
+                        <h4><strong>Pink Pigeon Innovations</strong></h4>
+                        <p class="text-muted" style="font-size: 13px; margin-top: 5px;">Breakout Board for PCB</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -156,25 +211,8 @@
     <!-- Custom Theme JavaScript -->
     <script src="../js/agency.js"></script>
 
-    <!-- Theme Toggle and Smooth Scroll Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('theme-toggle');
-            const body = document.body;
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            body.classList.add(currentTheme + '-mode');
-            toggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
-
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
-                body.classList.remove('dark-mode', 'light-mode');
-                body.classList.add(newTheme + '-mode');
-                localStorage.setItem('theme', newTheme);
-                toggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
-            });
-        });
-    </script>
+    <!-- Theme Toggle Script -->
+    <script src="../js/theme.js"></script>
 
 </body>
 

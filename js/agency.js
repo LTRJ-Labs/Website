@@ -34,21 +34,31 @@ $(function() {
         }
     });
 
-    // Smooth scroll to hash on initial load
+    // Smooth scroll to hash on initial load (using '#_' prefix to prevent browser's default instant jump)
     if (window.location.hash) {
         var hash = window.location.hash;
-        var targetId = hash.substring(1);
-        var targetEl = document.getElementById(targetId);
-        if (targetEl) {
-            // Reset scroll position to top
-            document.documentElement.scrollTop = 0;
-            document.body.scrollTop = 0;
-            setTimeout(function() {
-                targetEl.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }, 150);
+        if (hash.startsWith('#_')) {
+            var targetId = hash.substring(2);
+            var targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                // Force top scroll position initially to avoid any jumpiness
+                window.scrollTo(0, 0);
+                setTimeout(function() {
+                    // Cancel the animation immediately if the user scrolls manually
+                    var cancelEvents = 'wheel.scrollCancel touchmove.scrollCancel keydown.scrollCancel';
+                    $(window).on(cancelEvents, function() {
+                        $('html, body').stop(true);
+                        $(window).off(cancelEvents);
+                    });
+
+                    $('html, body').stop().animate({
+                        scrollTop: $(targetEl).offset().top - 60 // Offset for the fixed navigation bar
+                    }, 1250, 'easeInOutExpo', function() {
+                        // Clean up listeners once animation completes naturally
+                        $(window).off(cancelEvents);
+                    });
+                }, 500); // 500ms delay lets the page render before the smooth scroll begins
+            }
         }
     }
 });

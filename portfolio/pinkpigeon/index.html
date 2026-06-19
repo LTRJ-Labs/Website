@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Case study of the custom diagnostics breakout board designed and routed by LTRJ Labs for Pink Pigeon Innovations' PCB system validation.">
+    <meta name="author" content="LTRJ Labs">
+
+    <title>Pink Pigeon Breakout Board - LTRJ Labs</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../../img/SVGLogos/Small_Logo.svg">
+    <link rel="icon" type="image/png" href="../../img/HiResLogos/Small_Logo.png">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../../css/agency.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styling for the project details section -->
+    <style>
+        .project-detail-img {
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            background: #2a2a2a;
+            max-width: 100%;
+            height: auto;
+            margin: 30px auto;
+            display: block;
+        }
+        body.light-mode .project-detail-img {
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: #eaeaea;
+        }
+        .project-details-fallback {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 350px;
+            background: #2a2a2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            margin: 30px auto;
+        }
+        body.light-mode .project-details-fallback {
+            background: #eaeaea;
+            color: #555;
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../"><img src="../../img/logos/ltrj-logo.png" alt="LTRJ Labs Ltd Logo"></a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a href="../../services/#_services">Services</a>
+                    </li>
+                    <li>
+                        <a href="../../portfolio/#_portfolio">Portfolio</a>
+                    </li>
+                    <li>
+                        <a href="../../team/#_team">Team</a>
+                    </li>
+                    <li>
+                        <a href="../../contact/">Contact</a>
+                    </li>
+                    <li>
+                        <button id="theme-toggle" class="btn btn-link navbar-btn">🌙</button>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Project Details Section -->
+    <section id="project-details" style="padding-top: 150px; padding-bottom: 80px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" style="text-transform: none;">Pink Pigeon Breakout Board</h2>
+                    <h3 class="section-subheading text-muted" style="margin-bottom: 30px;"><strong>Pink Pigeon Innovations</strong></h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <!-- Project Image / Fallback -->
+                    <img src="../../img/portfolio/pink_pigeon_breakout.png" alt="Pink Pigeon Breakout Board" class="img-responsive project-detail-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="project-details-fallback">
+                        <i class="fa fa-plug fa-5x" style="color: #FF6600; margin-bottom: 20px;"></i>
+                        <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 16px; letter-spacing: 1px;">Pink Pigeon Breakout Board</span>
+                        <span style="font-size: 12px; margin-top: 10px; opacity: 0.7;">Place image at: img/portfolio/pink_pigeon_breakout.png</span>
+                    </div>
+
+                    <!-- Tech Badges -->
+                    <div class="tech-badge-container">
+                        <span class="tech-badge">PCB Routing</span>
+                        <span class="tech-badge">Impedance Matching</span>
+                        <span class="tech-badge">Test Points</span>
+                        <span class="tech-badge">Hardware Verification</span>
+                    </div>
+
+                    <!-- Project Description -->
+                    <div class="project-description text-muted" style="font-size: 16px; line-height: 1.8; margin-top: 40px;">
+                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-bottom: 15px;">Project Overview</h4>
+                        <p style="margin-bottom: 20px;">Our team designed and routed a custom breakout board for Pink Pigeon Innovations to interface with their main PCB system. The breakout board serves as a vital diagnostic interface, allowing engineers to easily inspect, tap, and analyze signal traces in real-time during laboratory testing phases.</p>
+                        
+                        <p style="margin-bottom: 20px;">By routing core communication signals and power rails out to dedicated headers and probe points, the breakout board eliminates the risk of short-circuits or connection errors when attaching logic analyzers, oscilloscopes, or signal injectors directly to the main PCB.</p>
+                        
+                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-top: 30px; margin-bottom: 15px;">Key Features</h4>
+                        <ul style="margin-bottom: 30px; padding-left: 20px;">
+                            <li><strong>Diagnostic Test Points:</strong> Integrated easy-to-use solder loops and hook-style probe points for clean, noise-free scope measurements.</li>
+                            <li><strong>Robust Signal Integrity:</strong> Designed with matched impedance traces and optimal spacing to avoid cross-talk on high-speed lines.</li>
+                            <li><strong>Standardized Pin Headers:</strong> Breaks out all micro-pins to standard 0.1" (2.54mm) headers for immediate compatibility with breadboards and jumper wires.</li>
+                            <li><strong>Compact Form Factor:</strong> Engineered to minimize workspace footprint while maintaining sufficient physical space for testing probes.</li>
+                        </ul>
+                        <div class="theme-info-box">
+                            <strong>Status: Completed & Delivered</strong><br>
+                            The custom breakout PCB was fabricated, assembled, and fully verified. It is currently deployed and actively utilized for system debugging at Pink Pigeon Innovations.
+                        </div>
+
+                        <!-- Client Testimonial -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-quote">"LTRJ Labs designed and routed our diagnostic breakout board with incredible speed and attention to detail. The matched impedance routing and dedicated test points have made our hardware validation and debugging phases significantly more reliable. We highly recommend their services."</div>
+                            <div class="testimonial-author">Lead Hardware Engineer</div>
+                            <div class="testimonial-company">Pink Pigeon Innovations</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="../../js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../../js/bootstrap.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="../../js/agency.js"></script>
+
+    <!-- Theme Toggle Script -->
+    <script src="../../js/theme.js"></script>
+
+</body>
+
+</html>

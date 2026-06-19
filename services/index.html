@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="LTRJ Labs offers affordable, high-quality electronics engineering services, including PCB layout, firmware development, circuit prototyping, and technical consultation.">
+    <meta name="author" content="LTRJ Labs">
 
-    <title>Services - LTRJ Labs</title>
+    <title>Engineering Services - LTRJ Labs</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="../img/SVGLogos/Small_Logo.svg">
@@ -31,9 +31,6 @@
     <!-- Custom Fonts -->
     <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -42,9 +39,146 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <!-- Scroll-Reveal Service Card Styles -->
+    <style>
+        .service-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 40px 35px;
+            margin-bottom: 50px;
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .service-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: #FF6600;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .service-card-icon {
+            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6600, #e65c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255,102,0,0.3);
+        }
+
+        .service-card-body {
+            flex: 1;
+        }
+        .service-card-body h3 {
+            font-family: Montserrat, sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+            margin: 0 0 12px 0;
+        }
+        .service-card-body .service-desc {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #aaa;
+            margin-bottom: 18px;
+        }
+        .service-card-body .service-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .service-card-body .service-features li {
+            font-size: 13px;
+            color: #888;
+            padding: 6px 0;
+            border-top: 1px solid #2a2a2a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .service-card-body .service-features li:last-child {
+            border-bottom: none;
+        }
+        .service-card-body .service-features li .fa {
+            color: #FF6600;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Number badge on the card */
+        .service-number {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-family: Montserrat, sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: rgba(255,102,0,0.08);
+            line-height: 1;
+            user-select: none;
+        }
+
+        /* Light mode overrides */
+        body.light-mode .service-card {
+            background: #ffffff;
+            border-color: #e8e8e8;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+        body.light-mode .service-card-body h3 {
+            color: #111;
+        }
+        body.light-mode .service-card-body .service-desc {
+            color: #555;
+        }
+        body.light-mode .service-card-body .service-features li {
+            color: #666;
+            border-top-color: #eee;
+        }
+        body.light-mode .service-number {
+            color: rgba(255,102,0,0.06);
+        }
+
+        /* Responsive: stack icon above text on mobile */
+        @media (max-width: 600px) {
+            .service-card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 30px 25px;
+            }
+            .service-card-body .service-features li {
+                justify-content: center;
+            }
+        }
+
+    </style>
+
 </head>
 
 <body id="page-top" class="index">
+
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -70,10 +204,10 @@
                         <a href="#services" class="page-scroll">Services</a>
                     </li>
                     <li>
-                        <a href="../portfolio/">Portfolio</a>
+                        <a href="../portfolio/#_portfolio">Portfolio</a>
                     </li>
                     <li>
-                        <a href="../team/">Team</a>
+                        <a href="../team/#_team">Team</a>
                     </li>
                     <li>
                         <a href="../contact/">Contact</a>
@@ -107,30 +241,63 @@
                     <h3 class="section-subheading text-muted">From one-off consultations to multi-month projects</h3>
                 </div>
             </div>
-            <div class="row text-center">
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-plug fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Electronics Design</h4>
-                    <p class="text-muted">Have an electronics problem? Let us make things easy for you. We will provide quality and professional work for a better price point.</p>
-                </div>
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-laptop fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Consultation</h4>
-                    <p class="text-muted">From small scope, technical questions to design strategy and troubleshooting, we can apply our experience and knowledge in the field for your benefit.</p>
-                </div>
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-briefcase fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Product Development</h4>
-                    <p class="text-muted">Have an idea but haven't found a way to make it a reality? We offer ground up services as well, providing prototypes for new ideas at an affordable pricepoint.</p>
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+
+                    <!-- Service 1: Electronics Design -->
+                    <div class="service-card" id="svc-design">
+                        <span class="service-number">01</span>
+                        <div class="service-card-icon">
+                            <i class="fa fa-plug"></i>
+                        </div>
+                        <div class="service-card-body">
+                            <h3>Electronics Design</h3>
+                            <p class="service-desc">Have an electronics problem? Let us make things easy for you. We deliver quality, professional hardware design at a better price point — from schematic capture to production-ready PCB layouts.</p>
+                            <ul class="service-features">
+                                <li><i class="fa fa-check"></i> Custom schematic and PCB layout design</li>
+                                <li><i class="fa fa-check"></i> Component sourcing and BOM optimization</li>
+                                <li><i class="fa fa-check"></i> Design-for-manufacturing (DFM) review</li>
+                                <li><i class="fa fa-check"></i> Multi-layer and high-density routing</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Service 2: Consultation -->
+                    <div class="service-card" id="svc-consult">
+                        <span class="service-number">02</span>
+                        <div class="service-card-icon">
+                            <i class="fa fa-laptop"></i>
+                        </div>
+                        <div class="service-card-body">
+                            <h3>Consultation</h3>
+                            <p class="service-desc">From small-scope technical questions to design strategy and troubleshooting, we apply our hands-on experience and engineering knowledge to help you solve real-world hardware challenges.</p>
+                            <ul class="service-features">
+                                <li><i class="fa fa-check"></i> One-on-one technical design reviews</li>
+                                <li><i class="fa fa-check"></i> Debugging and root-cause analysis</li>
+                                <li><i class="fa fa-check"></i> Architecture recommendations</li>
+                                <li><i class="fa fa-check"></i> Flexible hourly or project-based pricing</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Service 3: Product Development -->
+                    <div class="service-card" id="svc-product">
+                        <span class="service-number">03</span>
+                        <div class="service-card-icon">
+                            <i class="fa fa-briefcase"></i>
+                        </div>
+                        <div class="service-card-body">
+                            <h3>Product Development</h3>
+                            <p class="service-desc">Have an idea but haven't found a way to make it a reality? We offer ground-up development services, turning concepts into working prototypes and production-ready products at an affordable price.</p>
+                            <ul class="service-features">
+                                <li><i class="fa fa-check"></i> Concept-to-prototype development</li>
+                                <li><i class="fa fa-check"></i> Firmware and embedded software</li>
+                                <li><i class="fa fa-check"></i> Enclosure and mechanical integration</li>
+                                <li><i class="fa fa-check"></i> Testing, validation, and iteration</li>
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -177,23 +344,26 @@
     <!-- Custom Theme JavaScript -->
     <script src="../js/agency.js"></script>
 
-    <!-- Theme Toggle and Smooth Scroll Script -->
+    <!-- Theme Toggle Script -->
+    <script src="../js/theme.js"></script>
+    <!-- Scroll Fade Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('theme-toggle');
-            const body = document.body;
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            body.classList.add(currentTheme + '-mode');
-            toggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
-
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
-                body.classList.remove('dark-mode', 'light-mode');
-                body.classList.add(newTheme + '-mode');
-                localStorage.setItem('theme', newTheme);
-                toggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
-            });
+            var cards = document.querySelectorAll('.service-card');
+            if ('IntersectionObserver' in window) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        } else {
+                            entry.target.classList.remove('visible');
+                        }
+                    });
+                }, { threshold: 0.15 });
+                cards.forEach(function(card) { observer.observe(card); });
+            } else {
+                cards.forEach(function(card) { card.classList.add('visible'); });
+            }
         });
     </script>
 
