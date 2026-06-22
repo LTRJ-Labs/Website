@@ -275,16 +275,19 @@ fieldset[disabled] .btn-xl.active {
     color: #FF6600;
 }
 
-.navbar-default .navbar-nav>.active>a {
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active-page>a {
     border-radius: 0;
-    color: #fff;
-    background-color: #FF6600;
+    color: #fff !important;
+    background-color: #FF6600 !important;
 }
 
 .navbar-default .navbar-nav>.active>a:hover,
-.navbar-default .navbar-nav>.active>a:focus {
-    color: #fff;
-    background-color: #FF6600;
+.navbar-default .navbar-nav>.active>a:focus,
+.navbar-default .navbar-nav>.active-page>a:hover,
+.navbar-default .navbar-nav>.active-page>a:focus {
+    color: #fff !important;
+    background-color: #FF6600 !important;
 }
 
 #theme-toggle {
@@ -343,6 +346,12 @@ body.light-mode .navbar-default .navbar-toggle {
 }
 
 @media(min-width:768px) {
+    .navbar-default .container {
+        width: 100% !important;
+        padding-left: 30px !important;
+        padding-right: 30px !important;
+    }
+
     .navbar-default {
         padding: 10px 0;
         background-color: rgba(34, 34, 34, 0.9);
@@ -533,6 +542,7 @@ section#contact {
     background-repeat: no-repeat;
     background-size: cover;
     margin-bottom: 0;
+    position: relative;
 }
 
 section#contact .container {
@@ -942,6 +952,7 @@ section#contact {
     background-position: center;
     background-repeat: no-repeat;
     margin-bottom: 0;
+    position: relative;
 }
 
 section#contact .section-heading {
@@ -1083,12 +1094,13 @@ ul.social-buttons {
 }
 
 ul.social-buttons li a {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 40px;
     height: 40px;
     border-radius: 100%;
     font-size: 20px;
-    line-height: 40px;
     outline: 0;
     color: #fff;
     background-color: #222;
@@ -1423,17 +1435,31 @@ body.light-mode .tech-badge {
 /* Client Testimonials */
 .testimonial-card {
     background-color: #1a1a1a;
+    border: 1px solid #333;
     border-left: 5px solid #FF6600;
-    padding: 25px;
-    border-radius: 4px;
+    padding: 30px;
+    border-radius: 8px;
     margin-top: 40px;
     margin-bottom: 30px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    position: relative;
+}
+.testimonial-card::before {
+    content: '\201C';
+    position: absolute;
+    top: 12px;
+    left: 18px;
+    font-size: 48px;
+    font-family: Georgia, serif;
+    color: #FF6600;
+    opacity: 0.3;
+    line-height: 1;
 }
 body.light-mode .testimonial-card {
-    background-color: #fdfdfd;
-    border-color: #FF6600;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    background-color: #fff;
+    border-color: #e0e0e0;
+    border-left-color: #FF6600;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
 }
 .testimonial-quote {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -1461,6 +1487,236 @@ body.light-mode .testimonial-author {
     font-size: 11px;
     color: #888;
     margin-top: 2px;
+}
+
+/* Team Page Custom Scroll Card Styles */
+.team-scroll-card {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+    background: #111111;
+    border-radius: 12px;
+    padding: 35px 30px;
+    margin-bottom: 40px;
+    border: 1px solid #2a2a2a;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+body.light-mode .team-scroll-card {
+    background: #ffffff;
+    border-color: #e8e8e8;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+}
+.team-scroll-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.team-scroll-card:nth-child(even) {
+    flex-direction: row-reverse;
+}
+.team-card-image {
+    width: 180px;
+    height: 180px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 3px solid #222;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    position: relative;
+}
+body.light-mode .team-card-image {
+    border-color: #fff;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+.team-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.team-card-fallback {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #333;
+}
+body.light-mode .team-card-fallback {
+    background: #eaeaea;
+}
+.team-card-body {
+    flex: 1;
+}
+.team-card-name {
+    font-family: Montserrat, sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0 0 8px 0;
+    letter-spacing: 0.5px;
+}
+body.light-mode .team-card-name {
+    color: #222;
+}
+.team-card-role {
+    font-family: Montserrat, sans-serif;
+    font-weight: 700;
+    color: #FF6600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 12px 0;
+}
+body.light-mode .team-card-role {
+    color: #e65c00;
+}
+.team-card-desc {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #aaa;
+    margin-bottom: 18px;
+}
+body.light-mode .team-card-desc {
+    color: #555;
+}
+
+@media (max-width: 768px) {
+    .team-scroll-card, .team-scroll-card:nth-child(even) {
+        flex-direction: column !important;
+        text-align: center;
+        align-items: center;
+        padding: 30px 20px;
+    }
+    .team-card-image {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 20px;
+    }
+}
+
+/* Contact LinkedIn Button */
+.contact-linkedin-icon {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+.contact-linkedin-icon:hover {
+    background-color: #FF6600;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
+}
+body.light-mode .contact-linkedin-icon {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+body.light-mode .contact-linkedin-icon:hover {
+    background-color: #e65c00;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(230, 92, 0, 0.3);
+}
+
+/* Testimonial Carousel Styles */
+.testimonial-carousel {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-left: 5px solid #FF6600;
+    border-radius: 8px;
+    padding: 40px 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+body.light-mode .testimonial-carousel {
+    background-color: #fff;
+    border-color: #e0e0e0;
+    border-left-color: #FF6600;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+}
+.testimonial-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    text-align: center;
+}
+.testimonial-slide.active {
+    opacity: 1;
+    visibility: visible;
+}
+.testimonial-quote {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #eee;
+    margin-bottom: 20px;
+    padding: 0 40px;
+}
+body.light-mode .testimonial-quote {
+    color: #444;
+}
+.testimonial-author {
+    font-family: Montserrat, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #FF6600;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+body.light-mode .testimonial-author {
+    color: #e65c00;
+}
+.testimonial-project-link {
+    font-size: 12px;
+    color: #888;
+}
+.testimonial-project-link a {
+    color: #aaa;
+    text-decoration: underline;
+    transition: color 0.3s;
+}
+.testimonial-project-link a:hover {
+    color: #FF6600;
+}
+body.light-mode .testimonial-project-link a {
+    color: #666;
+}
+body.light-mode .testimonial-project-link a:hover {
+    color: #e65c00;
 }
 
 

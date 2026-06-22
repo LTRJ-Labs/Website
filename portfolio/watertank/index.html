@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Detailed engineering specifications for the custom STM32 Nucleo LCD daughterboard designed for Camosun College's ECET 260 course.">
-    <meta name="author" content="">
+    <meta name="description" content="Technical specifications and documentation for LTRJ Labs' custom Remote Water Tank Monitoring system.">
+    <meta name="author" content="LTRJ Labs">
 
-    <title>STM32 Nucleo F446RE LCD Board - LTRJ Labs</title>
+    <title>Remote Water Tank Monitoring - LTRJ Labs</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="../../img/SVGLogos/Small_Logo.svg">
@@ -50,7 +50,7 @@
             background: #eaeaea;
         }
         .project-details-fallback {
-            display: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -79,7 +79,7 @@
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
+        <div class="container-fluid" style="padding-left: 15px; padding-right: 15px;">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -124,45 +124,37 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2 class="section-heading" style="text-transform: none;">STM32 Nucleo-F446RE LCD Board</h2>
-                    <h3 class="section-subheading text-muted" style="margin-bottom: 30px;"><strong>Camosun College - ECET 260</strong></h3>
+                    <h2 class="section-heading" style="text-transform: none;">Remote Water Tank Monitoring</h2>
+                    <h3 class="section-subheading text-muted" style="margin-bottom: 30px;"><strong>LTRJ Labs - R&D Initiative</strong></h3>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-8 col-md-offset-2">
                     <!-- Project Image / Fallback -->
-                    <img src="../../img/portfolio/nucleo_f446re.png" alt="STM32 Nucleo F446RE LCD Board" class="img-responsive project-detail-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="../../img/portfolio/water_tank_monitor.png" alt="Remote Water Tank Monitoring System" class="img-responsive project-detail-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="display: none;">
                     <div class="project-details-fallback">
-                        <i class="fa fa-microchip fa-5x" style="color: #FF6600; margin-bottom: 20px;"></i>
-                        <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 16px; letter-spacing: 1px;">STM32 Nucleo Board Image</span>
-                        <span style="font-size: 12px; margin-top: 10px; opacity: 0.7;">Place image at: img/portfolio/nucleo_f446re.png</span>
+                        <i class="fa fa-tint fa-5x" style="color: #FF6600; margin-bottom: 20px;"></i>
+                        <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 16px; letter-spacing: 1px;">Water Tank Monitoring System</span>
+                        <span style="font-size: 12px; margin-top: 10px; opacity: 0.7;">Place image at: img/portfolio/water_tank_monitor.png</span>
                     </div>
-
-
-
 
                     <!-- Project Description -->
                     <div class="project-description text-muted" style="font-size: 16px; line-height: 1.8; margin-top: 40px;">
                         <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-bottom: 15px;">Project Overview</h4>
-                        <p style="margin-bottom: 20px;">The scope of this project is to simplify and streamline the integration of display modules with the STM32 Nucleo development board. Designed specifically as an educational hardware solution for Camosun College, this custom shield design aims to eliminate manual wiring, allowing students to focus on programming and core system logic rather than wiring troubleshooting.</p>
+                        <p style="margin-bottom: 20px;">The Remote Water Tank Monitoring system is a flagship internal research and development initiative at LTRJ Labs. Designed to address the challenges of tracking water resources in rural and off-grid environments, this system eliminates the need for manual inspections by delivering real-time telemetry from remote storage tanks directly to a central cloud platform.</p>
+                        
+                        <p style="margin-bottom: 20px;">By employing energy-efficient MCU architectures combined with long-range sub-GHz wireless transmitters (such as LoRa) and cellular modems, the device monitors hydrostatic pressure, temperature, and system battery levels. This project is currently in the prototyping phase and represents a key step toward launching our own commercial hardware product and subscription services.</p>
                         
                         <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-top: 30px; margin-bottom: 15px;">Key Features</h4>
                         <ul style="margin-bottom: 30px; padding-left: 20px;">
-                            <li><strong>Seamless Integration:</strong> Plugs directly into standard development board headers for a robust, plug-and-play connection.</li>
-                            <li><strong>Flexible Interfaces:</strong> Supports routing paths for multiple display protocols to facilitate learning laboratory exercises.</li>
-                            <li><strong>Improved Learning UX:</strong> Replaces messy jumper wires with a clean, unified shield board.</li>
+                            <li><strong>Long-Range Wireless Telemetry:</strong> Integrates sub-GHz wireless transceivers to transmit data reliably across several kilometers in rural terrain.</li>
+                            <li><strong>Ultra-Low Power Operations:</strong> Engineered to run on solar-charged lithium battery configurations, achieving multi-year operational cycles without manual recharging.</li>
+                            <li><strong>High-Precision Liquid Level Sensing:</strong> Employs temperature-compensated hydrostatic pressure sensors to log micro-changes in water volume.</li>
+                            <li><strong>Cloud Alert Dashboard:</strong> Feeds telemetry into an online portal configured to dispatch email and SMS notifications when water levels drop below key thresholds.</li>
                         </ul>
-
-                        <div class="theme-info-box" style="margin-bottom: 30px;">
-                            <strong>Status: In Progress</strong><br>
-                            Our team is currently testing prototypes and finalizing hardware layouts. Check back soon for updates!
-                        </div>
-
-                        <!-- Client Testimonial -->
-                        <div class="testimonial-card">
-                            <div class="testimonial-quote">"Placeholder quote for Mel Dundas. Detailed feedback regarding LTRJ Labs' STM32 custom LCD shield designs and educational technology support will be published here once finalized."</div>
-                            <div class="testimonial-author">Mel Dundas</div>
-                            <div class="testimonial-company">Camosun College</div>
+                        <div class="theme-info-box">
+                            <strong>Status: In Prototyping & Testing</strong><br>
+                            Our engineering team is actively constructing prototypes, calibrating level sensors, and optimizing the low-power sleeping loops. Check back soon for schematics and source files!
                         </div>
                     </div>
                 </div>
@@ -201,3 +193,4 @@
 </body>
 
 </html>
+

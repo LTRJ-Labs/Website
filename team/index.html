@@ -137,7 +137,7 @@
                     <li>
                         <a href="../portfolio/#_portfolio">Portfolio</a>
                     </li>
-                    <li>
+                    <li class="active-page">
                         <a href="#team" class="page-scroll">Team</a>
                     </li>
                     <li>
@@ -154,12 +154,9 @@
     </nav>
 
     <!-- Header -->
-    <header>
-        <div class="container-fluid">
-            <div class="intro-text">
-                <div class="intro-heading">LTRJ LABS Ltd</div>
-                <div class="intro-lead-in">Cost-Effective Electronics Design</div>
-            </div>
+    <header style="padding: 100px 0 50px 0; background: #1a1a1a;">
+        <div class="container text-center">
+            <h1 class="section-heading" style="margin-top: 50px; color: #fff; text-transform: uppercase;">About Our Team</h1>
         </div>
     </header>
 
@@ -211,55 +208,89 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <div class="team-member">
-                        <img src="../img/team/Levi.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Levi Puritch</h4>
-                        <p class="text-muted">Chief Executive Officer - Designer</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/levi-puritch-a8471a335/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
+                <div class="col-md-10 col-md-offset-1">
+                    
+                    <!-- Levi Puritch -->
+                    <div class="team-scroll-card">
+                        <div class="team-card-image">
+                            <img src="../img/team/Levi.jpg" alt="Levi Puritch" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="team-card-fallback">
+                                <i class="fa fa-user fa-3x" style="color: #FF6600;"></i>
+                            </div>
+                        </div>
+                        <div class="team-card-body">
+                            <h3 class="team-card-name">Levi Puritch</h3>
+                            <h5 class="team-card-role">Chief Executive Officer - Designer</h5>
+                            <p class="team-card-desc">Leads system-level hardware design and project coordination, bringing complex engineering requirements into clear, schematic layouts.</p>
+                            <ul class="list-inline social-buttons" style="margin-bottom: 0;">
+                                <li><a href="https://www.linkedin.com/in/levi-puritch-a8471a335/" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <div class="team-member">
-                        <img src="../img/team/Ryan.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Ryan Ko</h4>
-                        <p class="text-muted">Chief Financial Officer - Designer</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/ryan-ko-31a8543a6/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
+
+                    <!-- Ryan Ko -->
+                    <div class="team-scroll-card">
+                        <div class="team-card-image">
+                            <img src="../img/team/Ryan.jpg" alt="Ryan Ko" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="team-card-fallback">
+                                <i class="fa fa-user fa-3x" style="color: #FF6600;"></i>
+                            </div>
+                        </div>
+                        <div class="team-card-body">
+                            <h3 class="team-card-name">Ryan Ko</h3>
+                            <h5 class="team-card-role">Chief Financial Officer - Designer</h5>
+                            <p class="team-card-desc">Directs project finances, feasibility analysis, and budgeting, while supporting mechanical integration and layout verification.</p>
+                            <ul class="list-inline social-buttons" style="margin-bottom: 0;">
+                                <li><a href="https://www.linkedin.com/in/ryan-ko-31a8543a6/" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <div class="team-member">
-                        <img src="../img/team/Jaxon.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Jaxon Bjornson</h4>
-                        <p class="text-muted">Chief Technology Officer - Designer</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/jaxonbjornson/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
+
+                    <!-- Jaxon Bjornson -->
+                    <div class="team-scroll-card">
+                        <div class="team-card-image">
+                            <img src="../img/team/Jaxon.jpg" alt="Jaxon Bjornson" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="team-card-fallback">
+                                <i class="fa fa-user fa-3x" style="color: #FF6600;"></i>
+                            </div>
+                        </div>
+                        <div class="team-card-body">
+                            <h3 class="team-card-name">Jaxon Bjornson</h3>
+                            <h5 class="team-card-role">Chief Technology Officer - Designer</h5>
+                            <p class="team-card-desc">Oversees custom firmware development, microcontroller peripherals, and diagnostic scripting for system testing.</p>
+                            <ul class="list-inline social-buttons" style="margin-bottom: 0;">
+                                <li><a href="https://www.linkedin.com/in/jaxonbjornson/" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <div class="team-member">
-                        <img src="../img/team/tyler.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Tyler Bittencourt</h4>
-                        <p class="text-muted">Chief Marketing Officer - Designer</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/tyler-bittencourt/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
+
+                    <!-- Tyler Bittencourt -->
+                    <div class="team-scroll-card">
+                        <div class="team-card-image">
+                            <img src="../img/team/tyler.jpg" alt="Tyler Bittencourt" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="team-card-fallback">
+                                <i class="fa fa-user fa-3x" style="color: #FF6600;"></i>
+                            </div>
+                        </div>
+                        <div class="team-card-body">
+                            <h3 class="team-card-name">Tyler Bittencourt</h3>
+                            <h5 class="team-card-role">Chief Marketing Officer - Designer</h5>
+                            <p class="team-card-desc">Manages marketing, client onboarding, and corporate communications while collaborating on board testing and layout reviews.</p>
+                            <ul class="list-inline social-buttons" style="margin-bottom: 0;">
+                                <li><a href="https://www.linkedin.com/in/tyler-bittencourt/" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                            </ul>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </section>
 
     <section id="contact">
+        <a href="https://www.linkedin.com/company/ltrjlabs/people/" target="_blank" class="contact-linkedin-icon" title="Follow LTRJ Labs on LinkedIn">
+            <i class="fa fa-linkedin"></i>
+        </a>
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -276,7 +307,13 @@
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6 text-left">
+                    <span class="copyright" style="color: #888;">Copyright &copy; LTRJ Labs 2026</span>
+                </div>
+                <div class="col-md-6 text-right">
+                    <ul class="list-inline quicklinks" style="margin-bottom: 0;">
+                        <li><a href="../privacy/" style="color: #FF6600; text-decoration: none;">Privacy Policy</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -302,6 +339,27 @@
 
     <!-- Theme Toggle Script -->
     <script src="../js/theme.js"></script>
+
+    <!-- Scroll Fade Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var cards = document.querySelectorAll('.team-scroll-card');
+            if ('IntersectionObserver' in window) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        } else {
+                            entry.target.classList.remove('visible');
+                        }
+                    });
+                }, { threshold: 0.15 });
+                cards.forEach(function(card) { observer.observe(card); });
+            } else {
+                cards.forEach(function(card) { card.classList.add('visible'); });
+            }
+        });
+    </script>
 
 </body>
 
