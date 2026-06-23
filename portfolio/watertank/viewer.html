@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>3D PCB Assembly Viewer - LTRJ Labs</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#FF6600',
+                        'brand-dark': '#e65c00',
+                        surface: {
+                            900: '#0a0a0f',
+                            800: '#111118',
+                            700: '#1a1a24',
+                            600: '#22222e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Import Map for ES Modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "react": "https://esm.sh/react@18.3.1",
+            "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+            "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+            "three": "https://esm.sh/three@0.171.0",
+            "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.17.14?external=react,three",
+            "@react-three/drei": "https://esm.sh/@react-three/drei@9.120.4?external=react,three,@react-three/fiber",
+            "lucide-react": "https://esm.sh/lucide-react@0.468.0?external=react"
+        }
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #root {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Custom range slider styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #FF6600 0%, #FF6600 var(--val, 0%), #22222e var(--val, 0%), #22222e 100%);
+            outline: none;
+            transition: background 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FF6600;
+            cursor: pointer;
+            border: 3px solid #0a0a0f;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.5), 0 0 20px rgba(255, 102, 0, 0.2);
+            transition: box-shadow 0.2s ease, transform 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 14px rgba(255, 102, 0, 0.7), 0 0 28px rgba(255, 102, 0, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FF6600;
+            cursor: pointer;
+            border: 3px solid #0a0a0f;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+        }
+
+        /* Loading spinner */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loader-ring {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #22222e;
+            border-top-color: #FF6600;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Glassmorphism panel */
+        .glass-panel {
+            background: rgba(17, 17, 24, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="module">
+        import React, { useState, useRef, useCallback, useEffect, useMemo, Suspense } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
+        import { Canvas, useFrame, useThree } from '@react-three/fiber';
+        import { OrbitControls, useGLTF, Environment, ContactShadows, Html, Center } from '@react-three/drei';
+        import { Layers, RotateCcw, Move3D, Eye, Box, Maximize2 } from 'lucide-react';
+        import * as THREE from 'three';
+
+        // ─── GLTF Model Path ────────────────────────────────────────────────
+        const MODEL_PATH = '../../img/RemoteTankMonitoring-Enclosure+TankMountMainBoard.gltf';
+
+        // ─── Component group definitions for exploded view ──────────────────
+        // These prefixes classify the GLTF node names into logical assembly layers.
+        // Each group has a label, color for the legend, and the Y offset direction
+        // when exploded.
+        const COMPONENT_GROUPS = [
+            {
+                id: 'enclosure',
+                label: 'Enclosure',
+                color: '#6366f1',
+                prefixes: ['FRAME', '.step'],
+                offsetDir: [0, 1, 0],
+                offsetMag: 0.006,
+            },
+            {
+                id: 'connectors',
+                label: 'Connectors',
+                color: '#22d3ee',
+                prefixes: ['DB301V', 'SIM8051', '67910', 'TYPE-C', 'JST', 'DSJ0014', 'pin'],
+                offsetDir: [0, 1, 0],
+                offsetMag: 0.004,
+            },
+            {
+                id: 'ics',
+                label: 'ICs & Modules',
+                color: '#f59e0b',
+                prefixes: ['ESP32', 'INA219', 'lr62xe', 'SOT23', 'SOT23-3', 'BODY-SOT', 'LEAD-SOT', 'LEAD-DUMMY', 'MOLD'],
+                offsetDir: [0, 1, 0],
+                offsetMag: 0.003,
+            },
+            {
+                id: 'passives',
+                label: 'Passives',
+                color: '#a855f7',
+                prefixes: ['res_', 'ceramic_cap_', 'D_0402', 'DO-214', 'led_', '25ZLH', 'SWPA', 'SPM2512', 'TS-1088'],
+                offsetDir: [0, 1, 0],
+                offsetMag: 0.002,
+            },
+            {
+                id: 'pcb',
+                label: 'PCB Board',
+                color: '#10b981',
+                prefixes: ['RemoteTankMonitoring_PCB', 'MainBoard', 'SOLID', 'body_4'],
+                offsetDir: [0, 0, 0],
+                offsetMag: 0,
+            },
+        ];
+
+        function classifyNode(name) {
+            for (const group of COMPONENT_GROUPS) {
+                for (const prefix of group.prefixes) {
+                    if (name && name.startsWith(prefix)) {
+                        return group;
+                    }
+                }
+            }
+            return COMPONENT_GROUPS[COMPONENT_GROUPS.length - 1]; // default to PCB
+        }
+
+        // ─── Animated Mesh Wrapper ──────────────────────────────────────────
+        function ExplodedMesh({ node, explodeFactor, group }) {
+            const meshRef = useRef();
+            const originalPos = useRef(null);
+
+            useEffect(() => {
+                if (meshRef.current && originalPos.current === null) {
+                    originalPos.current = meshRef.current.position.clone();
+                }
+            }, []);
+
+            useFrame(() => {
+                if (meshRef.current && originalPos.current) {
+                    const t = explodeFactor;
+                    meshRef.current.position.x = originalPos.current.x + group.offsetDir[0] * group.offsetMag * t;
+                    meshRef.current.position.y = originalPos.current.y + group.offsetDir[1] * group.offsetMag * t;
+                    meshRef.current.position.z = originalPos.current.z + group.offsetDir[2] * group.offsetMag * t;
+                }
+            });
+
+            if (node.isMesh) {
+                return jsx('mesh', {
+                    ref: meshRef,
+                    geometry: node.geometry,
+                    material: node.material,
+                    position: node.position.toArray(),
+                    rotation: node.rotation.toArray().slice(0, 3),
+                    scale: node.scale.toArray(),
+                    castShadow: true,
+                    receiveShadow: true,
+                });
+            }
+
+            return null;
+        }
+
+        // ─── PCB Model Component ────────────────────────────────────────────
+        function PCBModel({ explodeFactor, autoRotate }) {
+            const { scene } = useGLTF(MODEL_PATH);
+            const groupRef = useRef();
+
+            // Auto-rotate
+            useFrame((state, delta) => {
+                if (groupRef.current && autoRotate) {
+                    groupRef.current.rotation.y += delta * 0.15;
+                }
+            });
+
+            // Traverse and classify all meshes
+            const meshes = useMemo(() => {
+                const result = [];
+                scene.traverse((child) => {
+                    if (child.isMesh) {
+                        const group = classifyNode(child.name);
+                        result.push({ node: child, group });
+                    }
+                });
+                return result;
+            }, [scene]);
+
+            // Scale factor - the model uses very small units (meters from CAD)
+            const scale = 200;
+
+            return jsx('group', {
+                ref: groupRef,
+                scale: [scale, scale, scale],
+                rotation: [-Math.PI / 2, 0, 0],
+                children: meshes.map((item, i) =>
+                    jsx(ExplodedMesh, {
+                        node: item.node,
+                        explodeFactor: explodeFactor,
+                        group: item.group,
+                        key: i,
+                    })
+                ),
+            });
+        }
+
+        // ─── Loading Fallback ───────────────────────────────────────────────
+        function Loader() {
+            return jsx(Html, {
+                center: true,
+                children: jsx('div', {
+                    className: 'flex flex-col items-center gap-4',
+                    children: [
+                        jsx('div', { className: 'loader-ring', key: 'ring' }),
+                        jsx('p', {
+                            className: 'text-sm text-gray-400 font-medium tracking-wide',
+                            children: 'Loading 3D Model...',
+                            key: 'text',
+                        }),
+                    ],
+                }),
+            });
+        }
+
+        // ─── Camera Controller ──────────────────────────────────────────────
+        function CameraSetup() {
+            const { camera } = useThree();
+            useEffect(() => {
+                camera.position.set(0.6, 0.5, 0.8);
+                camera.lookAt(0, 0, 0);
+            }, [camera]);
+            return null;
+        }
+
+        // ─── Main App ──────────────────────────────────────────────────────
+        function App() {
+            const [explodeFactor, setExplodeFactor] = useState(0);
+            const [autoRotate, setAutoRotate] = useState(true);
+            const sliderRef = useRef(null);
+
+            const handleSliderChange = useCallback((e) => {
+                const val = parseFloat(e.target.value);
+                setExplodeFactor(val);
+                e.target.style.setProperty('--val', `${val}%`);
+            }, []);
+
+            const handleReset = useCallback(() => {
+                setExplodeFactor(0);
+                if (sliderRef.current) {
+                    sliderRef.current.value = 0;
+                    sliderRef.current.style.setProperty('--val', '0%');
+                }
+            }, []);
+
+            return jsx('div', {
+                className: 'w-full h-full relative bg-surface-900',
+                children: [
+                    // ─── 3D Canvas ──────────────────────────────────────
+                    jsx(Canvas, {
+                        key: 'canvas',
+                        shadows: true,
+                        dpr: [1, 2],
+                        gl: { antialias: true, alpha: false, powerPreference: 'high-performance' },
+                        camera: { fov: 35, near: 0.01, far: 100 },
+                        style: { background: '#0a0a0f' },
+                        children: [
+                            jsx(CameraSetup, { key: 'cam' }),
+                            jsx('ambientLight', { intensity: 0.4, key: 'amb' }),
+                            jsx('directionalLight', {
+                                position: [5, 8, 5],
+                                intensity: 1.2,
+                                castShadow: true,
+                                key: 'dir1',
+                            }),
+                            jsx('directionalLight', {
+                                position: [-3, 4, -4],
+                                intensity: 0.5,
+                                key: 'dir2',
+                            }),
+                            jsx('pointLight', {
+                                position: [0, 2, 0],
+                                intensity: 0.3,
+                                color: '#FF6600',
+                                key: 'pt',
+                            }),
+                            jsx(Suspense, {
+                                fallback: jsx(Loader, {}),
+                                children: jsx(Center, {
+                                    children: jsx(PCBModel, {
+                                        explodeFactor: explodeFactor,
+                                        autoRotate: autoRotate,
+                                    }),
+                                }),
+                                key: 'model',
+                            }),
+                            jsx(ContactShadows, {
+                                position: [0, -0.35, 0],
+                                opacity: 0.4,
+                                scale: 4,
+                                blur: 2.5,
+                                far: 4,
+                                key: 'shadow',
+                            }),
+                            jsx(OrbitControls, {
+                                enablePan: true,
+                                enableZoom: true,
+                                enableRotate: true,
+                                minDistance: 0.3,
+                                maxDistance: 5,
+                                autoRotate: false,
+                                key: 'controls',
+                            }),
+                        ],
+                    }),
+
+                    // ─── Top-Left Title ─────────────────────────────────
+                    jsx('div', {
+                        key: 'title',
+                        className: 'absolute top-4 left-4 fade-in',
+                        children: jsxs('div', {
+                            className: 'glass-panel rounded-xl px-5 py-3',
+                            children: [
+                                jsxs('div', {
+                                    className: 'flex items-center gap-2 mb-1',
+                                    key: 'h',
+                                    children: [
+                                        jsx(Box, { size: 16, className: 'text-brand', key: 'ico' }),
+                                        jsx('span', {
+                                            className: 'text-xs font-bold tracking-widest uppercase text-brand',
+                                            children: 'LTRJ Labs',
+                                            key: 'brand',
+                                        }),
+                                    ],
+                                }),
+                                jsx('h1', {
+                                    className: 'text-base font-bold text-white leading-tight',
+                                    children: 'Remote Tank Monitoring',
+                                    key: 't',
+                                }),
+                                jsx('p', {
+                                    className: 'text-xs text-gray-500 mt-0.5',
+                                    children: 'PCB Assembly — Interactive 3D Viewer',
+                                    key: 's',
+                                }),
+                            ],
+                        }),
+                    }),
+
+                    // ─── Top-Right Legend ────────────────────────────────
+                    jsx('div', {
+                        key: 'legend',
+                        className: 'absolute top-4 right-4 fade-in',
+                        children: jsx('div', {
+                            className: 'glass-panel rounded-xl px-4 py-3',
+                            children: [
+                                jsxs('div', {
+                                    className: 'flex items-center gap-2 mb-2',
+                                    key: 'lh',
+                                    children: [
+                                        jsx(Layers, { size: 14, className: 'text-gray-400', key: 'li' }),
+                                        jsx('span', {
+                                            className: 'text-xs font-semibold text-gray-300 uppercase tracking-wider',
+                                            children: 'Layers',
+                                            key: 'lt',
+                                        }),
+                                    ],
+                                }),
+                                jsx('div', {
+                                    className: 'flex flex-col gap-1.5',
+                                    key: 'lb',
+                                    children: COMPONENT_GROUPS.map((g) =>
+                                        jsxs('div', {
+                                            className: 'flex items-center gap-2',
+                                            key: g.id,
+                                            children: [
+                                                jsx('div', {
+                                                    className: 'w-2.5 h-2.5 rounded-full',
+                                                    style: { backgroundColor: g.color },
+                                                    key: 'dot',
+                                                }),
+                                                jsx('span', {
+                                                    className: 'text-xs text-gray-400',
+                                                    children: g.label,
+                                                    key: 'name',
+                                                }),
+                                            ],
+                                        })
+                                    ),
+                                }),
+                            ],
+                        }),
+                    }),
+
+                    // ─── Bottom Control Bar ─────────────────────────────
+                    jsx('div', {
+                        key: 'controls',
+                        className: 'absolute bottom-0 left-0 right-0 fade-in',
+                        children: jsx('div', {
+                            className: 'glass-panel border-t border-white/5 px-6 py-4',
+                            children: jsxs('div', {
+                                className: 'max-w-3xl mx-auto flex items-center gap-4',
+                                children: [
+                                    // Label
+                                    jsxs('div', {
+                                        className: 'flex items-center gap-2 shrink-0',
+                                        key: 'label',
+                                        children: [
+                                            jsx(Move3D, { size: 16, className: 'text-brand', key: 'i' }),
+                                            jsx('span', {
+                                                className: 'text-xs font-semibold text-gray-300 uppercase tracking-wider hidden sm:inline',
+                                                children: 'Explode',
+                                                key: 't',
+                                            }),
+                                        ],
+                                    }),
+
+                                    // Slider
+                                    jsx('input', {
+                                        ref: sliderRef,
+                                        type: 'range',
+                                        min: '0',
+                                        max: '100',
+                                        defaultValue: '0',
+                                        step: '1',
+                                        className: 'flex-1 cursor-pointer',
+                                        onChange: handleSliderChange,
+                                        key: 'slider',
+                                    }),
+
+                                    // Percentage
+                                    jsx('span', {
+                                        className: 'text-xs font-mono text-brand w-10 text-right tabular-nums',
+                                        children: `${Math.round(explodeFactor)}%`,
+                                        key: 'pct',
+                                    }),
+
+                                    // Reset Button
+                                    jsx('button', {
+                                        onClick: handleReset,
+                                        className: 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-700 hover:bg-surface-600 text-gray-300 hover:text-white transition-all duration-200 text-xs font-medium border border-white/5',
+                                        title: 'Reset View',
+                                        key: 'reset',
+                                        children: [
+                                            jsx(RotateCcw, { size: 13, key: 'ri' }),
+                                            jsx('span', {
+                                                className: 'hidden sm:inline',
+                                                children: 'Reset',
+                                                key: 'rt',
+                                            }),
+                                        ],
+                                    }),
+
+                                    // Auto-rotate Toggle
+                                    jsx('button', {
+                                        onClick: () => setAutoRotate((v) => !v),
+                                        className: `flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-200 text-xs font-medium border ${autoRotate ? 'bg-brand/20 text-brand border-brand/30' : 'bg-surface-700 text-gray-400 hover:text-white border-white/5'}`,
+                                        title: 'Toggle Auto-Rotate',
+                                        key: 'rotate',
+                                        children: [
+                                            jsx(Eye, { size: 13, key: 'ei' }),
+                                            jsx('span', {
+                                                className: 'hidden sm:inline',
+                                                children: 'Spin',
+                                                key: 'et',
+                                            }),
+                                        ],
+                                    }),
+                                ],
+                            }),
+                        }),
+                    }),
+
+                    // ─── Back Link ──────────────────────────────────────
+                    jsx('a', {
+                        key: 'back',
+                        href: './',
+                        className: 'absolute bottom-16 left-4 text-xs text-gray-500 hover:text-brand transition-colors flex items-center gap-1 fade-in',
+                        children: [
+                            jsx(Maximize2, { size: 12, key: 'bi' }),
+                            jsx('span', { children: 'Back to Project', key: 'bt' }),
+                        ],
+                    }),
+                ],
+            });
+        }
+
+        // ─── Mount ──────────────────────────────────────────────────────────
+        const root = createRoot(document.getElementById('root'));
+        root.render(jsx(App, {}));
+    </script>
+</body>
+</html>
