@@ -27,6 +27,88 @@
     <link href="../../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
 
+    <!-- Import Map for ES Modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://esm.sh/three@0.171.0",
+            "three/addons/": "https://esm.sh/three@0.171.0/examples/jsm/",
+            "gsap": "https://esm.sh/gsap@3.12.2",
+            "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.2/ScrollTrigger"
+        }
+    }
+    </script>
+
+    <style>
+        /* Exploded 3D view breakout styling */
+        #exploded-view-container {
+            position: relative;
+            width: 100vw;
+            height: 70vh;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            background: #0a0a0f;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            transition: background-color 0.3s, border-color 0.3s;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        body.light-mode #exploded-view-container {
+            background: #f9fafb;
+            border-top-color: rgba(0, 0, 0, 0.06);
+            border-bottom-color: rgba(0, 0, 0, 0.06);
+        }
+        /* Glassmorphic tooltips */
+        #exploded-view-tooltip {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2000;
+            background: rgba(17, 17, 24, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 280px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.25s ease-out;
+            transform: translate(15px, -50%);
+        }
+        body.light-mode #exploded-view-tooltip {
+            background: rgba(255, 255, 255, 0.92);
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        #tooltip-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: #FF6600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        #tooltip-desc {
+            font-size: 11px;
+            color: #ccc;
+            line-height: 1.5;
+            margin: 0;
+        }
+        body.light-mode #tooltip-desc {
+            color: #4b5563;
+        }
+        /* Bounce micro-animation */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+    </style>
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -140,21 +222,32 @@
             </div>
             <div class="row">
                 <div class="col-md-8 col-md-offset-2">
-                    <!-- Project Image / Fallback -->
-                    <img src="../../img/portfolio/water_tank_monitor.png" alt="Remote Water Tank Monitoring System" class="img-responsive project-detail-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="display: none;">
-                    <div class="project-details-fallback">
-                        <i class="fa fa-tint fa-5x" style="color: #FF6600; margin-bottom: 20px;"></i>
-                        <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 16px; letter-spacing: 1px;">Water Tank Monitoring System</span>
-                        <span style="font-size: 12px; margin-top: 10px; opacity: 0.7;">Place image at: img/portfolio/water_tank_monitor.png</span>
+                    <!-- Exploded View Full-Width WebGL Section -->
+                    <div id="exploded-view-container">
+                        <canvas id="exploded-view-canvas"></canvas>
+                        
+                        <!-- Floating User Prompts -->
+                        <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; z-index: 10;">
+                            <p id="scroll-prompt" style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #888; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8); transition: opacity 0.3s; opacity: 1;">
+                                <i class="fa fa-chevron-down" style="color: #FF6600; margin-bottom: 4px; display: block; animation: bounce 1.5s infinite;"></i>
+                                Scroll down to explode assembly
+                            </p>
+                            <p id="hover-prompt" style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #FF6600; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8); transition: opacity 0.3s; opacity: 0; display: none;">
+                                Hover over components to inspect details
+                            </p>
+                        </div>
+                        
+                        <!-- Tooltip Overlay -->
+                        <div id="exploded-view-tooltip" style="display: none;">
+                            <div id="tooltip-title">Component Name</div>
+                            <div id="tooltip-desc">Component description...</div>
+                        </div>
                     </div>
 
                     <!-- Project Description -->
                     <div class="project-description text-muted" style="font-size: 16px; line-height: 1.8; margin-top: 40px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin: 0;">Project Overview</h4>
-                            <a href="viewer.html" class="btn" style="background: #FF6600; color: #fff; border: none; padding: 8px 16px; font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; border-radius: 4px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(255,102,0,0.2);">
-                                <i class="fa fa-cube"></i> 3D View
-                            </a>
                         </div>
                         <p style="margin-bottom: 20px;">The Remote Water Tank Monitoring system is a flagship internal research and development initiative at LTRJ Labs. Designed to address the challenges of tracking water resources in rural and off-grid environments, this system eliminates the need for manual inspections by delivering real-time telemetry from remote storage tanks directly to a central cloud platform.</p>
                         
@@ -199,6 +292,463 @@
     <script src="../../js/theme.js"></script>
     <script src="../../js/agency.js"></script>
 
+    <!-- 3D Exploded View Logic -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+        import gsap from 'gsap';
+        import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        const container = document.getElementById('exploded-view-container');
+        const canvas = document.getElementById('exploded-view-canvas');
+        const tooltip = document.getElementById('exploded-view-tooltip');
+        const tooltipTitle = document.getElementById('tooltip-title');
+        const tooltipDesc = document.getElementById('tooltip-desc');
+        const scrollPrompt = document.getElementById('scroll-prompt');
+        const hoverPrompt = document.getElementById('hover-prompt');
+
+        // 1. Scene setup
+        const scene = new THREE.Scene();
+        let isLightMode = document.body.classList.contains('light-mode');
+        const bgColor = isLightMode ? 0xf9fafb : 0x0a0a0f;
+        scene.background = new THREE.Color(bgColor);
+
+        // 2. Camera setup - locked isometric-style perspective looking down diagonally
+        const camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(1.5, 1.2, 1.5);
+        camera.lookAt(0, -0.02, 0);
+
+        // 3. Renderer setup
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+        // 4. Lighting setup
+        const ambientLight = new THREE.AmbientLight(0xffffff, isLightMode ? 0.8 : 0.4);
+        scene.add(ambientLight);
+
+        const dirLight1 = new THREE.DirectionalLight(0xffffff, isLightMode ? 1.5 : 1.0);
+        dirLight1.position.set(5, 8, 5);
+        scene.add(dirLight1);
+
+        const dirLight2 = new THREE.DirectionalLight(0xffffff, isLightMode ? 0.6 : 0.3);
+        dirLight2.position.set(-3, 4, -4);
+        scene.add(dirLight2);
+
+        // 5. Theme observer to sync WebGL clear color and lighting
+        const themeObserver = new MutationObserver(() => {
+            const isLight = document.body.classList.contains('light-mode');
+            const targetColor = isLight ? 0xf9fafb : 0x0a0a0f;
+            scene.background.setHex(targetColor);
+            ambientLight.intensity = isLight ? 0.8 : 0.4;
+            dirLight1.intensity = isLight ? 1.5 : 1.0;
+            dirLight2.intensity = isLight ? 0.6 : 0.3;
+            requestRender();
+        });
+        themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+        // 6. Interactive & Explode Configurations
+        const interactiveConfigs = [
+            {
+                id: 'lid',
+                name: 'Enclosure Lid',
+                desc: 'Top cover with a gasket seal protecting the internal electronics from water ingress and dust.',
+                match: (node) => node.name === 'LidAssembly'
+            },
+            {
+                id: 'base',
+                name: 'Enclosure Base',
+                desc: 'Rugged, weather-sealed polycarbonate base housing the electronics and battery compartment.',
+                match: (node) => node.name === 'BottomCasing'
+            },
+            {
+                id: 'pcb',
+                name: 'Main PCB Assembly',
+                desc: '4-layer FR4 board populated with the ESP32 microcontroller, power management systems, and sensor connectors.',
+                match: (node) => node.name === 'MainBoard'
+            },
+            {
+                id: 'modem',
+                name: 'LTE Cellular Modem',
+                desc: 'Low-power LTE Cat M1/NB-IoT cellular modem providing reliable cloud telemetry connectivity.',
+                match: (node) => node.name === 'BG95mPCIE'
+            },
+            {
+                id: 'battery_holder',
+                name: 'Battery Holder',
+                desc: 'Secure holder for 18650 lithium-ion cells, providing the system\'s power source.',
+                match: (node) => node.name.includes('Battery Holder') || node.name.startsWith('BatteryHolder')
+            },
+            {
+                id: 'sensor',
+                name: 'Ultrasonic Level Sensor',
+                desc: 'High-precision sensor emitting ultrasonic pulses to measure the distance to the water surface.',
+                match: (node) => node.name.includes('sensor') || node.name.startsWith('DYP-A02')
+            },
+            {
+                id: 'mount',
+                name: 'Sensor Mount',
+                desc: 'Threaded physical mount holding the ultrasonic sensor securely in place at the top of the tank.',
+                match: (node) => node.name === 'UltrasonicMount'
+            }
+        ];
+
+        function getNodeExplodeConfig(node) {
+            const name = node.name;
+            if (name === 'LidAssembly') return { offsetMag: 0.12 };
+            if (name === 'BG95mPCIE') return { offsetMag: 0.09 };
+            if (name === 'BottomCasing') return { offsetMag: -0.11 };
+            if (name.includes('Battery Holder') || name.startsWith('BatteryHolder')) return { offsetMag: -0.03 };
+            if (name === 'Casing2Ultrasonic') return { offsetMag: -0.05 };
+            if (name === 'UltrasonicMount') return { offsetMag: -0.07 };
+            if (name.includes('sensor') || name.startsWith('DYP-A02')) return { offsetMag: -0.09 };
+            
+            // PCB components (inside MainBoard)
+            if (node.parent && node.parent.name === 'MainBoard') {
+                if (name.startsWith('SOLID')) return { offsetMag: 0.015 };
+                if (name.startsWith('res_') || name.startsWith('ceramic_cap_') || name.startsWith('D_0402') || name.startsWith('DO-214') || name.startsWith('led_') || name.startsWith('25ZLH') || name.startsWith('SWPA') || name.startsWith('SPM2512') || name.startsWith('TS-1088')) {
+                    return { offsetMag: 0.03 };
+                }
+                if (name.startsWith('ESP32') || name.startsWith('INA219') || name.startsWith('lr62xe') || name.startsWith('SOT23')) {
+                    return { offsetMag: 0.045 };
+                }
+                if (name.startsWith('JST') || name.includes('JST_PH') || name.startsWith('TYPE-C') || name.startsWith('DB301V')) {
+                    return { offsetMag: 0.06 };
+                }
+            }
+            return null;
+        }
+
+        // 7. Model loading and classification
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
+
+        const loader = new GLTFLoader();
+        loader.setDRACOLoader(dracoLoader);
+
+        let modelGroup = null;
+        const explodeItems = [];
+        const interactiveItems = [];
+        const explodeState = { progress: 0 };
+        let currentHoveredItem = null;
+        let isAnimating = false;
+
+        loader.load('../../img/RemoteTankMonitoring.gltf', (gltf) => {
+            modelGroup = gltf.scene;
+            
+            // Group Main & Pocket015 into LidAssembly
+            const mainNode = modelGroup.children.find(c => c.name === 'Main');
+            const pocketNode = modelGroup.children.find(c => c.name === 'Pocket015');
+            let lidAssembly = null;
+            if (mainNode || pocketNode) {
+                lidAssembly = new THREE.Group();
+                lidAssembly.name = 'LidAssembly';
+                modelGroup.add(lidAssembly);
+                if (mainNode) lidAssembly.add(mainNode);
+                if (pocketNode) lidAssembly.add(pocketNode);
+            }
+
+            // Scale and orient modelGroup
+            modelGroup.scale.set(10, 10, 10);
+            modelGroup.rotation.set(-Math.PI / 2, 0, 0);
+
+            // Traverse and process nodes
+            modelGroup.traverse((node) => {
+                // Hide duplicate nodes under the root
+                let isDuplicate = false;
+                let curr = node;
+                while (curr && curr !== modelGroup) {
+                    if (curr.parent === modelGroup && 
+                        curr.name !== 'Enclosure+TankMount' && 
+                        curr.name !== 'Main' && 
+                        curr.name !== 'Pocket015' && 
+                        curr.name !== 'LidAssembly') {
+                        isDuplicate = true;
+                        break;
+                    }
+                    curr = curr.parent;
+                }
+                if (isDuplicate) {
+                    if (node.isMesh) node.visible = false;
+                    return;
+                }
+
+                // Register nodes for vertical explosion
+                const expConfig = getNodeExplodeConfig(node);
+                if (expConfig) {
+                    const worldUp = new THREE.Vector3(0, 1, 0);
+                    let parentUp = worldUp.clone();
+                    if (node.parent) {
+                        const parentWorldQuat = new THREE.Quaternion();
+                        node.parent.getWorldQuaternion(parentWorldQuat);
+                        parentUp.applyQuaternion(parentWorldQuat.invert());
+                    }
+                    
+                    explodeItems.push({
+                        node: node,
+                        offsetMag: expConfig.offsetMag,
+                        origPosition: node.position.clone(),
+                        upDirection: parentUp
+                    });
+                }
+
+                // Register nodes for interaction
+                const intConfig = interactiveConfigs.find(c => c.match(node));
+                if (intConfig) {
+                    const box = new THREE.Box3().setFromObject(node);
+                    const worldCenter = box.getCenter(new THREE.Vector3());
+                    let parentCenter = worldCenter.clone();
+                    if (node.parent) {
+                        node.parent.worldToLocal(parentCenter);
+                    }
+                    const localCenterOffset = parentCenter.clone().sub(node.position);
+
+                    interactiveItems.push({
+                        node: node,
+                        label: intConfig.name,
+                        desc: intConfig.desc,
+                        origPosition: node.position.clone(),
+                        origQuaternion: node.quaternion.clone(),
+                        localCenterOffset: localCenterOffset,
+                        currentAngle: 0,
+                        targetAngle: 0,
+                        isHovered: false
+                    });
+                }
+            });
+
+            scene.add(modelGroup);
+            requestRender();
+            initScrollTrigger();
+        }, undefined, (error) => {
+            console.error('An error occurred loading the GLTF model:', error);
+        });
+
+        // 8. Scroll-Driven Explosion Logic
+        function initScrollTrigger() {
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: '#exploded-view-container',
+                    start: 'top top',
+                    end: '+=100%',
+                    pin: true,
+                    scrub: 1.2,
+                    onUpdate: (self) => {
+                        explodeState.progress = self.progress;
+                        updateExplosion(self.progress);
+                        
+                        // Handle prompts visibility
+                        if (self.progress > 0.9) {
+                            if (!currentHoveredItem) {
+                                scrollPrompt.style.opacity = '0';
+                                setTimeout(() => { if (explodeState.progress > 0.9 && !currentHoveredItem) scrollPrompt.style.display = 'none'; }, 300);
+                                hoverPrompt.style.display = 'block';
+                                setTimeout(() => { if (explodeState.progress > 0.9 && !currentHoveredItem) hoverPrompt.style.opacity = '1'; }, 50);
+                            }
+                        } else {
+                            hoverPrompt.style.opacity = '0';
+                            setTimeout(() => { if (explodeState.progress <= 0.9) hoverPrompt.style.display = 'none'; }, 300);
+                            scrollPrompt.style.display = 'block';
+                            setTimeout(() => { if (explodeState.progress <= 0.9) scrollPrompt.style.opacity = '1'; }, 50);
+                            
+                            // Reset tooltips and hovers on scroll back
+                            if (currentHoveredItem) {
+                                currentHoveredItem.isHovered = false;
+                                currentHoveredItem = null;
+                                tooltip.style.opacity = '0';
+                                setTimeout(() => { if (!currentHoveredItem) tooltip.style.display = 'none'; }, 250);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateExplosion(progress) {
+            for (const item of explodeItems) {
+                const offset = item.offsetMag * progress;
+                item.node.position.copy(item.origPosition).addScaledVector(item.upDirection, offset);
+                
+                // PCB substrate opacity fading
+                if (item.node.name === 'RemoteTankMonitoring_PCB') {
+                    item.node.traverse((child) => {
+                        if (child.isMesh && child.material) {
+                            const materials = Array.isArray(child.material) ? child.material : [child.material];
+                            for (const mat of materials) {
+                                mat.transparent = progress > 0;
+                                mat.opacity = progress > 0 ? 0.45 : 1.0;
+                                mat.depthWrite = progress === 0;
+                                mat.needsUpdate = false;
+                            }
+                        }
+                    });
+                }
+            }
+            requestRender();
+        }
+
+        // 9. Raycasting and Hover Interaction
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        function onMouseMove(event) {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            // Position tooltip near cursor
+            tooltip.style.left = `${event.clientX}px`;
+            tooltip.style.top = `${event.clientY}px`;
+
+            if (modelGroup && explodeState.progress > 0.9) {
+                checkRaycast();
+            }
+        }
+        window.addEventListener('mousemove', onMouseMove);
+
+        function checkRaycast() {
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(modelGroup.children, true);
+
+            let foundItem = null;
+            if (intersects.length > 0) {
+                let curr = intersects[0].object;
+                while (curr && curr !== modelGroup) {
+                    const matched = interactiveItems.find(item => item.node === curr);
+                    if (matched) {
+                        foundItem = matched;
+                        break;
+                    }
+                    curr = curr.parent;
+                }
+            }
+
+            if (foundItem !== currentHoveredItem) {
+                if (currentHoveredItem) {
+                    currentHoveredItem.isHovered = false;
+                }
+                currentHoveredItem = foundItem;
+                if (foundItem) {
+                    foundItem.isHovered = true;
+                    tooltipTitle.textContent = foundItem.label;
+                    tooltipDesc.textContent = foundItem.desc;
+                    tooltip.style.display = 'block';
+                    // Force offset calculation and opacity trigger
+                    setTimeout(() => {
+                        if (currentHoveredItem === foundItem) tooltip.style.opacity = '1';
+                    }, 20);
+
+                    // Show hover details state
+                    scrollPrompt.style.opacity = '0';
+                    hoverPrompt.style.opacity = '1';
+
+                    startActiveLoop();
+                } else {
+                    tooltip.style.opacity = '0';
+                    setTimeout(() => {
+                        if (!currentHoveredItem) tooltip.style.display = 'none';
+                    }, 250);
+
+                    if (explodeState.progress > 0.9) {
+                        hoverPrompt.style.opacity = '1';
+                        scrollPrompt.style.opacity = '0';
+                    }
+                }
+            }
+        }
+
+        // Rotate a node around its localCenterOffset in parent coordinate space
+        function applyMeshRotation(item, angle) {
+            const axis = new THREE.Vector3(0, 0, 1); // vertical axis in parent space
+            
+            // Get correct exploded resting position
+            const expConfig = getNodeExplodeConfig(item.node);
+            const offsetMag = expConfig ? expConfig.offsetMag : 0;
+            const currentExplodeOffset = offsetMag * explodeState.progress;
+            
+            const explodedPos = item.origPosition.clone().addScaledVector(item.upDirection, currentExplodeOffset);
+            
+            // Reset to default exploded position and rotation
+            item.node.position.copy(explodedPos);
+            item.node.quaternion.copy(item.origQuaternion);
+            
+            if (angle !== 0) {
+                // Compute rotation center in parent space
+                const rotationCenter = explodedPos.clone().add(item.localCenterOffset);
+                
+                // Translate, rotate position, translate back
+                item.node.position.sub(rotationCenter);
+                item.node.position.applyAxisAngle(axis, angle);
+                item.node.position.add(rotationCenter);
+                
+                // Rotate node itself
+                item.node.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(axis, angle));
+            }
+        }
+
+        // Active render loop for hover animations
+        function startActiveLoop() {
+            if (isAnimating) return;
+            isAnimating = true;
+            animate();
+        }
+
+        function animate() {
+            if (!isAnimating) return;
+            requestAnimationFrame(animate);
+
+            let anyAnimating = false;
+            for (const item of interactiveItems) {
+                if (item.isHovered) {
+                    item.targetAngle += 0.035; // continuous spin
+                } else {
+                    item.targetAngle = 0; // return to rest
+                }
+
+                const diff = item.targetAngle - item.currentAngle;
+                if (Math.abs(diff) > 0.001 || item.isHovered) {
+                    item.currentAngle += diff * 0.12; // smooth lerp transition
+                    applyMeshRotation(item, item.currentAngle);
+                    anyAnimating = true;
+                } else if (item.currentAngle !== 0) {
+                    item.currentAngle = 0;
+                    applyMeshRotation(item, 0);
+                }
+            }
+
+            renderer.render(scene, camera);
+
+            if (!anyAnimating) {
+                isAnimating = false; // pause render loop to optimize GPU
+            }
+        }
+
+        // 10. Performance optimization: render on demand
+        function requestRender() {
+            if (!isAnimating) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        // 11. Responsive resize handler
+        function onWindowResize() {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            requestRender();
+        }
+        window.addEventListener('resize', onWindowResize);
+
+    </script>
 
 </body>
 
