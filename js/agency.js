@@ -68,23 +68,34 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Smooth scroll to hash on initial load (using '#_' prefix to prevent browser's default instant jump)
-    if (window.location.hash) {
+    function triggerHashScroll() {
         var hash = window.location.hash;
-        if (hash.startsWith('#_')) {
+        if (hash && hash.startsWith('#_')) {
             var targetId = hash.substring(2);
             var targetEl = document.getElementById(targetId);
             if (targetEl) {
-                // Force top scroll position initially to avoid any jumpiness
-                window.scrollTo(0, 0);
-                setTimeout(function() {
-                    var navHeight = 60; // Offset for the fixed navigation bar
-                    var targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
-                }, 500); // 500ms delay lets the page render before the smooth scroll begins
+                var navHeight = 60; // Offset for the fixed navigation bar
+                var targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
             }
+        }
+    }
+
+    if (window.location.hash && window.location.hash.startsWith('#_')) {
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        if (document.readyState === 'complete') {
+            setTimeout(triggerHashScroll, 100);
+        } else {
+            window.addEventListener('load', function() {
+                setTimeout(triggerHashScroll, 100);
+            });
         }
     }
 
