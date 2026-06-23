@@ -150,7 +150,12 @@
 
                     <!-- Project Description -->
                     <div class="project-description text-muted" style="font-size: 16px; line-height: 1.8; margin-top: 40px;">
-                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-bottom: 15px;">Project Overview</h4>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin: 0;">Project Overview</h4>
+                            <a href="viewer.html" class="btn" style="background: #FF6600; color: #fff; border: none; padding: 8px 16px; font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; border-radius: 4px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(255,102,0,0.2);">
+                                <i class="fa fa-cube"></i> 3D View
+                            </a>
+                        </div>
                         <p style="margin-bottom: 20px;">The Remote Water Tank Monitoring system is a flagship internal research and development initiative at LTRJ Labs. Designed to address the challenges of tracking water resources in rural and off-grid environments, this system eliminates the need for manual inspections by delivering real-time telemetry from remote storage tanks directly to a central cloud platform.</p>
                         
                         <p style="margin-bottom: 20px;">By employing energy-efficient MCU architectures combined with long-range sub-GHz wireless transmitters (such as LoRa) and cellular modems, the device monitors hydrostatic pressure, temperature, and system battery levels. This project is currently in the prototyping phase and represents a key step toward launching our own commercial hardware product and subscription services.</p>
@@ -163,13 +168,7 @@
                             <li><strong>Cloud Alert Dashboard:</strong> Feeds telemetry into an online portal configured to dispatch email and SMS notifications when water levels drop below key thresholds.</li>
                         </ul>
                         
-                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-top: 30px; margin-bottom: 15px;">Interactive 3D Assembly</h4>
-                        <p style="margin-bottom: 20px;">Explore the PCB assembly in full 3D. Rotate, zoom, and use the exploded view slider to inspect each component layer of the board.</p>
-                        <div style="text-align: center; margin-bottom: 30px;">
-                            <a href="viewer.html" class="btn btn-xl" style="background: #FF6600; color: #fff; border: none; padding: 14px 32px; font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; border-radius: 4px; display: inline-block; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255,102,0,0.3);">
-                                <i class="fa fa-cube" style="margin-right: 8px;"></i>Launch 3D Viewer
-                            </a>
-                        </div>
+
                         <div class="theme-info-box">
                             <strong>Status: In Prototyping & Testing</strong><br>
                             Our engineering team is actively constructing prototypes, calibrating level sensors, and optimizing the low-power sleeping loops. Check back soon for schematics and source files!
