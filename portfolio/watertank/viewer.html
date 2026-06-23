@@ -189,15 +189,14 @@
         import { createRoot } from 'react-dom/client';
         import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
         import { Canvas, useFrame, useThree } from '@react-three/fiber';
-        import { OrbitControls, useGLTF, Html, Center } from '@react-three/drei';
-        import { Layers, RotateCcw, Move3D, Eye, Box, Maximize2, Sun, Moon } from 'lucide-react';
+        import { OrbitControls, useGLTF, Html, Center, GizmoHelper, GizmoViewcube } from '@react-three/drei';
+        import { Layers, RotateCcw, Move3D, Eye, Box, Maximize2, Sun, Moon, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Home } from 'lucide-react';
         import * as THREE from 'three';
 
         // ─── GLTF Model Path ────────────────────────────────────────────────
         const MODEL_PATH = '../../img/RemoteTankMonitoring-Enclosure+TankMountMainBoard.gltf';
 
         // ─── Configure Draco decoder path globally ──────────────────────────
-        // This ensures the decoder is loaded on-demand only if the model uses Draco.
         useGLTF.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
 
         // ─── Component group definitions for exploded view ──────────────────
@@ -231,10 +230,17 @@
                 offsetMag: 0.002,
             },
             {
+                id: 'traces',
+                label: 'Traces & Solder',
+                color: '#e5e7eb',
+                prefixes: ['SOLID'],
+                offsetMag: 0.001,
+            },
+            {
                 id: 'pcb',
                 label: 'PCB Board',
                 color: '#10b981',
-                prefixes: ['RemoteTankMonitoring_PCB', 'MainBoard', 'SOLID', 'body_4'],
+                prefixes: ['RemoteTankMonitoring_PCB', 'MainBoard', 'body_4'],
                 offsetMag: 0,
             },
         ];
@@ -250,13 +256,15 @@
             return COMPONENT_GROUPS[COMPONENT_GROUPS.length - 1];
         }
 
-        // ─── PCB Model with on-demand explode ───────────────────────────────
+        // ─── PCB Model with strictly vertical on-demand explode ─────────────
         function PCBModel({ explodeFactor, autoRotate }) {
             const gltf = useGLTF(MODEL_PATH);
             const groupRef = useRef();
             const { invalidate: inv } = useThree();
 
-            // Build mesh data once on mount — store original positions
+            // Build mesh data once on mount — store original positions and project
+            // the parent vertical axis (0, 1, 0) into each child's local coordinate system
+            // to enforce strictly vertical translations regardless of local rotation.
             const meshData = useMemo(() => {
                 const result = [];
                 gltf.scene.traverse((child) => {
@@ -266,10 +274,16 @@
                         if (child.material) {
                             child.material.needsUpdate = false;
                         }
+                        
+                        // Local up direction vector corresponding to parent-space (0, 1, 0)
+                        const upDirection = new THREE.Vector3(0, 1, 0)
+                            .applyQuaternion(child.quaternion.clone().invert());
+                            
                         result.push({
                             mesh: child,
                             group,
-                            origY: child.position.y,
+                            origPosition: child.position.clone(),
+                            upDirection,
                         });
                     }
                 });
@@ -280,7 +294,22 @@
             useEffect(() => {
                 const t = explodeFactor;
                 for (const item of meshData) {
-                    item.mesh.position.y = item.origY + item.group.offsetMag * t;
+                    const offset = item.group.offsetMag * t;
+                    // Position is: origPosition + upDirection * offset
+                    item.mesh.position.copy(item.origPosition)
+                        .addScaledVector(item.upDirection, offset);
+                        
+                    // Opacity control for board substrate
+                    if (item.group.id === 'pcb') {
+                        if (item.mesh.material) {
+                            const materials = Array.isArray(item.mesh.material) ? item.mesh.material : [item.mesh.material];
+                            for (const mat of materials) {
+                                mat.transparent = t > 0;
+                                mat.opacity = t > 0 ? 0.45 : 1.0;
+                                mat.depthWrite = t === 0;
+                            }
+                        }
+                    }
                 }
                 inv(); // Request a single re-render
             }, [explodeFactor, meshData, inv]);
@@ -321,11 +350,13 @@
             });
         }
 
-        // ─── Camera Setup ───────────────────────────────────────────────────
+        // ─── Camera Setup (Default Top View) ────────────────────────────────
         function CameraSetup() {
             const { camera } = useThree();
             useEffect(() => {
-                camera.position.set(0.8, 0.6, 1.0);
+                // Setup default view looking straight down at the top of the board
+                // with a tiny offset to prevent OrbitControls gimbal lock.
+                camera.position.set(0.01, 1.5, 0.01);
                 camera.lookAt(0, 0, 0);
             }, [camera]);
             return null;
@@ -344,11 +375,77 @@
             return null;
         }
 
+        // ─── Controller for View Cube & D-pad rotations ──────────────────────
+        function GizmoController({ controlsRef, setGizmoApi }) {
+            const { camera, invalidate: inv } = useThree();
+
+            const animateCameraTo = useCallback((newPosition) => {
+                const controls = controlsRef.current;
+                if (!controls) return;
+                const startPos = camera.position.clone();
+                const endPos = newPosition.clone();
+                const duration = 250; // ms
+                const startTime = performance.now();
+
+                const animate = (time) => {
+                    const elapsed = time - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // Easing: easeInOutQuad
+                    const t = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+
+                    camera.position.lerpVectors(startPos, endPos, t);
+                    camera.lookAt(controls.target);
+                    controls.update();
+                    inv();
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                };
+                requestAnimationFrame(animate);
+            }, [camera, controlsRef, inv]);
+
+            const rotateView = useCallback((dir) => {
+                const controls = controlsRef.current;
+                if (!controls) return;
+
+                const target = controls.target;
+                const offset = camera.position.clone().sub(target);
+
+                const angle = (dir === 'left' || dir === 'up') ? -Math.PI / 2 : Math.PI / 2;
+                const axis = new THREE.Vector3();
+
+                if (dir === 'left' || dir === 'right') {
+                    axis.set(0, 1, 0); // World Y-axis (vertical)
+                } else {
+                    // Camera local right axis (horizontal pitch)
+                    axis.set(1, 0, 0).applyQuaternion(camera.quaternion);
+                }
+
+                offset.applyAxisAngle(axis, angle);
+
+                const newPos = target.clone().add(offset);
+                animateCameraTo(newPos);
+            }, [camera, controlsRef, animateCameraTo]);
+
+            const goHome = useCallback(() => {
+                animateCameraTo(new THREE.Vector3(0.01, 1.5, 0.01));
+            }, [animateCameraTo]);
+
+            useEffect(() => {
+                setGizmoApi({ rotateView, goHome });
+                return () => setGizmoApi(null);
+            }, [setGizmoApi, rotateView, goHome]);
+
+            return null;
+        }
+
         // ─── Main App ──────────────────────────────────────────────────────
         function App() {
             const [explodeFactor, setExplodeFactor] = useState(0);
-            const [autoRotate, setAutoRotate] = useState(true);
+            const [autoRotate, setAutoRotate] = useState(false); // Start with rotate OFF so top view remains steady
             const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+            const [gizmoApi, setGizmoApi] = useState(null);
             const sliderRef = useRef(null);
             const controlsRef = useRef(null);
 
@@ -424,6 +521,7 @@
                             }),
                             jsx(OrbitControls, {
                                 ref: controlsRef,
+                                makeDefault: true, // Required for GizmoHelper
                                 enablePan: true,
                                 enableZoom: true,
                                 enableRotate: true,
@@ -436,6 +534,24 @@
                             jsx(InvalidateOnChange, {
                                 controlsRef: controlsRef,
                                 key: 'invalidator',
+                            }),
+                            jsx(GizmoController, {
+                                controlsRef: controlsRef,
+                                setGizmoApi: setGizmoApi,
+                                key: 'gizmo-controller',
+                            }),
+                            jsx(GizmoHelper, {
+                                alignment: 'bottom-right',
+                                margin: [80, 80],
+                                renderPriority: 2,
+                                key: 'gizmo-helper',
+                                children: jsx(GizmoViewcube, {
+                                    strokeColor: theme === 'dark' ? '#9ca3af' : '#4b5563',
+                                    textColor: theme === 'dark' ? '#e5e7eb' : '#111827',
+                                    color: theme === 'dark' ? '#1a1a24' : '#f3f4f6',
+                                    hoverColor: '#FF6600',
+                                    opacity: 0.85,
+                                }),
                             }),
                         ],
                     }),
@@ -516,6 +632,55 @@
                                 }),
                             ],
                         }),
+                    }),
+
+                    // ─── View Controller Overlay (D-pad) ────────────────
+                    gizmoApi && jsx('div', {
+                        key: 'view-controller',
+                        className: 'absolute bottom-48 right-6 flex flex-col items-center gap-1 fade-in z-10 select-none',
+                        children: [
+                            // Up Button
+                            jsx('button', {
+                                onClick: () => gizmoApi.rotateView('up'),
+                                className: 'btn-control w-7 h-7 rounded-full flex items-center justify-center',
+                                title: 'Rotate Up 90°',
+                                children: jsx(ChevronUp, { size: 14 }),
+                            }),
+                            // Middle Row
+                            jsxs('div', {
+                                className: 'flex items-center gap-1',
+                                children: [
+                                    // Left Button
+                                    jsx('button', {
+                                        onClick: () => gizmoApi.rotateView('left'),
+                                        className: 'btn-control w-7 h-7 rounded-full flex items-center justify-center',
+                                        title: 'Rotate Left 90°',
+                                        children: jsx(ChevronLeft, { size: 14 }),
+                                    }),
+                                    // Home (Top View)
+                                    jsx('button', {
+                                        onClick: () => gizmoApi.goHome(),
+                                        className: 'btn-control w-7 h-7 rounded-full flex items-center justify-center bg-brand/20 text-brand border-brand/30 hover:bg-brand/30',
+                                        title: 'Top View (Home)',
+                                        children: jsx(Home, { size: 12 }),
+                                    }),
+                                    // Right Button
+                                    jsx('button', {
+                                        onClick: () => gizmoApi.rotateView('right'),
+                                        className: 'btn-control w-7 h-7 rounded-full flex items-center justify-center',
+                                        title: 'Rotate Right 90°',
+                                        children: jsx(ChevronRight, { size: 14 }),
+                                    }),
+                                ],
+                            }),
+                            // Down Button
+                            jsx('button', {
+                                onClick: () => gizmoApi.rotateView('down'),
+                                className: 'btn-control w-7 h-7 rounded-full flex items-center justify-center',
+                                title: 'Rotate Down 90°',
+                                children: jsx(ChevronDown, { size: 14 }),
+                            }),
+                        ],
                     }),
 
                     // ─── Bottom Control Bar ─────────────────────────────
