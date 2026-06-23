@@ -1,38 +1,71 @@
 /*!
- * Start Bootstrap - Agnecy Bootstrap Theme (http://startbootstrap.com)
+ * Start Bootstrap - Agency Bootstrap Theme (http://startbootstrap.com)
  * Code licensed under the Apache License v2.0.
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
 // Native smooth scrolling and navigation logic
-$(function() {
-    $('a.page-scroll').bind('click', function(event) {
-        var $anchor = $(this);
-        var target = $anchor.attr('href');
-        if (target && target.startsWith('#')) {
-            var targetId = target.substring(1);
-            var targetEl = document.getElementById(targetId);
-            if (targetEl) {
-                event.preventDefault();
-                targetEl.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scrolling for a.page-scroll
+    var pageScrollLinks = document.querySelectorAll('a.page-scroll');
+    pageScrollLinks.forEach(function(link) {
+        link.addEventListener('click', function(event) {
+            var target = link.getAttribute('href');
+            if (target && target.startsWith('#')) {
+                var targetId = target.substring(1);
+                var targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    event.preventDefault();
+                    targetEl.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             }
-        }
-    });
-
-    // Highlight the top nav as scrolling occurs
-    $('body').scrollspy({
-        target: '.navbar-fixed-top'
+        });
     });
 
     // Closes the Responsive Menu on Menu Item Click
-    $('.navbar-collapse ul li a').click(function() {
-        if ($('.navbar-toggle').is(':visible')) {
-            $('.navbar-toggle').click();
-        }
+    var navLinks = document.querySelectorAll('.navbar-collapse ul li a');
+    navLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            var navbarToggle = document.querySelector('.navbar-toggle');
+            var navbarCollapse = document.querySelector('.navbar-collapse');
+            if (navbarToggle && navbarCollapse && window.getComputedStyle(navbarToggle).display !== 'none') {
+                navbarCollapse.classList.remove('in');
+            }
+        });
     });
+
+    // Highlight the top nav as scrolling occurs (Scrollspy)
+    var sections = document.querySelectorAll('section[id]');
+    if ('IntersectionObserver' in window && sections.length > 0) {
+        var options = {
+            root: null,
+            rootMargin: '0px 0px -60% 0px',
+            threshold: 0
+        };
+        
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var id = entry.target.getAttribute('id');
+                    var activeLink = document.querySelector('.navbar-nav a[href*="#' + id + '"]') || 
+                                     document.querySelector('.navbar-nav a[href*="#_' + id + '"]');
+                    if (activeLink) {
+                        document.querySelectorAll('.navbar-nav li').forEach(function(li) {
+                            li.classList.remove('active');
+                        });
+                        activeLink.parentElement.classList.add('active');
+                    }
+                }
+            });
+        }, options);
+        
+        sections.forEach(function(section) {
+            observer.observe(section);
+        });
+    }
 
     // Smooth scroll to hash on initial load (using '#_' prefix to prevent browser's default instant jump)
     if (window.location.hash) {
@@ -44,21 +77,28 @@ $(function() {
                 // Force top scroll position initially to avoid any jumpiness
                 window.scrollTo(0, 0);
                 setTimeout(function() {
-                    // Cancel the animation immediately if the user scrolls manually
-                    var cancelEvents = 'wheel.scrollCancel touchmove.scrollCancel keydown.scrollCancel';
-                    $(window).on(cancelEvents, function() {
-                        $('html, body').stop(true);
-                        $(window).off(cancelEvents);
-                    });
-
-                    $('html, body').stop().animate({
-                        scrollTop: $(targetEl).offset().top - 60 // Offset for the fixed navigation bar
-                    }, 1250, 'easeInOutExpo', function() {
-                        // Clean up listeners once animation completes naturally
-                        $(window).off(cancelEvents);
+                    var navHeight = 60; // Offset for the fixed navigation bar
+                    var targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
                     });
                 }, 500); // 500ms delay lets the page render before the smooth scroll begins
             }
         }
+    }
+
+    // Shrink Navbar on Scroll
+    var header = document.querySelector('.navbar-fixed-top');
+    if (header) {
+        var shrinkNavbar = function() {
+            if (window.scrollY >= 100) {
+                header.classList.add('navbar-shrink');
+            } else {
+                header.classList.remove('navbar-shrink');
+            }
+        };
+        window.addEventListener('scroll', shrinkNavbar);
+        shrinkNavbar(); // Initial run
     }
 });

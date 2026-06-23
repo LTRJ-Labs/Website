@@ -6,10 +6,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="LTRJ Labs specializes in cost-effective electronics engineering services, custom PCB design, schematic capture, and rapid hardware prototyping in Victoria, BC.">
+    <meta name="author" content="LTRJ Labs">
+    <meta name="keywords" content="electronics design, PCB layout, prototyping, firmware, STM32, hardware engineering, Victoria BC">
 
-    <title>LTRJ Labs</title>
+    <title>LTRJ Labs - Cost-Effective Electronics Design & Prototyping</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="img/SVGLogos/Small_Logo.svg">
@@ -22,8 +23,8 @@
     <meta property="og:title" content="LTRJ Labs">
     <meta property="og:url" content="https://ltrjlabs.com">
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Modern CSS Layout -->
+    <link href="css/modern-layout.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="css/agency.css" rel="stylesheet">
@@ -62,7 +63,7 @@
 
 </head>
 
-<body id="page-top" class="index">
+<body id="page-top" class="index"><script>(function(){const t=localStorage.getItem("theme")||"dark";document.body.classList.add(t+"-mode");})();</script>
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -97,7 +98,15 @@
                         <a href="contact/">Contact</a>
                     </li>
                     <li>
-                        <button id="theme-toggle" class="btn btn-link navbar-btn">🌙</button>
+                        <div class="theme-switch-wrapper">
+                            <div id="theme-toggle" class="theme-switch" role="button" aria-label="Toggle Dark and Light Mode">
+                                <div class="theme-switch-track">
+                                    <div class="theme-switch-handle">
+                                        <span class="theme-switch-icon"><span class="theme-switch-icon-moon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FF6600" stroke="#FF6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span><span class="theme-switch-icon-sun"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e65c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -346,6 +355,19 @@
                             <div class="testimonial-project-link">Project: <a href="portfolio/nucleof446re/">STM32 Nucleo LCD Board</a></div>
                         </div>
                     </div>
+                    <!-- Testimonial Manual Controls -->
+                    <div class="testimonial-controls">
+                        <button class="testimonial-control-btn prev-btn" aria-label="Previous Testimonial">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <div class="testimonial-indicators">
+                            <span class="testimonial-indicator active" data-slide="0"></span>
+                            <span class="testimonial-indicator" data-slide="1"></span>
+                        </div>
+                        <button class="testimonial-control-btn next-btn" aria-label="Next Testimonial">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -382,61 +404,95 @@
 
     <!-- Portfolio Modals moved to portfolio.html (if needed) -->
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-    <script src="js/classie.js"></script>
-    <script src="js/cbpanimatedheader.js"></script>
-
-    <!-- Contact Form JavaScript -->
-    <script src="js/jqbootstrapvalidation.js"></script>
-    <script src="js/contact_me.js"></script>
-
-    <!-- Custom Theme JavaScript -->
+    <!-- Native Theme & Navigation Scripts -->
+    <script src="js/theme.js"></script>
     <script src="js/agency.js"></script>
 
-    <!-- Theme Toggle Script -->
-    <script src="js/theme.js"></script>
-
-    <!-- Testimonial Carousel Auto-Rotator Script -->
+    <!-- Testimonial Carousel Controls & Auto-Rotator Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var slides = document.querySelectorAll('.testimonial-slide');
+            var indicators = document.querySelectorAll('.testimonial-indicator');
+            var prevBtn = document.querySelector('.prev-btn');
+            var nextBtn = document.querySelector('.next-btn');
             var currentIndex = 0;
+            var autoRotateTimer = null;
+            var isTransitioning = false;
 
-            function showNextRandomSlide() {
-                if (slides.length <= 1) return;
+            function showSlide(index) {
+                if (index === currentIndex || isTransitioning || slides.length === 0) return;
+                isTransitioning = true;
 
-                // Pick a random next index different from the current index
-                var nextIndex;
-                do {
-                    nextIndex = Math.floor(Math.random() * slides.length);
-                } while (nextIndex === currentIndex);
-
-                // 1. Fade out current active slide
+                // 1. Fade out current active slide & indicator
                 slides[currentIndex].classList.remove('active');
+                if (indicators[currentIndex]) {
+                    indicators[currentIndex].classList.remove('active');
+                }
                 
-                // 2. Wait for the fade-out to complete (500ms, matching CSS transition time)
+                // 2. Wait for fade-out to complete (500ms)
                 setTimeout(function() {
-                    // 3. Set the new index and fade in the next slide
-                    currentIndex = nextIndex;
+                    // 3. Set the new index and fade in
+                    currentIndex = index;
                     slides[currentIndex].classList.add('active');
+                    if (indicators[currentIndex]) {
+                        indicators[currentIndex].classList.add('active');
+                    }
+                    isTransitioning = false;
                 }, 500);
-
-                // Schedule the next transition loop (10-15 seconds)
-                var randomDelay = 10000 + Math.random() * 5000;
-                setTimeout(showNextRandomSlide, randomDelay);
             }
 
-            // Start the auto-rotation loop if there's more than 1 slide
+            function nextSlide() {
+                var nextIndex = (currentIndex + 1) % slides.length;
+                showSlide(nextIndex);
+            }
+
+            function prevSlide() {
+                var prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+                showSlide(prevIndex);
+            }
+
+            function resetTimer() {
+                if (autoRotateTimer) {
+                    clearInterval(autoRotateTimer);
+                }
+                autoRotateTimer = setInterval(nextSlide, 10000);
+            }
+
+            function stopTimer() {
+                if (autoRotateTimer) {
+                    clearInterval(autoRotateTimer);
+                    autoRotateTimer = null;
+                }
+            }
+
+            // Click Handlers
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function() {
+                    prevSlide();
+                    stopTimer(); // Pause auto-rotation on manual interaction
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    nextSlide();
+                    stopTimer(); // Pause auto-rotation on manual interaction
+                });
+            }
+
+            indicators.forEach(function(indicator) {
+                indicator.addEventListener('click', function() {
+                    var slideIndex = parseInt(indicator.getAttribute('data-slide'));
+                    if (!isNaN(slideIndex)) {
+                        showSlide(slideIndex);
+                        stopTimer(); // Pause auto-rotation on manual interaction
+                    }
+                });
+            });
+
+            // Start auto-rotation
             if (slides.length > 1) {
-                var initialDelay = 10000 + Math.random() * 5000; // 10-15 seconds
-                setTimeout(showNextRandomSlide, initialDelay);
+                resetTimer();
             }
         });
     </script>

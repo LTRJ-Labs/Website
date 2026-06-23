@@ -9,14 +9,16 @@
     <meta name="description" content="Detailed engineering specifications for the custom STM32 Nucleo LCD daughterboard designed for Camosun College's ECET 260 course.">
     <meta name="author" content="">
 
+    <meta name="keywords" content="STM32, Nucleo, F446RE, LCD board, PCB daughterboard, educational technology, schematic routing, Camosun College, Victoria BC">
+
     <title>STM32 Nucleo F446RE LCD Board - LTRJ Labs</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="../../img/SVGLogos/Small_Logo.svg">
     <link rel="icon" type="image/png" href="../../img/HiResLogos/Small_Logo.png">
 
-    <!-- Bootstrap Core CSS -->
-    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <!-- Modern CSS Layout -->
+    <link href="../../css/modern-layout.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="../../css/agency.css" rel="stylesheet">
@@ -75,7 +77,7 @@
 
 </head>
 
-<body id="page-top" class="index">
+<body id="page-top" class="index"><script>(function(){const t=localStorage.getItem("theme")||"dark";document.body.classList.add(t+"-mode");})();</script>
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -110,7 +112,15 @@
                         <a href="../../contact/">Contact</a>
                     </li>
                     <li>
-                        <button id="theme-toggle" class="btn btn-link navbar-btn">🌙</button>
+                        <div class="theme-switch-wrapper">
+                            <div id="theme-toggle" class="theme-switch" role="button" aria-label="Toggle Dark and Light Mode">
+                                <div class="theme-switch-track">
+                                    <div class="theme-switch-handle">
+                                        <span class="theme-switch-icon"><span class="theme-switch-icon-moon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FF6600" stroke="#FF6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span><span class="theme-switch-icon-sun"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e65c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -153,6 +163,69 @@
                             <li><strong>Improved Learning UX:</strong> Replaces messy jumper wires with a clean, unified shield board.</li>
                         </ul>
 
+                        <!-- Interactive PCB Layer Visualizer -->
+                        <div class="pcb-visualizer">
+                            <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 16px; color: #FF6600; margin-bottom: 20px; text-align: center;">Interactive PCB Layer Inspector</h4>
+                            <div class="pcb-canvas-container">
+                                <!-- Board Outline (Always Visible) -->
+                                <div class="pcb-layer" id="layer-board" style="opacity: 1;">
+                                    <svg viewBox="0 0 320 220">
+                                        <!-- PCB Green Board -->
+                                        <rect x="10" y="10" width="300" height="200" rx="8" fill="#0d2818" stroke="#d4af37" stroke-width="3" />
+                                        <!-- Corner Mount Holes -->
+                                        <circle cx="25" cy="25" r="8" fill="#151515" stroke="#d4af37" stroke-width="2" />
+                                        <circle cx="295" cy="25" r="8" fill="#151515" stroke="#d4af37" stroke-width="2" />
+                                        <circle cx="25" cy="195" r="8" fill="#151515" stroke="#d4af37" stroke-width="2" />
+                                        <circle cx="295" cy="195" r="8" fill="#151515" stroke="#d4af37" stroke-width="2" />
+                                    </svg>
+                                </div>
+                                
+                                <!-- Copper Traces Layer (Gold/Copper lines) -->
+                                <div class="pcb-layer" id="layer-copper" style="opacity: 0.9;">
+                                    <svg viewBox="0 0 320 220">
+                                        <!-- Solder Pads -->
+                                        <rect x="50" y="40" width="80" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="3,3" />
+                                        <rect x="190" y="40" width="80" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="3,3" />
+                                        
+                                        <!-- Trace lines -->
+                                        <path d="M 90,50 L 90,120 L 130,150 L 190,150 L 230,120 L 230,50" fill="none" stroke="#d4af37" stroke-width="2" />
+                                        <path d="M 60,50 L 60,90 L 110,140 L 210,140 L 260,90 L 260,50" fill="none" stroke="#d4af37" stroke-width="1.5" />
+                                        <path d="M 120,50 L 120,80 L 200,80 L 200,50" fill="none" stroke="#d4af37" stroke-width="1" />
+                                        
+                                        <!-- Small Vias -->
+                                        <circle cx="130" cy="150" r="3" fill="#d4af37" />
+                                        <circle cx="190" cy="150" r="3" fill="#d4af37" />
+                                        <circle cx="110" cy="140" r="3" fill="#d4af37" />
+                                        <circle cx="210" cy="140" r="3" fill="#d4af37" />
+                                    </svg>
+                                </div>
+                                
+                                <!-- Silkscreen Layer (White text & outlines) -->
+                                <div class="pcb-layer" id="layer-silk" style="opacity: 0.9;">
+                                    <svg viewBox="0 0 320 220">
+                                        <!-- Component Outlines -->
+                                        <rect x="48" y="38" width="84" height="19" fill="none" stroke="#ffffff" stroke-width="1.5" />
+                                        <rect x="188" y="38" width="84" height="19" fill="none" stroke="#ffffff" stroke-width="1.5" />
+                                        
+                                        <rect x="110" y="90" width="100" height="50" fill="none" stroke="#ffffff" stroke-width="2" />
+                                        
+                                        <!-- Text Annotations -->
+                                        <text x="90" y="30" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">CN7 (NUCLEO LEFT)</text>
+                                        <text x="230" y="30" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">CN10 (NUCLEO RIGHT)</text>
+                                        <text x="160" y="115" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">LCD MODULE</text>
+                                        <text x="160" y="180" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">LTRJ LABS LTD</text>
+                                        <text x="160" y="195" fill="#ffffff" font-family="sans-serif" font-size="8" text-anchor="middle">NUCLEO LCD SHIELD V1.1</text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <!-- Layer Control Buttons -->
+                            <div class="pcb-layer-controls">
+                                <button class="layer-toggle-btn active" data-layer="board">Board Outline</button>
+                                <button class="layer-toggle-btn active" data-layer="copper">Copper Traces</button>
+                                <button class="layer-toggle-btn active" data-layer="silk">Silkscreen</button>
+                            </div>
+                        </div>
+
                         <div class="theme-info-box" style="margin-bottom: 30px;">
                             <strong>Status: In Progress</strong><br>
                             Our team is currently testing prototypes and finalizing hardware layouts. Check back soon for updates!
@@ -186,17 +259,30 @@
         </div>
     </footer>
 
-    <!-- jQuery -->
-    <script src="../../js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="../../js/bootstrap.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
+    <!-- Native Theme & Navigation Scripts -->
+    <script src="../../js/theme.js"></script>
     <script src="../../js/agency.js"></script>
 
-    <!-- Theme Toggle Script -->
-    <script src="../../js/theme.js"></script>
+    <!-- PCB Layer Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toggleBtns = document.querySelectorAll('.layer-toggle-btn');
+            toggleBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var layerId = btn.getAttribute('data-layer');
+                    var layer = document.getElementById('layer-' + layerId);
+                    if (layer) {
+                        btn.classList.toggle('active');
+                        if (btn.classList.contains('active')) {
+                            layer.style.opacity = (layerId === 'board') ? '1' : '0.9';
+                        } else {
+                            layer.style.opacity = '0';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 
 </body>
 

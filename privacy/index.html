@@ -15,8 +15,8 @@
     <link rel="icon" type="image/svg+xml" href="../img/SVGLogos/Small_Logo.svg">
     <link rel="icon" type="image/png" href="../img/HiResLogos/Small_Logo.png">
 
-    <!-- Bootstrap Core CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <!-- Modern CSS Layout -->
+    <link href="../css/modern-layout.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="../css/agency.css" rel="stylesheet">
@@ -34,11 +34,11 @@
 
 </head>
 
-<body id="page-top" class="index">
+<body id="page-top" class="index"><script>(function(){const t=localStorage.getItem("theme")||"dark";document.body.classList.add(t+"-mode");})();</script>
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid" style="padding-left: 15px; padding-right: 15px;">
+        <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -69,7 +69,15 @@
                         <a href="../contact/">Contact</a>
                     </li>
                     <li>
-                        <button id="theme-toggle" class="btn btn-link navbar-btn">🌙</button>
+                        <div class="theme-switch-wrapper">
+                            <div id="theme-toggle" class="theme-switch" role="button" aria-label="Toggle Dark and Light Mode">
+                                <div class="theme-switch-track">
+                                    <div class="theme-switch-handle">
+                                        <span class="theme-switch-icon"><span class="theme-switch-icon-moon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FF6600" stroke="#FF6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span><span class="theme-switch-icon-sun"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e65c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -78,11 +86,10 @@
         <!-- /.container-fluid -->
     </nav>
 
-    <!-- Header -->
     <header style="padding: 100px 0 50px 0; background: #1a1a1a;">
-        <div class="container text-center">
+        <div class="container text-center" style="min-height: auto; display: block;">
             <h1 class="section-heading" style="margin-top: 50px; color: #fff; text-transform: uppercase;">Privacy Policy</h1>
-            <p class="text-muted" style="font-family: Montserrat; font-size: 14px;">Last Updated: June 22, 2026</p>
+            <p class="text-muted" style="font-family: Montserrat; font-size: 14px; margin-top: 10px;">Last Updated: June 22, 2026</p>
         </div>
     </header>
 
@@ -140,17 +147,9 @@
         </div>
     </footer>
 
-    <!-- jQuery -->
-    <script src="../js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="../js/bootstrap.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="../js/agency.js"></script>
-
-    <!-- Theme Toggle Script -->
+    <!-- Native Theme & Navigation Scripts -->
     <script src="../js/theme.js"></script>
+    <script src="../js/agency.js"></script>
 
 </body>
 

@@ -243,9 +243,10 @@ fieldset[disabled] .btn-xl.active {
 }
 
 .navbar-default .navbar-brand img {
-    max-height: 45px;
+    max-height: 42px;
     width: auto;
     display: block;
+    transition: max-height 0.3s ease;
 }
 
 .navbar-default .navbar-toggle {
@@ -264,7 +265,8 @@ fieldset[disabled] .btn-xl.active {
 .navbar-default .nav li a {
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight: 400;
+    font-weight: 700;
+    font-size: 14px;
     letter-spacing: 1px;
     color: #fff;
 }
@@ -275,38 +277,36 @@ fieldset[disabled] .btn-xl.active {
     color: #FF6600;
 }
 
-.navbar-default .navbar-nav>.active>a,
-.navbar-default .navbar-nav>.active-page>a {
-    border-radius: 0;
+.navbar-default .navbar-nav>li.active>a,
+.navbar-default .navbar-nav>li.active-page>a {
     color: #fff !important;
-    background-color: #FF6600 !important;
-}
-
-.navbar-default .navbar-nav>.active>a:hover,
-.navbar-default .navbar-nav>.active>a:focus,
-.navbar-default .navbar-nav>.active-page>a:hover,
-.navbar-default .navbar-nav>.active-page>a:focus {
-    color: #fff !important;
-    background-color: #FF6600 !important;
-}
-
-#theme-toggle {
     background-color: transparent !important;
-    border: none !important;
-    color: #fff !important;
-    font-size: 20px !important;
-    padding: 10px 15px !important;
-    cursor: pointer;
-    text-decoration: none !important;
-    vertical-align: middle !important;
-    font-weight: 400;
     position: relative;
-    top: -9px;
 }
 
-#theme-toggle:hover {
-    color: #FF6600 !important;
+.navbar-default .navbar-nav>li.active>a::before,
+.navbar-default .navbar-nav>li.active-page>a::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 24px);
+    height: 24px;
+    background-color: #FF6600;
+    border-radius: 4px;
+    z-index: -1;
 }
+
+.navbar-default .navbar-nav>li.active>a:hover,
+.navbar-default .navbar-nav>li.active>a:focus,
+.navbar-default .navbar-nav>li.active-page>a:hover,
+.navbar-default .navbar-nav>li.active-page>a:focus {
+    color: #fff !important;
+    background-color: transparent !important;
+}
+
+
 
 body.light-mode .navbar-default {
     background-color: #fff;
@@ -348,16 +348,20 @@ body.light-mode .navbar-default .navbar-toggle {
 @media(min-width:768px) {
     .navbar-default .container {
         width: 100% !important;
+        max-width: 100% !important;
         padding-left: 30px !important;
         padding-right: 30px !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 65px;
+        transition: height 0.3s ease;
     }
 
     .navbar-default {
-        padding: 10px 0;
+        padding: 0 !important;
         background-color: rgba(34, 34, 34, 0.9);
-        -webkit-transition: padding .3s, background-color .3s;
-        -moz-transition: padding .3s, background-color .3s;
-        transition: padding .3s, background-color .3s;
+        transition: background-color .3s;
     }
 
     .navbar-default .navbar-brand {
@@ -368,12 +372,20 @@ body.light-mode .navbar-default .navbar-toggle {
     }
 
     .navbar-default .navbar-nav>.active>a {
-        border-radius: 3px;
+        border-radius: 4px;
     }
 
     .navbar-default.navbar-shrink {
-        padding: 5px 0;
+        padding: 0 !important;
         background-color: #222;
+    }
+
+    .navbar-default.navbar-shrink .container {
+        height: 52px;
+    }
+
+    .navbar-default.navbar-shrink .navbar-brand img {
+        max-height: 34px;
     }
 
     .navbar-default.navbar-shrink .navbar-brand {
@@ -495,11 +507,9 @@ header .intro-text .intro-heading {
 }
 
 section#services .service-heading {
-    font-size: clamp(2.4rem, 5vw, 3.5rem);
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
     margin-bottom: 1rem;
-    white-space: nowrap;
-    overflow-wrap: normal;
-    word-break: keep-all;
+    overflow-wrap: break-word;
 }
 
 section#services .section-subheading {
@@ -1712,11 +1722,454 @@ body.light-mode .testimonial-author {
 .testimonial-project-link a:hover {
     color: #FF6600;
 }
-body.light-mode .testimonial-project-link a {
-    color: #666;
-}
 body.light-mode .testimonial-project-link a:hover {
     color: #e65c00;
+}
+
+/* ==========================================
+   Global Theme Transitions & Switch Styles
+   ========================================== */
+body, header, section, footer, .service-card, .team-scroll-card, .testimonial-carousel, .form-control, .navbar, .navbar-default, .navbar-default .nav li a, .navbar-default .navbar-brand {
+    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Custom Sliding Theme Switch */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+}
+@media (min-width: 768px) {
+    .theme-switch-wrapper {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
+.theme-switch {
+    width: 54px;
+    height: 28px;
+    background-color: #1a1a1a;
+    border: 2px solid #FF6600;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+body.light-mode .theme-switch {
+    background-color: #e0e0e0;
+    border-color: #e65c00;
+}
+.theme-switch-track {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.theme-switch-handle {
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body.light-mode .theme-switch-handle {
+    transform: translateX(26px);
+}
+.theme-switch-icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+.theme-switch-icon-moon, .theme-switch-icon-sun {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body.dark-mode .theme-switch-icon-moon {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+body.dark-mode .theme-switch-icon-sun {
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+}
+body.light-mode .theme-switch-icon-moon {
+    opacity: 0;
+    transform: scale(0) rotate(180deg);
+}
+body.light-mode .theme-switch-icon-sun {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+.theme-switch-icon-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.theme-switch, .theme-switch *, .theme-switch:focus, .theme-switch *:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* ==========================================
+   Testimonial Carousel Manual Controls
+   ========================================== */
+.testimonial-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+.testimonial-control-btn {
+    background: transparent;
+    border: none;
+    color: #FF6600;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: color 0.2s, transform 0.2s;
+    outline: none;
+}
+.testimonial-control-btn:hover {
+    color: #e65c00;
+    transform: scale(1.1);
+}
+.testimonial-indicators {
+    display: flex;
+    gap: 8px;
+}
+.testimonial-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #444;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+body.light-mode .testimonial-indicator {
+    background-color: #ccc;
+}
+.testimonial-indicator.active {
+    background-color: #FF6600;
+}
+
+/* ==========================================
+   Live Telemetry Dashboard Widget
+   ========================================== */
+.telemetry-container {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 25px;
+    margin: 30px 0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+body.light-mode .telemetry-container {
+    background: #fcfcfc;
+    border-color: #ddd;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+.telemetry-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+@media (min-width: 768px) {
+    .telemetry-grid {
+        grid-template-columns: 1.2fr 1fr;
+        gap: 30px;
+    }
+}
+.telemetry-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.telemetry-metric {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: #1a1a1a;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+}
+body.light-mode .telemetry-metric {
+    background: #eee;
+    color: #333;
+}
+.telemetry-metric .value {
+    color: #FF6600;
+    font-weight: bold;
+}
+.telemetry-controls-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+.telemetry-btn {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 8px 12px;
+    font-size: 11px;
+    border-radius: 4px;
+    font-family: Montserrat, sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+body.light-mode .telemetry-btn {
+    background: #e5e5e5;
+    border-color: #ccc;
+    color: #333;
+}
+.telemetry-btn:hover {
+    background: #FF6600;
+    border-color: #FF6600;
+    color: #fff;
+}
+.telemetry-btn.active {
+    background: #FF6600;
+    border-color: #FF6600;
+    color: #fff;
+}
+
+/* ==========================================
+   PCB Layer Visualizer
+   ========================================== */
+.pcb-visualizer {
+    position: relative;
+    margin: 30px 0;
+    background: #151515;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+body.light-mode .pcb-visualizer {
+    background: #fdfdfd;
+    border-color: #ddd;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+.pcb-canvas-container {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    height: 320px;
+    margin: 0 auto 20px auto;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #0d2818; /* PCB Green */
+    border: 3px solid #222;
+}
+.pcb-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pcb-layer svg {
+    width: 90%;
+    height: 90%;
+}
+.pcb-layer-controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.layer-toggle-btn {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: #888;
+    padding: 6px 12px;
+    font-size: 11px;
+    border-radius: 4px;
+    font-family: Montserrat, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+body.light-mode .layer-toggle-btn {
+    background: #eee;
+    border-color: #ccc;
+    color: #666;
+}
+.layer-toggle-btn.active {
+    background: #FF6600;
+    border-color: #FF6600;
+    color: #fff;
+}
+
+/* ==========================================
+   Project Cost Estimator Tool
+   ========================================== */
+.estimator-container {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 30px;
+    margin-top: 40px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+body.light-mode .estimator-container {
+    background: #fff;
+    border-color: #ddd;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+}
+.estimator-steps-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 10px;
+}
+body.light-mode .estimator-steps-nav {
+    border-bottom-color: #eee;
+}
+.estimator-step-label {
+    font-family: Montserrat, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #555;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.estimator-step-label:hover {
+    color: #FF6600;
+}
+.estimator-step-label.active {
+    color: #FF6600;
+}
+body.light-mode #custom-weeks-input {
+    background: #fff !important;
+      border-color: #e65c00 !important;
+      color: #000 !important;
+}
+.estimator-step {
+    display: none;
+}
+.estimator-step.active {
+    display: block;
+}
+.estimator-option-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+@media (min-width: 768px) {
+    .estimator-option-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+.estimator-card {
+    border: 1px solid #2a2a2a;
+    background: #1a1a1a;
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+body.light-mode .estimator-card {
+    border-color: #eee;
+    background: #fdfdfd;
+}
+.estimator-card:hover {
+    border-color: #FF6600;
+    transform: translateY(-2px);
+}
+.estimator-card.active {
+    border-color: #FF6600;
+    background: rgba(255,102,0,0.05);
+    box-shadow: 0 0 10px rgba(255,102,0,0.2);
+}
+.estimator-card i {
+    font-size: 24px;
+    color: #FF6600;
+    margin-bottom: 10px;
+}
+.estimator-card h4 {
+    font-family: Montserrat, sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin: 0 0 8px 0;
+    color: #fff;
+}
+body.light-mode .estimator-card h4 {
+    color: #000;
+}
+.estimator-card p {
+    font-size: 11px;
+    color: #888;
+    margin: 0;
+}
+.estimator-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+.estimator-summary-panel {
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 25px;
+    font-family: monospace;
+    font-size: 14px;
+}
+body.light-mode .estimator-summary-panel {
+    background: #f5f5f5;
+    border-color: #eee;
+    color: #333;
+}
+.estimator-summary-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed #222;
+}
+body.light-mode .estimator-summary-line {
+    border-bottom-color: #ddd;
+}
+.estimator-summary-line:last-child {
+    border-bottom: none;
+    font-weight: bold;
+    font-size: 16px;
+    color: #FF6600;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #222;
+}
+body.light-mode .estimator-summary-line:last-child {
+    border-top-color: #ddd;
 }
 
 

@@ -1,4 +1,4 @@
-// Centralized Theme Toggle Logic - LTRJ Labs
+// Centralized Theme Toggle Logic & Mobile Navbar Toggler - LTRJ Labs
 document.addEventListener('DOMContentLoaded', function() {
     const toggle = document.getElementById('theme-toggle');
     const body = document.body;
@@ -8,15 +8,29 @@ document.addEventListener('DOMContentLoaded', function() {
     body.classList.add(currentTheme + '-mode');
     
     if (toggle) {
-        toggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
-
         toggle.addEventListener('click', function(e) {
             e.preventDefault();
+            
             const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
+            
+            // Update body classes and storage
             body.classList.remove('dark-mode', 'light-mode');
             body.classList.add(newTheme + '-mode');
             localStorage.setItem('theme', newTheme);
-            toggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
         });
     }
+
+    // --- Vanilla JS Mobile Navbar Toggle ---
+    var toggles = document.querySelectorAll('.navbar-toggle');
+    toggles.forEach(function(navbarToggle) {
+        navbarToggle.addEventListener('click', function() {
+            var targetId = navbarToggle.getAttribute('data-target');
+            if (targetId) {
+                var target = document.querySelector(targetId);
+                if (target) {
+                    target.classList.toggle('in');
+                }
+            }
+        });
+    });
 });
