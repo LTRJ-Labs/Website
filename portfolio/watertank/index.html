@@ -31,8 +31,8 @@
     <script type="importmap">
     {
         "imports": {
-            "three": "https://esm.sh/three@0.171.0",
-            "three/addons/": "https://esm.sh/three@0.171.0/examples/jsm/",
+            "three": "https://unpkg.com/three@0.171.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.171.0/examples/jsm/",
             "gsap": "https://esm.sh/gsap@3.12.2",
             "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.2/ScrollTrigger"
         }
@@ -442,14 +442,17 @@
         loader.load('../../img/RemoteTankMonitoring.gltf', (gltf) => {
             modelGroup = gltf.scene;
             
-            // Group Main & Pocket015 into LidAssembly
-            const mainNode = modelGroup.children.find(c => c.name === 'Main');
-            const pocketNode = modelGroup.children.find(c => c.name === 'Pocket015');
+            // The top-level group node inside gltf.scene is 'RemoteTankMonitoring'
+            const rootNode = modelGroup.getObjectByName('RemoteTankMonitoring') || modelGroup;
+            
+            // Group Main & Pocket015 into LidAssembly under rootNode
+            const mainNode = rootNode.children.find(c => c.name === 'Main');
+            const pocketNode = rootNode.children.find(c => c.name === 'Pocket015');
             let lidAssembly = null;
             if (mainNode || pocketNode) {
                 lidAssembly = new THREE.Group();
                 lidAssembly.name = 'LidAssembly';
-                modelGroup.add(lidAssembly);
+                rootNode.add(lidAssembly);
                 if (mainNode) lidAssembly.add(mainNode);
                 if (pocketNode) lidAssembly.add(pocketNode);
             }
@@ -458,23 +461,24 @@
             modelGroup.scale.set(10, 10, 10);
             modelGroup.rotation.set(-Math.PI / 2, 0, 0);
 
-            // Traverse and process nodes
-            modelGroup.traverse((node) => {
-                // Hide duplicate nodes under the root
-                let isDuplicate = false;
+            // Helper to get direct child of rootNode for any node
+            function getRootChildAncestor(node, rootNode) {
                 let curr = node;
-                while (curr && curr !== modelGroup) {
-                    if (curr.parent === modelGroup && 
-                        curr.name !== 'Enclosure+TankMount' && 
-                        curr.name !== 'Main' && 
-                        curr.name !== 'Pocket015' && 
-                        curr.name !== 'LidAssembly') {
-                        isDuplicate = true;
-                        break;
-                    }
+                while (curr && curr.parent !== rootNode) {
                     curr = curr.parent;
                 }
-                if (isDuplicate) {
+                return curr;
+            }
+
+            // Traverse and process nodes
+            modelGroup.traverse((node) => {
+                // Skip duplicate loose nodes directly under rootNode
+                const ancestor = getRootChildAncestor(node, rootNode);
+                if (ancestor && 
+                    ancestor.name !== 'Enclosure+TankMount' && 
+                    ancestor.name !== 'Main' && 
+                    ancestor.name !== 'Pocket015' && 
+                    ancestor.name !== 'LidAssembly') {
                     if (node.isMesh) node.visible = false;
                     return;
                 }
