@@ -34,6 +34,7 @@
             "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
             "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
             "three": "https://esm.sh/three@0.171.0",
+            "three/examples/jsm/loaders/DRACOLoader.js": "https://esm.sh/three@0.171.0/examples/jsm/loaders/DRACOLoader.js",
             "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.17.14?external=react,three",
             "@react-three/drei": "https://esm.sh/@react-three/drei@9.120.4?external=react,three,@react-three/fiber",
             "lucide-react": "https://esm.sh/lucide-react@0.468.0?external=react"
@@ -139,25 +140,29 @@
         import React, { useState, useRef, useCallback, useEffect, useMemo, Suspense } from 'react';
         import { createRoot } from 'react-dom/client';
         import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
-        import { Canvas, useFrame, useThree } from '@react-three/fiber';
-        import { OrbitControls, useGLTF, Environment, ContactShadows, Html, Center } from '@react-three/drei';
+        import { Canvas, useFrame, useThree, invalidate } from '@react-three/fiber';
+        import { OrbitControls, useGLTF, Html, Center } from '@react-three/drei';
         import { Layers, RotateCcw, Move3D, Eye, Box, Maximize2 } from 'lucide-react';
         import * as THREE from 'three';
+        import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
         // ─── GLTF Model Path ────────────────────────────────────────────────
         const MODEL_PATH = '../../img/RemoteTankMonitoring-Enclosure+TankMountMainBoard.gltf';
 
+        // ─── Configure Draco decoder for compressed models ──────────────────
+        // If you run: npx gltf-pipeline -i model.gltf -o model_optimized.gltf -d
+        // the output will be Draco-compressed and this loader will decode it.
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
+        dracoLoader.setDecoderConfig({ type: 'js' }); // Use JS decoder (wasm is faster but needs correct MIME)
+
         // ─── Component group definitions for exploded view ──────────────────
-        // These prefixes classify the GLTF node names into logical assembly layers.
-        // Each group has a label, color for the legend, and the Y offset direction
-        // when exploded.
         const COMPONENT_GROUPS = [
             {
                 id: 'enclosure',
                 label: 'Enclosure',
                 color: '#6366f1',
                 prefixes: ['FRAME', '.step'],
-                offsetDir: [0, 1, 0],
                 offsetMag: 0.006,
             },
             {
@@ -165,7 +170,6 @@
                 label: 'Connectors',
                 color: '#22d3ee',
                 prefixes: ['DB301V', 'SIM8051', '67910', 'TYPE-C', 'JST', 'DSJ0014', 'pin'],
-                offsetDir: [0, 1, 0],
                 offsetMag: 0.004,
             },
             {
@@ -173,7 +177,6 @@
                 label: 'ICs & Modules',
                 color: '#f59e0b',
                 prefixes: ['ESP32', 'INA219', 'lr62xe', 'SOT23', 'SOT23-3', 'BODY-SOT', 'LEAD-SOT', 'LEAD-DUMMY', 'MOLD'],
-                offsetDir: [0, 1, 0],
                 offsetMag: 0.003,
             },
             {
@@ -181,7 +184,6 @@
                 label: 'Passives',
                 color: '#a855f7',
                 prefixes: ['res_', 'ceramic_cap_', 'D_0402', 'DO-214', 'led_', '25ZLH', 'SWPA', 'SPM2512', 'TS-1088'],
-                offsetDir: [0, 1, 0],
                 offsetMag: 0.002,
             },
             {
@@ -189,7 +191,6 @@
                 label: 'PCB Board',
                 color: '#10b981',
                 prefixes: ['RemoteTankMonitoring_PCB', 'MainBoard', 'SOLID', 'body_4'],
-                offsetDir: [0, 0, 0],
                 offsetMag: 0,
             },
         ];
@@ -202,84 +203,70 @@
                     }
                 }
             }
-            return COMPONENT_GROUPS[COMPONENT_GROUPS.length - 1]; // default to PCB
+            return COMPONENT_GROUPS[COMPONENT_GROUPS.length - 1];
         }
 
-        // ─── Animated Mesh Wrapper ──────────────────────────────────────────
-        function ExplodedMesh({ node, explodeFactor, group }) {
-            const meshRef = useRef();
-            const originalPos = useRef(null);
-
-            useEffect(() => {
-                if (meshRef.current && originalPos.current === null) {
-                    originalPos.current = meshRef.current.position.clone();
-                }
-            }, []);
-
-            useFrame(() => {
-                if (meshRef.current && originalPos.current) {
-                    const t = explodeFactor;
-                    meshRef.current.position.x = originalPos.current.x + group.offsetDir[0] * group.offsetMag * t;
-                    meshRef.current.position.y = originalPos.current.y + group.offsetDir[1] * group.offsetMag * t;
-                    meshRef.current.position.z = originalPos.current.z + group.offsetDir[2] * group.offsetMag * t;
-                }
+        // ─── PCB Model with on-demand explode ───────────────────────────────
+        // Instead of individual useFrame per mesh, we apply positions directly
+        // in a single pass when explodeFactor changes.
+        function PCBModel({ explodeFactor, autoRotate, onLoaded }) {
+            const gltf = useGLTF(MODEL_PATH, true, true, (loader) => {
+                loader.setDRACOLoader(dracoLoader);
             });
-
-            if (node.isMesh) {
-                return jsx('mesh', {
-                    ref: meshRef,
-                    geometry: node.geometry,
-                    material: node.material,
-                    position: node.position.toArray(),
-                    rotation: node.rotation.toArray().slice(0, 3),
-                    scale: node.scale.toArray(),
-                    castShadow: true,
-                    receiveShadow: true,
-                });
-            }
-
-            return null;
-        }
-
-        // ─── PCB Model Component ────────────────────────────────────────────
-        function PCBModel({ explodeFactor, autoRotate }) {
-            const { scene } = useGLTF(MODEL_PATH);
             const groupRef = useRef();
+            const meshDataRef = useRef(null);
+            const prevExplodeRef = useRef(-1);
+            const { invalidate: inv } = useThree();
 
-            // Auto-rotate
-            useFrame((state, delta) => {
-                if (groupRef.current && autoRotate) {
-                    groupRef.current.rotation.y += delta * 0.15;
-                }
-            });
-
-            // Traverse and classify all meshes
-            const meshes = useMemo(() => {
+            // Build mesh data once on mount — store original positions
+            const meshData = useMemo(() => {
                 const result = [];
-                scene.traverse((child) => {
+                gltf.scene.traverse((child) => {
                     if (child.isMesh) {
                         const group = classifyNode(child.name);
-                        result.push({ node: child, group });
+                        // Freeze material to prevent needless GPU uploads
+                        if (child.material) {
+                            child.material.needsUpdate = false;
+                        }
+                        result.push({
+                            mesh: child,
+                            group,
+                            origY: child.position.y,
+                        });
                     }
                 });
                 return result;
-            }, [scene]);
+            }, [gltf.scene]);
 
-            // Scale factor - the model uses very small units (meters from CAD)
+            // Signal loaded
+            useEffect(() => {
+                if (onLoaded) onLoaded();
+            }, [onLoaded]);
+
+            // Apply explode positions only when the factor changes
+            useEffect(() => {
+                const t = explodeFactor;
+                for (const item of meshData) {
+                    item.mesh.position.y = item.origY + item.group.offsetMag * t;
+                }
+                inv(); // Request a single re-render
+            }, [explodeFactor, meshData, inv]);
+
+            // Auto-rotate: only active when enabled, requests renders
+            useFrame((state, delta) => {
+                if (groupRef.current && autoRotate) {
+                    groupRef.current.rotation.y += delta * 0.15;
+                    inv();
+                }
+            });
+
             const scale = 200;
 
-            return jsx('group', {
+            return jsx('primitive', {
                 ref: groupRef,
+                object: gltf.scene,
                 scale: [scale, scale, scale],
                 rotation: [-Math.PI / 2, 0, 0],
-                children: meshes.map((item, i) =>
-                    jsx(ExplodedMesh, {
-                        node: item.node,
-                        explodeFactor: explodeFactor,
-                        group: item.group,
-                        key: i,
-                    })
-                ),
             });
         }
 
@@ -301,7 +288,7 @@
             });
         }
 
-        // ─── Camera Controller ──────────────────────────────────────────────
+        // ─── Camera Setup ───────────────────────────────────────────────────
         function CameraSetup() {
             const { camera } = useThree();
             useEffect(() => {
@@ -311,11 +298,26 @@
             return null;
         }
 
+        // ─── Invalidation controller ────────────────────────────────────────
+        // Triggers a re-render whenever OrbitControls fires a change event.
+        function InvalidateOnChange({ controlsRef }) {
+            const { invalidate: inv } = useThree();
+            useEffect(() => {
+                const controls = controlsRef.current;
+                if (!controls) return;
+                const handler = () => inv();
+                controls.addEventListener('change', handler);
+                return () => controls.removeEventListener('change', handler);
+            }, [controlsRef, inv]);
+            return null;
+        }
+
         // ─── Main App ──────────────────────────────────────────────────────
         function App() {
             const [explodeFactor, setExplodeFactor] = useState(0);
             const [autoRotate, setAutoRotate] = useState(true);
             const sliderRef = useRef(null);
+            const controlsRef = useRef(null);
 
             const handleSliderChange = useCallback((e) => {
                 const val = parseFloat(e.target.value);
@@ -335,30 +337,44 @@
                 className: 'w-full h-full relative bg-surface-900',
                 children: [
                     // ─── 3D Canvas ──────────────────────────────────────
+                    // frameloop="demand" — only renders when invalidate() is called
                     jsx(Canvas, {
                         key: 'canvas',
-                        shadows: true,
+                        frameloop: 'demand',
                         dpr: [1, 2],
-                        gl: { antialias: true, alpha: false, powerPreference: 'high-performance' },
+                        gl: {
+                            antialias: true,
+                            alpha: false,
+                            powerPreference: 'high-performance',
+                            stencil: false,
+                            depth: true,
+                        },
                         camera: { fov: 35, near: 0.01, far: 100 },
                         style: { background: '#0a0a0f' },
+                        onCreated: ({ gl }) => {
+                            // Cap pixel ratio to 2 for 4K screens
+                            gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                            // Optimize tone mapping
+                            gl.toneMapping = THREE.ACESFilmicToneMapping;
+                            gl.toneMappingExposure = 1.0;
+                            gl.outputColorSpace = THREE.SRGBColorSpace;
+                        },
                         children: [
                             jsx(CameraSetup, { key: 'cam' }),
-                            jsx('ambientLight', { intensity: 0.4, key: 'amb' }),
+                            jsx('ambientLight', { intensity: 0.5, key: 'amb' }),
                             jsx('directionalLight', {
                                 position: [5, 8, 5],
                                 intensity: 1.2,
-                                castShadow: true,
                                 key: 'dir1',
                             }),
                             jsx('directionalLight', {
                                 position: [-3, 4, -4],
-                                intensity: 0.5,
+                                intensity: 0.4,
                                 key: 'dir2',
                             }),
                             jsx('pointLight', {
                                 position: [0, 2, 0],
-                                intensity: 0.3,
+                                intensity: 0.2,
                                 color: '#FF6600',
                                 key: 'pt',
                             }),
@@ -372,22 +388,20 @@
                                 }),
                                 key: 'model',
                             }),
-                            jsx(ContactShadows, {
-                                position: [0, -0.35, 0],
-                                opacity: 0.4,
-                                scale: 4,
-                                blur: 2.5,
-                                far: 4,
-                                key: 'shadow',
-                            }),
                             jsx(OrbitControls, {
+                                ref: controlsRef,
                                 enablePan: true,
                                 enableZoom: true,
                                 enableRotate: true,
+                                enableDamping: true,
+                                dampingFactor: 0.08,
                                 minDistance: 0.3,
                                 maxDistance: 5,
-                                autoRotate: false,
                                 key: 'controls',
+                            }),
+                            jsx(InvalidateOnChange, {
+                                controlsRef: controlsRef,
+                                key: 'invalidator',
                             }),
                         ],
                     }),
