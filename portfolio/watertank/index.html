@@ -383,7 +383,7 @@
                 id: 'battery_holder',
                 name: 'Battery Holder',
                 desc: 'Secure holder for 18650 lithium-ion cells, providing the system\'s power source.',
-                match: (node) => node.name.includes('Battery Holder') || node.name.startsWith('BatteryHolder')
+                match: (node) => node.name.includes('Battery Holder') || node.name.startsWith('BatteryHolder') || node.name === '18650 Battery Holder 4x'
             },
             {
                 id: 'sensor',
@@ -396,30 +396,40 @@
                 name: 'Sensor Mount',
                 desc: 'Threaded physical mount holding the ultrasonic sensor securely in place at the top of the tank.',
                 match: (node) => node.name === 'UltrasonicMount'
+            },
+            {
+                id: 'bracket',
+                name: 'Sensor Bracket',
+                desc: 'Sleeve bracket that attaches the ultrasonic sensor to the threaded mount.',
+                match: (node) => node.name === 'Casing2Ultrasonic'
             }
         ];
 
         function getNodeExplodeConfig(node) {
             const name = node.name;
-            if (name === 'LidAssembly') return { offsetMag: 0.12 };
-            if (name === 'BG95mPCIE') return { offsetMag: 0.09 };
-            if (name === 'BottomCasing') return { offsetMag: -0.11 };
-            if (name.includes('Battery Holder') || name.startsWith('BatteryHolder')) return { offsetMag: -0.03 };
-            if (name === 'Casing2Ultrasonic') return { offsetMag: -0.05 };
-            if (name === 'UltrasonicMount') return { offsetMag: -0.07 };
-            if (name.includes('sensor') || name.startsWith('DYP-A02')) return { offsetMag: -0.09 };
+            if (name === 'LidAssembly') return { offsetVector: new THREE.Vector3(0, 0.15, 0) };
+            if (name === 'BG95mPCIE') return { offsetVector: new THREE.Vector3(0, 0.08, -0.06) };
+            if (name === 'BottomCasing') return { offsetVector: new THREE.Vector3(0, 0, 0) };
+            if (name.includes('Battery Holder') || name.startsWith('BatteryHolder') || name === '18650 Battery Holder 4x') {
+                return { offsetVector: new THREE.Vector3(-0.12, 0.02, 0) };
+            }
+            if (name === 'MainBoard') return { offsetVector: new THREE.Vector3(0.12, 0.02, 0) };
+            if (name === 'Casing2Ultrasonic') return { offsetVector: new THREE.Vector3(0.08, -0.08, 0.06) };
+            if (name === 'UltrasonicMount') return { offsetVector: new THREE.Vector3(-0.08, -0.08, 0.06) };
+            if (name.includes('sensor') || name.startsWith('DYP-A02')) return { offsetVector: new THREE.Vector3(0, -0.08, 0.08) };
+            if (name === 'RemoteTankMonitoring_PCB') return { offsetVector: new THREE.Vector3(0, 0, 0) };
             
             // PCB components (inside MainBoard)
             if (node.parent && node.parent.name === 'MainBoard') {
-                if (name.startsWith('SOLID')) return { offsetMag: 0.015 };
+                if (name.startsWith('SOLID')) return { offsetVector: new THREE.Vector3(0, 0.015, 0) };
                 if (name.startsWith('res_') || name.startsWith('ceramic_cap_') || name.startsWith('D_0402') || name.startsWith('DO-214') || name.startsWith('led_') || name.startsWith('25ZLH') || name.startsWith('SWPA') || name.startsWith('SPM2512') || name.startsWith('TS-1088')) {
-                    return { offsetMag: 0.03 };
+                    return { offsetVector: new THREE.Vector3(0, 0.03, 0) };
                 }
                 if (name.startsWith('ESP32') || name.startsWith('INA219') || name.startsWith('lr62xe') || name.startsWith('SOT23')) {
-                    return { offsetMag: 0.045 };
+                    return { offsetVector: new THREE.Vector3(0, 0.045, 0) };
                 }
                 if (name.startsWith('JST') || name.includes('JST_PH') || name.startsWith('TYPE-C') || name.startsWith('DB301V')) {
-                    return { offsetMag: 0.06 };
+                    return { offsetVector: new THREE.Vector3(0, 0.06, 0) };
                 }
             }
             return null;
@@ -439,7 +449,7 @@
         let currentHoveredItem = null;
         let isAnimating = false;
 
-        loader.load('../../img/RemoteTankMonitoring.gltf', (gltf) => {
+        function onModelLoaded(gltf) {
             modelGroup = gltf.scene;
             
             // The top-level group node inside gltf.scene is 'RemoteTankMonitoring'
@@ -459,7 +469,7 @@
 
             // Scale and orient modelGroup
             modelGroup.scale.set(10, 10, 10);
-            modelGroup.rotation.set(-Math.PI / 2, 0, 0);
+            modelGroup.rotation.set(0, 0, 0); // No rotation (Y-up)
 
             // Helper to get direct child of rootNode for any node
             function getRootChildAncestor(node, rootNode) {
@@ -483,22 +493,13 @@
                     return;
                 }
 
-                // Register nodes for vertical explosion
+                // Register nodes for explosion
                 const expConfig = getNodeExplodeConfig(node);
                 if (expConfig) {
-                    const worldUp = new THREE.Vector3(0, 1, 0);
-                    let parentUp = worldUp.clone();
-                    if (node.parent) {
-                        const parentWorldQuat = new THREE.Quaternion();
-                        node.parent.getWorldQuaternion(parentWorldQuat);
-                        parentUp.applyQuaternion(parentWorldQuat.invert());
-                    }
-                    
                     explodeItems.push({
                         node: node,
-                        offsetMag: expConfig.offsetMag,
-                        origPosition: node.position.clone(),
-                        upDirection: parentUp
+                        offsetVector: expConfig.offsetVector,
+                        origPosition: node.position.clone()
                     });
                 }
 
@@ -530,8 +531,21 @@
             scene.add(modelGroup);
             requestRender();
             initScrollTrigger();
+        }
+
+        // Try loading optimized model first, fall back to unoptimized if it fails or is not found
+        const modelUrl = '../../img/RemoteTankMonitoring_optimized.gltf';
+        const fallbackUrl = '../../img/RemoteTankMonitoring.gltf';
+
+        loader.load(modelUrl, (gltf) => {
+            onModelLoaded(gltf);
         }, undefined, (error) => {
-            console.error('An error occurred loading the GLTF model:', error);
+            console.warn('Optimized model not found. Falling back to unoptimized model...', error);
+            loader.load(fallbackUrl, (gltf) => {
+                onModelLoaded(gltf);
+            }, undefined, (fallbackError) => {
+                console.error('An error occurred loading the fallback GLTF model:', fallbackError);
+            });
         });
 
         // 8. Scroll-Driven Explosion Logic
@@ -576,8 +590,8 @@
 
         function updateExplosion(progress) {
             for (const item of explodeItems) {
-                const offset = item.offsetMag * progress;
-                item.node.position.copy(item.origPosition).addScaledVector(item.upDirection, offset);
+                const offsetVector = item.offsetVector.clone().multiplyScalar(progress);
+                item.node.position.copy(item.origPosition).add(offsetVector);
                 
                 // PCB substrate opacity fading
                 if (item.node.name === 'RemoteTankMonitoring_PCB') {
@@ -588,7 +602,7 @@
                                 mat.transparent = progress > 0;
                                 mat.opacity = progress > 0 ? 0.45 : 1.0;
                                 mat.depthWrite = progress === 0;
-                                mat.needsUpdate = false;
+                                mat.needsUpdate = true;
                             }
                         }
                     });
@@ -669,14 +683,14 @@
 
         // Rotate a node around its localCenterOffset in parent coordinate space
         function applyMeshRotation(item, angle) {
-            const axis = new THREE.Vector3(0, 0, 1); // vertical axis in parent space
+            const axis = new THREE.Vector3(0, 1, 0); // vertical axis in parent space
             
             // Get correct exploded resting position
             const expConfig = getNodeExplodeConfig(item.node);
-            const offsetMag = expConfig ? expConfig.offsetMag : 0;
-            const currentExplodeOffset = offsetMag * explodeState.progress;
+            const offsetVector = expConfig ? expConfig.offsetVector : new THREE.Vector3();
+            const currentExplodeOffset = offsetVector.clone().multiplyScalar(explodeState.progress);
             
-            const explodedPos = item.origPosition.clone().addScaledVector(item.upDirection, currentExplodeOffset);
+            const explodedPos = item.origPosition.clone().add(currentExplodeOffset);
             
             // Reset to default exploded position and rotation
             item.node.position.copy(explodedPos);
