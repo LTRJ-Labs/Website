@@ -4,6 +4,14 @@
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
+// Immediate execution to prevent browser scroll jumping on load
+if (window.location.hash && window.location.hash.startsWith('#_')) {
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+}
+
 // Native smooth scrolling and navigation logic
 document.addEventListener('DOMContentLoaded', function() {
     // Smooth scrolling for a.page-scroll
@@ -68,7 +76,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Smooth scroll to hash on initial load (using '#_' prefix to prevent browser's default instant jump)
+    var hasScrolled = false;
+
     function triggerHashScroll() {
+        if (hasScrolled) return;
         var hash = window.location.hash;
         if (hash && hash.startsWith('#_')) {
             var targetId = hash.substring(2);
@@ -76,6 +87,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (targetEl) {
                 var navHeight = 60; // Offset for the fixed navigation bar
                 var targetPosition = targetEl.offsetTop - navHeight;
+                // If layout is not ready yet (height is 0), wait for load event
+                if (targetPosition <= 0 && targetId !== 'page-top') {
+                    return;
+                }
+                hasScrolled = true;
                 window.scrollTo({
                     top: targetPosition,
                     behavior: 'smooth'
@@ -85,11 +101,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (window.location.hash && window.location.hash.startsWith('#_')) {
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
+        // Force top scroll position initially to avoid any jumpiness
         window.scrollTo(0, 0);
-        setTimeout(triggerHashScroll, 300); // 300ms delay lets the page render before smooth scroll begins
+        
+        // Try scrolling after 300ms (fast path)
+        setTimeout(triggerHashScroll, 300);
+        
+        // Fallback for slower load or layout delays
+        window.addEventListener('load', function() {
+            setTimeout(triggerHashScroll, 50);
+        });
     }
 
     // Shrink Navbar on Scroll
