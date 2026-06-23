@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var targetEl = document.getElementById(targetId);
             if (targetEl) {
                 var navHeight = 60; // Offset for the fixed navigation bar
-                var targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                var targetPosition = targetEl.offsetTop - navHeight;
                 window.scrollTo({
                     top: targetPosition,
                     behavior: 'smooth'
@@ -89,14 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
             history.scrollRestoration = 'manual';
         }
         window.scrollTo(0, 0);
-
-        if (document.readyState === 'complete') {
-            setTimeout(triggerHashScroll, 100);
-        } else {
-            window.addEventListener('load', function() {
-                setTimeout(triggerHashScroll, 100);
-            });
-        }
+        setTimeout(triggerHashScroll, 300); // 300ms delay lets the page render before smooth scroll begins
     }
 
     // Shrink Navbar on Scroll
