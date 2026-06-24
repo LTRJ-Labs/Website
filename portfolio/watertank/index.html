@@ -56,7 +56,7 @@
             transition: background-color 0.3s, border-color 0.3s;
             margin-top: 20px;
             margin-bottom: 40px;
-            cursor: pointer;
+            
         }
         body.light-mode #exploded-view-container {
             background: #f9fafb;
@@ -124,7 +124,7 @@
             transform: translate(-50%, -50%);
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             transition: opacity 0.3s;
-            cursor: pointer;
+            
         }
     </style>
 
@@ -246,16 +246,6 @@
                         <canvas id="exploded-view-canvas"></canvas>
                         
                         <div id="mobile-buttons-container"></div>
-                        
-                        <!-- Floating User Prompts -->
-                        <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; z-index: 10;">
-                            <p id="scroll-prompt" class="hidden-md hidden-lg" style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #888; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
-                                Scroll to view assembly
-                            </p>
-                            <p id="hover-prompt" class="hidden-xs hidden-sm" style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #888; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
-                                Hover to explode & inspect
-                            </p>
-                        </div>
                         
                         <!-- Tooltip Overlay -->
                         <div id="exploded-view-tooltip" style="display: none;">
@@ -384,50 +374,108 @@
 
     loader.load(modelUrl, (gltf) => {
         modelGroup = gltf.scene;
-        
-        // Scale and center the model
-        modelGroup.scale.set(10, 10, 10);
-        
-        // Calculate bounding box and center
-        const box = new THREE.Box3().setFromObject(modelGroup);
-        const center = box.getCenter(new THREE.Vector3());
-        modelGroup.position.sub(center); // Center the group
 
-        // Traverse and identify parts to explode
-        modelGroup.traverse((node) => {
-            if (node.isMesh && node.parent === modelGroup || (node.parent && node.parent.parent === modelGroup)) {
-                // If it's a prominent mesh or group
-                // In FreeCAD GLTF exports, top-level children are usually the parts
+        // Traverse and identify parts
+        // In FreeCAD GLTF exports, the scene has 1 child (root assembly node), which has children (the parts)
+        const rootNode = modelGroup.children[0] || modelGroup;
+        
+        let bottomCasingPart = null;
+        const explodeParts = [];
+        
+        rootNode.children.forEach(child => {
+            // Include everything that is a 3D object (Mesh, Group, Object3D)
+            if (child.isObject3D && !child.isLight && !child.isCamera) {
+                if (child.name.includes('BottomCasing')) {
+                    bottomCasingPart = child;
+                } else {
+                    explodeParts.push(child);
+                }
             }
         });
 
-        // Let's grab the top level children as parts
-        modelGroup.children.forEach(child => {
-            if (child.type === 'Mesh' || child.type === 'Group') {
-                // Calculate an outward explosion vector based on its position relative to center
-                const childBox = new THREE.Box3().setFromObject(child);
-                const childCenter = childBox.getCenter(new THREE.Vector3());
-                const dir = childCenter.clone().sub(new THREE.Vector3(0,0,0)).normalize();
-                
-                // Add some vertical spread
-                dir.y += (Math.random() - 0.5) * 0.5;
-                dir.normalize();
-
-                const offsetVector = dir.multiplyScalar(0.5); // Magnitude of explosion
-
-                parts.push({
-                    node: child,
-                    origPosition: child.position.clone(),
-                    offsetVector: offsetVector,
-                    origScale: child.scale.clone(),
-                    targetScale: child.scale.clone(),
-                    currentScale: child.scale.clone(),
-                    label: child.name || 'Component',
-                    desc: 'Details about ' + (child.name || 'this component') + ' will go here.',
-                    buttonEl: null
-                });
-            }
+        // 1. Calculate the overall center of the collapsed assembly
+        const collapsedBox = new THREE.Box3().setFromObject(modelGroup);
+        const collapsedCenter = collapsedBox.getCenter(new THREE.Vector3());
+        
+        // 2. Determine a good radius for the circle based on the sizes of the parts
+        let maxPartDim = 0;
+        explodeParts.forEach(child => {
+            const childBox = new THREE.Box3().setFromObject(child);
+            const size = childBox.getSize(new THREE.Vector3());
+            maxPartDim = Math.max(maxPartDim, size.x, size.y, size.z);
         });
+        // Circle radius should be large enough to hold all parts without overlap
+        let radius = (explodeParts.length * maxPartDim * 1.2) / (2 * Math.PI);
+        radius = Math.max(radius, maxPartDim * 1.5); // Ensure a minimum radius
+
+        // 3. Add BottomCasing
+        if (bottomCasingPart) {
+            parts.push({
+                node: bottomCasingPart,
+                origPosition: bottomCasingPart.position.clone(),
+                offsetVector: new THREE.Vector3(0, 0, 0),
+                origScale: bottomCasingPart.scale.clone(),
+                targetScale: bottomCasingPart.scale.clone(),
+                currentScale: bottomCasingPart.scale.clone(),
+                label: bottomCasingPart.name || 'Bottom Casing',
+                desc: 'The main base enclosure.',
+                buttonEl: null
+            });
+        }
+        
+        // 4. Calculate target exploded positions and offset vectors
+        const numParts = explodeParts.length;
+        
+        explodeParts.forEach((child, index) => {
+            const angle = (index / numParts) * Math.PI * 2;
+            
+            // The child's current center in local space
+            const childBox = new THREE.Box3().setFromObject(child);
+            const childCenter = childBox.getCenter(new THREE.Vector3());
+            
+            // We want its center to end up on the circle around the collapsed center
+            const targetCenter = new THREE.Vector3(
+                collapsedCenter.x + Math.cos(angle) * radius,
+                collapsedCenter.y + (maxPartDim * 0.3), // elevate slightly so it orbits above
+                collapsedCenter.z + Math.sin(angle) * radius
+            );
+            
+            // The required translation to move childCenter to targetCenter
+            const translation = targetCenter.clone().sub(childCenter);
+            
+            parts.push({
+                node: child,
+                origPosition: child.position.clone(),
+                offsetVector: translation,
+                origScale: child.scale.clone(),
+                targetScale: child.scale.clone(),
+                currentScale: child.scale.clone(),
+                label: child.name || 'Component',
+                desc: 'Component details for ' + child.name,
+                buttonEl: null
+            });
+        });
+
+        // 5. Temporarily move parts to exploded state to calculate the maximum bounding box
+        parts.forEach(p => p.node.position.copy(p.origPosition).add(p.offsetVector));
+        const explodedBox = new THREE.Box3().setFromObject(modelGroup);
+        const explodedSize = explodedBox.getSize(new THREE.Vector3());
+        
+        // 6. Calculate scale factor so the EXPLODED assembly fits perfectly within the camera view
+        // The camera is at (2, 1.5, 2) looking at (0,0,0). A 2.2 unit max dimension object fits very well.
+        const maxExplodedDim = Math.max(explodedSize.x, explodedSize.y, explodedSize.z);
+        const scaleFactor = 2.2 / maxExplodedDim;
+        
+        // 7. Restore original positions before scaling
+        parts.forEach(p => p.node.position.copy(p.origPosition));
+        
+        // 8. Apply scale and center the collapsed model
+        modelGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
+        
+        // Re-center the modelGroup based on its new scaled collapsed box
+        const finalCollapsedBox = new THREE.Box3().setFromObject(modelGroup);
+        const finalCenter = finalCollapsedBox.getCenter(new THREE.Vector3());
+        modelGroup.position.sub(finalCenter);
 
         scene.add(modelGroup);
         
