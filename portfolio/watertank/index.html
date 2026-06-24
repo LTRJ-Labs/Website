@@ -410,12 +410,8 @@
             maxPartDim = Math.max(maxPartDim, Math.max(size.x, size.z));
         });
         
-        // Screen-Plane Explosion calculations
-        camera.updateMatrixWorld();
-        const cameraRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion).normalize();
-        const cameraUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion).normalize();
-        
-        // Dynamic radius using max 3D diagonal to ensure it clears the casing visually from any angle
+        // Baseline explosion parameters
+          // Dynamic radius using max 3D diagonal to ensure it clears the casing visually from any angle
         const casingMax = Math.max(casingSize.x, casingSize.y, casingSize.z);
         window.radius = (casingMax * 0.5 + maxPartDim * 0.5) * 1.15;
 
@@ -451,22 +447,8 @@
         explodeParts.forEach((child, index) => {
             const angle = (index / numParts) * Math.PI * 2;
             
-            const aspect = container.clientWidth / container.clientHeight;
-            const dirX = Math.cos(angle) * aspect; 
-            const dirY = Math.sin(angle) * 1.0; 
-            
-            const dir = new THREE.Vector3()
-                .addScaledVector(cameraRight, dirX)
-                .addScaledVector(cameraUp, dirY);
-                
-            const worldTranslation = dir.multiplyScalar(window.radius);
-            
-            const worldPos = new THREE.Vector3();
-            child.getWorldPosition(worldPos);
-            worldPos.add(worldTranslation);
-            const targetLocalPos = child.parent.worldToLocal(worldPos);
-            const translation = targetLocalPos.clone().sub(child.position);
-            // Bulletproof robust offset applied in local space!
+            // offsetVector will be calculated dynamically in fitModelToScreen
+              const translation = new THREE.Vector3(0,0,0);
             
             const childBox = new THREE.Box3().setFromObject(child);
             const childSize = childBox.getSize(new THREE.Vector3());
@@ -496,66 +478,196 @@
         });
 
         function fitModelToScreen() {
-            // 1. Safe rough scale and reset positions
+            // 1. Reset everything to baseline origin
             modelGroup.scale.set(1,1,1);
             modelGroup.position.set(0,0,0);
-            
             parts.forEach(p => p.node.position.copy(p.origPosition));
             modelGroup.updateMatrixWorld(true);
             
-            // Dynamic Ellipse Recalculation based on CURRENT window size!
             const aspect = container.clientWidth / container.clientHeight;
             camera.updateMatrixWorld();
             const cameraRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion).normalize();
             const cameraUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion).normalize();
             const numParts = explodeParts.length;
             
+            // 2. Ultimate Collision-Detection Packing Algorithm
+            let casingMax = 10;
+            if (bottomCasingPart) {
+                const box = new THREE.Box3().setFromObject(bottomCasingPart);
+                const size = box.getSize(new THREE.Vector3());
+                casingMax = Math.max(size.x, size.y, size.z);
+            }
+            
+            // Start with a microscopically small explosion radius
+            let optimalRadius = casingMax * 0.1; 
+            let bestPushX = Math.max(1.0, aspect);
+            let bestPushY = Math.max(1.0, 1.0 / aspect);
+            
+            // Progressively expand the explosion radius until no parts overlap
+            for (let radiusIter = 0; radiusIter < 60; radiusIter++) {
+                window.radius = optimalRadius;
+                
+                // Aspect Ratio Tuning Loop
+                let currentPushX = Math.max(1.0, aspect);
+                let currentPushY = Math.max(1.0, 1.0 / aspect);
+                
+                for (let iter = 0; iter < 10; iter++) {
+                    parts.forEach(p => {
+                        if (p.node === bottomCasingPart) {
+                            p.offsetVector = new THREE.Vector3(0,0,0);
+                            p.node.position.copy(p.origPosition);
+                            return;
+                        }
+                        const index = explodeParts.indexOf(p.node);
+                        if (index === -1) return;
+                        
+                        const angle = (index / numParts) * Math.PI * 2;
+                        const dirX = Math.cos(angle) * currentPushX; 
+                        const dirY = Math.sin(angle) * currentPushY; 
+                        
+                        const dir = new THREE.Vector3()
+                            .addScaledVector(cameraRight, dirX)
+                            .addScaledVector(cameraUp, dirY);
+                            
+                        const worldTranslation = dir.multiplyScalar(window.radius);
+                        const worldPos = p.origPosition.clone();
+                        p.node.parent.localToWorld(worldPos);
+                        worldPos.add(worldTranslation);
+                        
+                        const targetLocalPos = p.node.parent.worldToLocal(worldPos);
+                        p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
+                        p.node.position.copy(p.origPosition).add(p.offsetVector);
+                    });
+                    
+                    modelGroup.updateMatrixWorld(true);
+                    
+                    let minX = Infinity, maxX = -Infinity;
+                    let minY = Infinity, maxY = -Infinity;
+                    
+                    parts.forEach(p => {
+                        const box = new THREE.Box3().setFromObject(p.node);
+                        const corners = [
+                            new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+                            new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                            new THREE.Vector3(box.min.x, box.max.y, box.min.z),
+                            new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                            new THREE.Vector3(box.max.x, box.min.y, box.min.z),
+                            new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                            new THREE.Vector3(box.max.x, box.max.y, box.min.z),
+                            new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                        ];
+                        corners.forEach(c => {
+                            c.project(camera); 
+                            minX = Math.min(minX, c.x);
+                            maxX = Math.max(maxX, c.x);
+                            minY = Math.min(minY, c.y);
+                            maxY = Math.max(maxY, c.y);
+                        });
+                    });
+                    
+                    const ndcWidth = maxX - minX;
+                    const ndcHeight = maxY - minY;
+                    if (ndcHeight === 0 || ndcWidth === 0) break;
+                    
+                    const currentNdcRatio = ndcWidth / ndcHeight;
+                    if (Math.abs(currentNdcRatio - 1.0) < 0.02) {
+                        bestPushX = currentPushX;
+                        bestPushY = currentPushY;
+                        break;
+                    }
+                    if (currentNdcRatio < 1.0) currentPushX *= 1.05;
+                    else currentPushY *= 1.05;
+                    
+                    bestPushX = currentPushX;
+                    bestPushY = currentPushY;
+                }
+                
+                // Now check for 2D Screen Space Overlaps!
+                const partsNDC = [];
+                parts.forEach(p => {
+                    const box = new THREE.Box3().setFromObject(p.node);
+                    let pMinX = Infinity, pMaxX = -Infinity;
+                    let pMinY = Infinity, pMaxY = -Infinity;
+                    const corners = [
+                        new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+                        new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                        new THREE.Vector3(box.min.x, box.max.y, box.min.z),
+                        new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                        new THREE.Vector3(box.max.x, box.min.y, box.min.z),
+                        new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                        new THREE.Vector3(box.max.x, box.max.y, box.min.z),
+                        new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                    ];
+                    corners.forEach(c => {
+                        c.project(camera);
+                        pMinX = Math.min(pMinX, c.x);
+                        pMaxX = Math.max(pMaxX, c.x);
+                        pMinY = Math.min(pMinY, c.y);
+                        pMaxY = Math.max(pMaxY, c.y);
+                    });
+                    partsNDC.push({minX: pMinX, maxX: pMaxX, minY: pMinY, maxY: pMaxY});
+                });
+                
+                let hasOverlap = false;
+                const margin = 0.03; // 3% of screen space minimum gap between parts
+                
+                for (let i = 0; i < partsNDC.length; i++) {
+                    for (let j = i + 1; j < partsNDC.length; j++) {
+                        const a = partsNDC[i];
+                        const b = partsNDC[j];
+                        if (!(a.maxX + margin < b.minX || a.minX - margin > b.maxX || 
+                              a.maxY + margin < b.minY || a.minY - margin > b.maxY)) {
+                            hasOverlap = true;
+                            break;
+                        }
+                    }
+                    if (hasOverlap) break;
+                }
+                
+                if (!hasOverlap) {
+                    break; // Perfection achieved!
+                }
+                
+                // If they overlap, push them slightly further apart and try again
+                optimalRadius += casingMax * 0.05;
+            }
+            
+            // 3. Apply the perfectly calculated non-overlapping offsets
             parts.forEach(p => {
                 if (p.node === bottomCasingPart) {
                     p.offsetVector = new THREE.Vector3(0,0,0);
+                    p.node.position.copy(p.origPosition);
                     return;
                 }
                 const index = explodeParts.indexOf(p.node);
                 if (index === -1) return;
-                
                 const angle = (index / numParts) * Math.PI * 2;
-                
-                // Aggressive Algorithm: 
-                // Ensure the minimum push distance in ANY direction is exactly window.radius (to prevent overlap).
-                // Then, aggressively stretch the longer screen dimension by the aspect ratio to fill the screen!
-                const pushX = Math.max(1.0, aspect);
-                const pushY = Math.max(1.0, 1.0 / aspect);
-                
-                const dirX = Math.cos(angle) * pushX; 
-                const dirY = Math.sin(angle) * pushY; 
-                
+                const dirX = Math.cos(angle) * bestPushX; 
+                const dirY = Math.sin(angle) * bestPushY; 
                 const dir = new THREE.Vector3()
                     .addScaledVector(cameraRight, dirX)
                     .addScaledVector(cameraUp, dirY);
-                    
-                const worldTranslation = dir.multiplyScalar(window.radius);
-                const worldPos = new THREE.Vector3();
-                p.node.getWorldPosition(worldPos);
+                const worldTranslation = dir.multiplyScalar(optimalRadius);
+                const worldPos = p.origPosition.clone();
+                p.node.parent.localToWorld(worldPos);
                 worldPos.add(worldTranslation);
-                
                 const targetLocalPos = p.node.parent.worldToLocal(worldPos);
                 p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
-                
-                // Apply the new dynamic offset
                 p.node.position.copy(p.origPosition).add(p.offsetVector);
             });
             
             modelGroup.updateMatrixWorld(true);
             
+            // 4. Safe rough scale and centering
             const rawBox = new THREE.Box3().setFromObject(modelGroup);
             const rawRadius = rawBox.getSize(new THREE.Vector3()).length();
-            const safeScale = 1.0 / rawRadius;
+            const safeScale = 1.0 / Math.max(0.1, rawRadius);
             
             modelGroup.scale.set(safeScale, safeScale, safeScale);
             modelGroup.position.sub(rawBox.getCenter(new THREE.Vector3()).multiplyScalar(safeScale));
             modelGroup.updateMatrixWorld(true);
             
-            // 2. Project exactly to NDC
+            // 5. Final precision pass to scale to exactly 95% of screen
             let minX = Infinity, maxX = -Infinity;
             let minY = Infinity, maxY = -Infinity;
             
@@ -571,34 +683,30 @@
                     new THREE.Vector3(box.max.x, box.max.y, box.min.z),
                     new THREE.Vector3(box.max.x, box.max.y, box.max.z),
                 ];
-                corners.forEach(corner => {
-                    corner.project(camera); 
-                    minX = Math.min(minX, corner.x);
-                    maxX = Math.max(maxX, corner.x);
-                    minY = Math.min(minY, corner.y);
-                    maxY = Math.max(maxY, corner.y);
+                corners.forEach(c => {
+                    c.project(camera); 
+                    minX = Math.min(minX, c.x);
+                    maxX = Math.max(maxX, c.x);
+                    minY = Math.min(minY, c.y);
+                    maxY = Math.max(maxY, c.y);
                 });
             });
             
             const ndcWidth = maxX - minX;
             const ndcHeight = maxY - minY;
+            const targetNdcSize = 1.9; // 95% of screen
             
-            // 3. 95% of screen
-            const targetNdcSize = 2.0 * 0.95; 
-            const fineScale = Math.min(targetNdcSize / ndcWidth, targetNdcSize / ndcHeight);
-            
+            const fineScale = Math.min(targetNdcSize / Math.max(0.01, ndcWidth), targetNdcSize / Math.max(0.01, ndcHeight));
             const finalScale = safeScale * fineScale;
+            
             modelGroup.scale.set(finalScale, finalScale, finalScale);
             modelGroup.position.set(0,0,0);
             modelGroup.updateMatrixWorld(true);
             
-            // 4. Center perfectly
             const finalExplodedBox = new THREE.Box3().setFromObject(modelGroup);
             modelGroup.position.sub(finalExplodedBox.getCenter(new THREE.Vector3()));
             
-            // Restore collapsed
             parts.forEach(p => p.node.position.copy(p.origPosition));
-            
             requestRender();
         }
         
