@@ -41,28 +41,22 @@
 
     <style>
         /* Exploded 3D view breakout styling */
-        #exploded-view-container {
-            position: relative;
-            width: 100vw;
-            height: 70vh;
-            left: 50%;
-            right: 50%;
-            margin-left: -50vw;
-            margin-right: -50vw;
-            background: #0a0a0f;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            overflow: hidden;
-            transition: background-color 0.3s, border-color 0.3s;
-            margin-top: 20px;
-            margin-bottom: 40px;
-            
-        }
-        body.light-mode #exploded-view-container {
-            background: #f9fafb;
-            border-top-color: rgba(0, 0, 0, 0.06);
-            border-bottom-color: rgba(0, 0, 0, 0.06);
-        }
+                  #exploded-view-container {
+              position: relative;
+              width: 100vw;
+              height: 70vh;
+              left: 50%;
+              right: 50%;
+              margin-left: -50vw;
+              margin-right: -50vw;
+              background: transparent;
+              overflow: hidden;
+              margin-top: 20px;
+              margin-bottom: 40px;
+          }
+          body.light-mode #exploded-view-container {
+              background: transparent;
+          }
         /* Glassmorphic tooltips */
         #exploded-view-tooltip {
             position: fixed;
@@ -320,8 +314,7 @@
     // 1. Scene setup
     const scene = new THREE.Scene();
     let isLightMode = document.body.classList.contains('light-mode');
-    const bgColor = isLightMode ? 0xf9fafb : 0x0a0a0f;
-    scene.background = new THREE.Color(bgColor);
+    scene.background = null; // Removed to allow CSS background to show through
 
     // 2. Camera setup - fixed isometric perspective
     // Adjust camera to fit the 70vh container
@@ -353,9 +346,9 @@
     const themeObserver = new MutationObserver(() => {
         const isLight = document.body.classList.contains('light-mode');
         const targetColor = isLight ? 0xf9fafb : 0x0a0a0f;
-        scene.background.setHex(targetColor);
-        ambientLight.intensity = isLight ? 0.8 : 0.4;
-        dirLight1.intensity = isLight ? 1.5 : 1.0;
+        // scene.background.setHex(targetColor); // Disabled for true transparency
+        ambientLight.intensity = isLight ? 0.8 : 1.2; // Boosted dark mode ambient
+            dirLight1.intensity = isLight ? 1.5 : 2.0; // Boosted dark mode directional
         dirLight2.intensity = isLight ? 0.6 : 0.3;
         requestRender();
     });
@@ -363,7 +356,7 @@
 
     // 5. Model Loading
     const loader = new GLTFLoader();
-    const modelUrl = '../../img/RemoteTankMonitoring-Enclosure+TankMount.gltf';
+    const modelUrl = '../../img/RemoteTankMonitoring-Enclosure+TankMount.gltf?v=' + new Date().getTime();
 
     let modelGroup = null;
     const parts = []; // Store parts for explosion
@@ -375,45 +368,76 @@
     loader.load(modelUrl, (gltf) => {
         modelGroup = gltf.scene;
 
-        // Traverse and identify parts
-        // In FreeCAD GLTF exports, the scene has 1 child (root assembly node), which has children (the parts)
         const rootNode = modelGroup.children[0] || modelGroup;
-        
         let bottomCasingPart = null;
         const explodeParts = [];
         
         rootNode.children.forEach(child => {
-            // Include everything that is a 3D object (Mesh, Group, Object3D)
             if (child.isObject3D && !child.isLight && !child.isCamera) {
-                if (child.name.includes('BottomCasing')) {
-                    bottomCasingPart = child;
+                if (child.name.includes('BottomCasing') || child.name.includes('Casing')) {
+                    if (!bottomCasingPart) bottomCasingPart = child;
+                    else explodeParts.push(child);
                 } else {
                     explodeParts.push(child);
                 }
             }
         });
 
-        // 1. Calculate the overall center of the collapsed assembly
-        const collapsedBox = new THREE.Box3().setFromObject(modelGroup);
-        const collapsedCenter = collapsedBox.getCenter(new THREE.Vector3());
+        if (!bottomCasingPart && explodeParts.length > 0) {
+            bottomCasingPart = explodeParts.shift();
+        }
+
+        modelGroup.updateMatrixWorld(true);
+
+        // Force EVERYTHING to be visible to ensure TopCasing isn't hidden
+        modelGroup.traverse(node => {
+            node.visible = true;
+            if (node.isMesh && node.material) {
+                node.material.visible = true;
+                node.material.opacity = 1.0;
+                node.material.transparent = false;
+            }
+        });
+
+        const bottomCasingBox = new THREE.Box3().setFromObject(bottomCasingPart);
+        const casingSize = bottomCasingBox.getSize(new THREE.Vector3());
         
-        // 2. Determine a good radius for the circle based on the sizes of the parts
         let maxPartDim = 0;
+        window.radius = 0; // Global for fitModelToScreen
         explodeParts.forEach(child => {
             const childBox = new THREE.Box3().setFromObject(child);
             const size = childBox.getSize(new THREE.Vector3());
-            maxPartDim = Math.max(maxPartDim, size.x, size.y, size.z);
+            maxPartDim = Math.max(maxPartDim, Math.max(size.x, size.z));
         });
-        // Circle radius should be large enough to hold all parts without overlap
-        let radius = (explodeParts.length * maxPartDim * 1.2) / (2 * Math.PI);
-        radius = Math.max(radius, maxPartDim * 1.5); // Ensure a minimum radius
+        
+        // Screen-Plane Explosion calculations
+        camera.updateMatrixWorld();
+        const cameraRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion).normalize();
+        const cameraUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion).normalize();
+        
+        // Dynamic radius using max 3D diagonal to ensure it clears the casing visually from any angle
+        const casingMax = Math.max(casingSize.x, casingSize.y, casingSize.z);
+        window.radius = (casingMax * 0.5 + maxPartDim * 0.5) * 1.15;
 
-        // 3. Add BottomCasing
         if (bottomCasingPart) {
+            const childBox = new THREE.Box3().setFromObject(bottomCasingPart);
+            const childCenterWorld = childBox.getCenter(new THREE.Vector3());
+            const childCenterParent = bottomCasingPart.parent.worldToLocal(childCenterWorld);
+            const pivotOffset = childCenterParent.clone().sub(bottomCasingPart.position);
+
+            const hitboxGeo = new THREE.BoxGeometry(casingSize.x, casingSize.y, casingSize.z);
+            const hitboxMat = new THREE.MeshBasicMaterial({ visible: false });
+            const hitbox = new THREE.Mesh(hitboxGeo, hitboxMat);
+            bottomCasingPart.worldToLocal(childCenterWorld.clone());
+            hitbox.position.copy(bottomCasingPart.worldToLocal(childBox.getCenter(new THREE.Vector3())));
+            bottomCasingPart.add(hitbox);
+
             parts.push({
+                hitbox: hitbox,
                 node: bottomCasingPart,
                 origPosition: bottomCasingPart.position.clone(),
                 offsetVector: new THREE.Vector3(0, 0, 0),
+                pivotOffset: pivotOffset,
                 origScale: bottomCasingPart.scale.clone(),
                 targetScale: bottomCasingPart.scale.clone(),
                 currentScale: bottomCasingPart.scale.clone(),
@@ -423,30 +447,45 @@
             });
         }
         
-        // 4. Calculate target exploded positions and offset vectors
         const numParts = explodeParts.length;
-        
         explodeParts.forEach((child, index) => {
             const angle = (index / numParts) * Math.PI * 2;
             
-            // The child's current center in local space
+            const aspect = container.clientWidth / container.clientHeight;
+            const dirX = Math.cos(angle) * aspect; 
+            const dirY = Math.sin(angle) * 1.0; 
+            
+            const dir = new THREE.Vector3()
+                .addScaledVector(cameraRight, dirX)
+                .addScaledVector(cameraUp, dirY);
+                
+            const worldTranslation = dir.multiplyScalar(window.radius);
+            
+            const worldPos = new THREE.Vector3();
+            child.getWorldPosition(worldPos);
+            worldPos.add(worldTranslation);
+            const targetLocalPos = child.parent.worldToLocal(worldPos);
+            const translation = targetLocalPos.clone().sub(child.position);
+            // Bulletproof robust offset applied in local space!
+            
             const childBox = new THREE.Box3().setFromObject(child);
-            const childCenter = childBox.getCenter(new THREE.Vector3());
-            
-            // We want its center to end up on the circle around the collapsed center
-            const targetCenter = new THREE.Vector3(
-                collapsedCenter.x + Math.cos(angle) * radius,
-                collapsedCenter.y + (maxPartDim * 0.3), // elevate slightly so it orbits above
-                collapsedCenter.z + Math.sin(angle) * radius
-            );
-            
-            // The required translation to move childCenter to targetCenter
-            const translation = targetCenter.clone().sub(childCenter);
-            
+            const childSize = childBox.getSize(new THREE.Vector3());
+            const childCenterWorld = childBox.getCenter(new THREE.Vector3());
+            const childCenterParent = child.parent.worldToLocal(childCenterWorld.clone());
+            const pivotOffset = childCenterParent.clone().sub(child.position);
+
+            const hitboxGeo = new THREE.BoxGeometry(childSize.x, childSize.y, childSize.z);
+            const hitboxMat = new THREE.MeshBasicMaterial({ visible: false });
+            const hitbox = new THREE.Mesh(hitboxGeo, hitboxMat);
+            hitbox.position.copy(child.worldToLocal(childCenterWorld.clone()));
+            child.add(hitbox);
+
             parts.push({
+                hitbox: hitbox,
                 node: child,
                 origPosition: child.position.clone(),
                 offsetVector: translation,
+                pivotOffset: pivotOffset,
                 origScale: child.scale.clone(),
                 targetScale: child.scale.clone(),
                 currentScale: child.scale.clone(),
@@ -456,32 +495,118 @@
             });
         });
 
-        // 5. Temporarily move parts to exploded state to calculate the maximum bounding box
-        parts.forEach(p => p.node.position.copy(p.origPosition).add(p.offsetVector));
-        const explodedBox = new THREE.Box3().setFromObject(modelGroup);
-        const explodedSize = explodedBox.getSize(new THREE.Vector3());
+        function fitModelToScreen() {
+            // 1. Safe rough scale and reset positions
+            modelGroup.scale.set(1,1,1);
+            modelGroup.position.set(0,0,0);
+            
+            parts.forEach(p => p.node.position.copy(p.origPosition));
+            modelGroup.updateMatrixWorld(true);
+            
+            // Dynamic Ellipse Recalculation based on CURRENT window size!
+            const aspect = container.clientWidth / container.clientHeight;
+            camera.updateMatrixWorld();
+            const cameraRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion).normalize();
+            const cameraUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion).normalize();
+            const numParts = explodeParts.length;
+            
+            parts.forEach(p => {
+                if (p.node === bottomCasingPart) {
+                    p.offsetVector = new THREE.Vector3(0,0,0);
+                    return;
+                }
+                const index = explodeParts.indexOf(p.node);
+                if (index === -1) return;
+                
+                const angle = (index / numParts) * Math.PI * 2;
+                
+                // Aggressive Algorithm: 
+                // Ensure the minimum push distance in ANY direction is exactly window.radius (to prevent overlap).
+                // Then, aggressively stretch the longer screen dimension by the aspect ratio to fill the screen!
+                const pushX = Math.max(1.0, aspect);
+                const pushY = Math.max(1.0, 1.0 / aspect);
+                
+                const dirX = Math.cos(angle) * pushX; 
+                const dirY = Math.sin(angle) * pushY; 
+                
+                const dir = new THREE.Vector3()
+                    .addScaledVector(cameraRight, dirX)
+                    .addScaledVector(cameraUp, dirY);
+                    
+                const worldTranslation = dir.multiplyScalar(window.radius);
+                const worldPos = new THREE.Vector3();
+                p.node.getWorldPosition(worldPos);
+                worldPos.add(worldTranslation);
+                
+                const targetLocalPos = p.node.parent.worldToLocal(worldPos);
+                p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
+                
+                // Apply the new dynamic offset
+                p.node.position.copy(p.origPosition).add(p.offsetVector);
+            });
+            
+            modelGroup.updateMatrixWorld(true);
+            
+            const rawBox = new THREE.Box3().setFromObject(modelGroup);
+            const rawRadius = rawBox.getSize(new THREE.Vector3()).length();
+            const safeScale = 1.0 / rawRadius;
+            
+            modelGroup.scale.set(safeScale, safeScale, safeScale);
+            modelGroup.position.sub(rawBox.getCenter(new THREE.Vector3()).multiplyScalar(safeScale));
+            modelGroup.updateMatrixWorld(true);
+            
+            // 2. Project exactly to NDC
+            let minX = Infinity, maxX = -Infinity;
+            let minY = Infinity, maxY = -Infinity;
+            
+            parts.forEach(p => {
+                const box = new THREE.Box3().setFromObject(p.node);
+                const corners = [
+                    new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+                    new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                    new THREE.Vector3(box.min.x, box.max.y, box.min.z),
+                    new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                    new THREE.Vector3(box.max.x, box.min.y, box.min.z),
+                    new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                    new THREE.Vector3(box.max.x, box.max.y, box.min.z),
+                    new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                ];
+                corners.forEach(corner => {
+                    corner.project(camera); 
+                    minX = Math.min(minX, corner.x);
+                    maxX = Math.max(maxX, corner.x);
+                    minY = Math.min(minY, corner.y);
+                    maxY = Math.max(maxY, corner.y);
+                });
+            });
+            
+            const ndcWidth = maxX - minX;
+            const ndcHeight = maxY - minY;
+            
+            // 3. 95% of screen
+            const targetNdcSize = 2.0 * 0.95; 
+            const fineScale = Math.min(targetNdcSize / ndcWidth, targetNdcSize / ndcHeight);
+            
+            const finalScale = safeScale * fineScale;
+            modelGroup.scale.set(finalScale, finalScale, finalScale);
+            modelGroup.position.set(0,0,0);
+            modelGroup.updateMatrixWorld(true);
+            
+            // 4. Center perfectly
+            const finalExplodedBox = new THREE.Box3().setFromObject(modelGroup);
+            modelGroup.position.sub(finalExplodedBox.getCenter(new THREE.Vector3()));
+            
+            // Restore collapsed
+            parts.forEach(p => p.node.position.copy(p.origPosition));
+            
+            requestRender();
+        }
         
-        // 6. Calculate scale factor so the EXPLODED assembly fits perfectly within the camera view
-        // The camera is at (2, 1.5, 2) looking at (0,0,0). A 2.2 unit max dimension object fits very well.
-        const maxExplodedDim = Math.max(explodedSize.x, explodedSize.y, explodedSize.z);
-        const scaleFactor = 2.2 / maxExplodedDim;
-        
-        // 7. Restore original positions before scaling
-        parts.forEach(p => p.node.position.copy(p.origPosition));
-        
-        // 8. Apply scale and center the collapsed model
-        modelGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
-        
-        // Re-center the modelGroup based on its new scaled collapsed box
-        const finalCollapsedBox = new THREE.Box3().setFromObject(modelGroup);
-        const finalCenter = finalCollapsedBox.getCenter(new THREE.Vector3());
-        modelGroup.position.sub(finalCenter);
+        window.fitModelToScreen = fitModelToScreen;
+        fitModelToScreen();
 
         scene.add(modelGroup);
-        
-        // Create mobile buttons
         createMobileButtons();
-        
         requestRender();
     });
 
@@ -553,28 +678,19 @@
 
         raycaster.setFromCamera(mouse, camera);
         
-        // Collect all meshes
-        const meshes = parts.map(p => p.node);
-        const intersects = raycaster.intersectObjects(meshes, true);
+        // Invisible Bounding Box Raycasting
+        const hitboxes = parts.map(p => p.hitbox);
+        const intersects = raycaster.intersectObjects(hitboxes, false);
 
         let foundPart = null;
         if (intersects.length > 0) {
-            // Find which part this mesh belongs to
-            let obj = intersects[0].object;
-            while (obj && obj !== modelGroup) {
-                const part = parts.find(p => p.node === obj);
-                if (part) {
-                    foundPart = part;
-                    break;
-                }
-                obj = obj.parent;
-            }
+            const hitObject = intersects[0].object;
+            const part = parts.find(p => p.hitbox === hitObject);
+            if (part) { foundPart = part; }
         }
 
         if (foundPart !== currentHoveredPart) {
-            if (currentHoveredPart) {
-                unhoverPart(currentHoveredPart);
-            }
+            if (currentHoveredPart) unhoverPart(currentHoveredPart);
             currentHoveredPart = foundPart;
             if (foundPart) {
                 hoverPart(foundPart);
@@ -592,10 +708,12 @@
     let scaleAnimationId = null;
     function hoverPart(part) {
         part.targetScale = part.origScale.clone().multiplyScalar(1.1);
+        part.isHovered = true;
         startScaleLoop();
     }
     function unhoverPart(part) {
         part.targetScale = part.origScale.clone();
+        part.isHovered = false;
         startScaleLoop();
     }
 
@@ -610,7 +728,42 @@
                 if (part.currentScale.distanceTo(part.targetScale) > 0.001) {
                     stillAnimating = true;
                 }
+
+                if (!part.origQuaternion) {
+                    part.origQuaternion = part.node.quaternion.clone();
+                }
+
+                if (part.isHovered) {
+                    if (part.currentRotationY === undefined) part.currentRotationY = 0;
+                    part.currentRotationY += 0.015; 
+                    stillAnimating = true;
+                } else if (part.currentRotationY !== undefined && part.currentRotationY > 0) {
+                    part.currentRotationY += (0 - part.currentRotationY) * 0.1;
+                    if (part.currentRotationY < 0.001) part.currentRotationY = 0;
+                    else stillAnimating = true;
+                }
+
+                if (part.currentRotationY !== undefined) {
+                    const basePos = part.origPosition.clone().add(part.offsetVector.clone().multiplyScalar(explosionProgress.value));
+                    part.node.position.copy(basePos);
+                    part.node.quaternion.copy(part.origQuaternion);
+
+                    if (part.currentRotationY > 0) {
+                        const axis = new THREE.Vector3(0,1,0);
+                        const q = new THREE.Quaternion().setFromAxisAngle(axis, part.currentRotationY);
+                        
+                        // Pivot is exactly offset from basePos
+                        const pivot = basePos.clone().add(part.pivotOffset);
+                        
+                        part.node.position.sub(pivot);
+                        part.node.position.applyQuaternion(q);
+                        part.node.position.add(pivot);
+                        
+                        part.node.quaternion.premultiply(q);
+                    }
+                }
             });
+            
             requestRender();
             
             if (stillAnimating) {
@@ -706,6 +859,7 @@
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
+        if (window.fitModelToScreen) window.fitModelToScreen();
         updateMobileButtons();
         requestRender();
     });
