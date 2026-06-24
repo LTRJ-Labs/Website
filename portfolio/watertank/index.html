@@ -56,6 +56,7 @@
             transition: background-color 0.3s, border-color 0.3s;
             margin-top: 20px;
             margin-bottom: 40px;
+            cursor: pointer;
         }
         body.light-mode #exploded-view-container {
             background: #f9fafb;
@@ -102,10 +103,28 @@
         body.light-mode #tooltip-desc {
             color: #4b5563;
         }
-        /* Bounce micro-animation */
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(5px); }
+        #mobile-buttons-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .mobile-plus-btn {
+            position: absolute;
+            width: 32px; height: 32px;
+            background: rgba(255, 102, 0, 0.8);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            pointer-events: auto;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: opacity 0.3s;
+            cursor: pointer;
         }
     </style>
 
@@ -226,14 +245,15 @@
                     <div id="exploded-view-container">
                         <canvas id="exploded-view-canvas"></canvas>
                         
+                        <div id="mobile-buttons-container"></div>
+                        
                         <!-- Floating User Prompts -->
                         <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; z-index: 10;">
-                            <p id="scroll-prompt" style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #888; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8); transition: opacity 0.3s; opacity: 1;">
-                                <i class="fa fa-chevron-down" style="color: #FF6600; margin-bottom: 4px; display: block; animation: bounce 1.5s infinite;"></i>
-                                Scroll down to explode assembly
+                            <p id="scroll-prompt" class="hidden-md hidden-lg" style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #888; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+                                Scroll to view assembly
                             </p>
-                            <p id="hover-prompt" style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #FF6600; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8); transition: opacity 0.3s; opacity: 0; display: none;">
-                                Hover over components to inspect details
+                            <p id="hover-prompt" class="hidden-xs hidden-sm" style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #888; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+                                Hover to explode & inspect
                             </p>
                         </div>
                         
@@ -294,479 +314,360 @@
 
     <!-- 3D Exploded View Logic -->
     <script type="module">
-        import * as THREE from 'three';
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-        import gsap from 'gsap';
-        import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import gsap from 'gsap';
 
-        gsap.registerPlugin(ScrollTrigger);
+    const container = document.getElementById('exploded-view-container');
+    const canvas = document.getElementById('exploded-view-canvas');
+    const tooltip = document.getElementById('exploded-view-tooltip');
+    const tooltipTitle = document.getElementById('tooltip-title');
+    const tooltipDesc = document.getElementById('tooltip-desc');
+    
+    // We will dynamically create mobile plus buttons
+    const mobileButtonsContainer = document.getElementById('mobile-buttons-container');
 
-        const container = document.getElementById('exploded-view-container');
-        const canvas = document.getElementById('exploded-view-canvas');
-        const tooltip = document.getElementById('exploded-view-tooltip');
-        const tooltipTitle = document.getElementById('tooltip-title');
-        const tooltipDesc = document.getElementById('tooltip-desc');
-        const scrollPrompt = document.getElementById('scroll-prompt');
-        const hoverPrompt = document.getElementById('hover-prompt');
+    // 1. Scene setup
+    const scene = new THREE.Scene();
+    let isLightMode = document.body.classList.contains('light-mode');
+    const bgColor = isLightMode ? 0xf9fafb : 0x0a0a0f;
+    scene.background = new THREE.Color(bgColor);
 
-        // 1. Scene setup
-        const scene = new THREE.Scene();
-        let isLightMode = document.body.classList.contains('light-mode');
-        const bgColor = isLightMode ? 0xf9fafb : 0x0a0a0f;
-        scene.background = new THREE.Color(bgColor);
+    // 2. Camera setup - fixed isometric perspective
+    // Adjust camera to fit the 70vh container
+    const camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(2.0, 1.5, 2.0);
+    camera.lookAt(0, 0, 0);
 
-        // 2. Camera setup - locked isometric-style perspective looking down diagonally
-        const camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 100);
-        camera.position.set(1.5, 1.2, 1.5);
-        camera.lookAt(0, -0.02, 0);
+    // 3. Renderer setup
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-        // 3. Renderer setup
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.0;
-        renderer.outputColorSpace = THREE.SRGBColorSpace;
+    // 4. Lighting setup
+    const ambientLight = new THREE.AmbientLight(0xffffff, isLightMode ? 0.8 : 0.4);
+    scene.add(ambientLight);
 
-        // 4. Lighting setup
-        const ambientLight = new THREE.AmbientLight(0xffffff, isLightMode ? 0.8 : 0.4);
-        scene.add(ambientLight);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, isLightMode ? 1.5 : 1.0);
+    dirLight1.position.set(5, 8, 5);
+    scene.add(dirLight1);
 
-        const dirLight1 = new THREE.DirectionalLight(0xffffff, isLightMode ? 1.5 : 1.0);
-        dirLight1.position.set(5, 8, 5);
-        scene.add(dirLight1);
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, isLightMode ? 0.6 : 0.3);
+    dirLight2.position.set(-3, 4, -4);
+    scene.add(dirLight2);
 
-        const dirLight2 = new THREE.DirectionalLight(0xffffff, isLightMode ? 0.6 : 0.3);
-        dirLight2.position.set(-3, 4, -4);
-        scene.add(dirLight2);
+    // Theme observer
+    const themeObserver = new MutationObserver(() => {
+        const isLight = document.body.classList.contains('light-mode');
+        const targetColor = isLight ? 0xf9fafb : 0x0a0a0f;
+        scene.background.setHex(targetColor);
+        ambientLight.intensity = isLight ? 0.8 : 0.4;
+        dirLight1.intensity = isLight ? 1.5 : 1.0;
+        dirLight2.intensity = isLight ? 0.6 : 0.3;
+        requestRender();
+    });
+    themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
-        // 5. Theme observer to sync WebGL clear color and lighting
-        const themeObserver = new MutationObserver(() => {
-            const isLight = document.body.classList.contains('light-mode');
-            const targetColor = isLight ? 0xf9fafb : 0x0a0a0f;
-            scene.background.setHex(targetColor);
-            ambientLight.intensity = isLight ? 0.8 : 0.4;
-            dirLight1.intensity = isLight ? 1.5 : 1.0;
-            dirLight2.intensity = isLight ? 0.6 : 0.3;
-            requestRender();
-        });
-        themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    // 5. Model Loading
+    const loader = new GLTFLoader();
+    const modelUrl = '../../img/RemoteTankMonitoring-Enclosure+TankMount.gltf';
 
-        // 6. Interactive & Explode Configurations
-        const interactiveConfigs = [
-            {
-                id: 'lid',
-                name: 'Enclosure Lid',
-                desc: 'Top cover with a gasket seal protecting the internal electronics from water ingress and dust.',
-                match: (node) => node.name === 'LidAssembly'
-            },
-            {
-                id: 'base',
-                name: 'Enclosure Base',
-                desc: 'Rugged, weather-sealed polycarbonate base housing the electronics and battery compartment.',
-                match: (node) => node.name === 'BottomCasing'
-            },
-            {
-                id: 'pcb',
-                name: 'Main PCB Assembly',
-                desc: '4-layer FR4 board populated with the ESP32 microcontroller, power management systems, and sensor connectors.',
-                match: (node) => node.name === 'MainBoard'
-            },
-            {
-                id: 'modem',
-                name: 'LTE Cellular Modem',
-                desc: 'Low-power LTE Cat M1/NB-IoT cellular modem providing reliable cloud telemetry connectivity.',
-                match: (node) => node.name === 'BG95mPCIE'
-            },
-            {
-                id: 'battery_holder',
-                name: 'Battery Holder',
-                desc: 'Secure holder for 18650 lithium-ion cells, providing the system\'s power source.',
-                match: (node) => node.name.includes('Battery Holder') || node.name.startsWith('BatteryHolder') || node.name === '18650 Battery Holder 4x'
-            },
-            {
-                id: 'sensor',
-                name: 'Ultrasonic Level Sensor',
-                desc: 'High-precision sensor emitting ultrasonic pulses to measure the distance to the water surface.',
-                match: (node) => node.name.includes('sensor') || node.name.startsWith('DYP-A02')
-            },
-            {
-                id: 'mount',
-                name: 'Sensor Mount',
-                desc: 'Threaded physical mount holding the ultrasonic sensor securely in place at the top of the tank.',
-                match: (node) => node.name === 'UltrasonicMount'
-            },
-            {
-                id: 'bracket',
-                name: 'Sensor Bracket',
-                desc: 'Sleeve bracket that attaches the ultrasonic sensor to the threaded mount.',
-                match: (node) => node.name === 'Casing2Ultrasonic'
+    let modelGroup = null;
+    const parts = []; // Store parts for explosion
+    let isExploded = false;
+    let explosionProgress = { value: 0 };
+    let currentHoveredPart = null;
+    let isMobile = window.innerWidth <= 768;
+
+    loader.load(modelUrl, (gltf) => {
+        modelGroup = gltf.scene;
+        
+        // Scale and center the model
+        modelGroup.scale.set(10, 10, 10);
+        
+        // Calculate bounding box and center
+        const box = new THREE.Box3().setFromObject(modelGroup);
+        const center = box.getCenter(new THREE.Vector3());
+        modelGroup.position.sub(center); // Center the group
+
+        // Traverse and identify parts to explode
+        modelGroup.traverse((node) => {
+            if (node.isMesh && node.parent === modelGroup || (node.parent && node.parent.parent === modelGroup)) {
+                // If it's a prominent mesh or group
+                // In FreeCAD GLTF exports, top-level children are usually the parts
             }
-        ];
-
-        function getNodeExplodeConfig(node) {
-            const name = node.name;
-            if (name === 'LidAssembly') return { offsetVector: new THREE.Vector3(0, 0.15, 0) };
-            if (name === 'BG95mPCIE') return { offsetVector: new THREE.Vector3(0, 0.08, -0.06) };
-            if (name === 'BottomCasing') return { offsetVector: new THREE.Vector3(0, 0, 0) };
-            if (name.includes('Battery Holder') || name.startsWith('BatteryHolder') || name === '18650 Battery Holder 4x') {
-                return { offsetVector: new THREE.Vector3(-0.12, 0.02, 0) };
-            }
-            if (name === 'MainBoard') return { offsetVector: new THREE.Vector3(0.12, 0.02, 0) };
-            if (name === 'Casing2Ultrasonic') return { offsetVector: new THREE.Vector3(0.08, -0.08, 0.06) };
-            if (name === 'UltrasonicMount') return { offsetVector: new THREE.Vector3(-0.08, -0.08, 0.06) };
-            if (name.includes('sensor') || name.startsWith('DYP-A02')) return { offsetVector: new THREE.Vector3(0, -0.08, 0.08) };
-            if (name === 'RemoteTankMonitoring_PCB') return { offsetVector: new THREE.Vector3(0, 0, 0) };
-            
-            // PCB components (inside MainBoard)
-            if (node.parent && node.parent.name === 'MainBoard') {
-                if (name.startsWith('SOLID')) return { offsetVector: new THREE.Vector3(0, 0.015, 0) };
-                if (name.startsWith('res_') || name.startsWith('ceramic_cap_') || name.startsWith('D_0402') || name.startsWith('DO-214') || name.startsWith('led_') || name.startsWith('25ZLH') || name.startsWith('SWPA') || name.startsWith('SPM2512') || name.startsWith('TS-1088')) {
-                    return { offsetVector: new THREE.Vector3(0, 0.03, 0) };
-                }
-                if (name.startsWith('ESP32') || name.startsWith('INA219') || name.startsWith('lr62xe') || name.startsWith('SOT23')) {
-                    return { offsetVector: new THREE.Vector3(0, 0.045, 0) };
-                }
-                if (name.startsWith('JST') || name.includes('JST_PH') || name.startsWith('TYPE-C') || name.startsWith('DB301V')) {
-                    return { offsetVector: new THREE.Vector3(0, 0.06, 0) };
-                }
-            }
-            return null;
-        }
-
-        // 7. Model loading and classification
-        const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
-
-        const loader = new GLTFLoader();
-        loader.setDRACOLoader(dracoLoader);
-
-        let modelGroup = null;
-        const explodeItems = [];
-        const interactiveItems = [];
-        const explodeState = { progress: 0 };
-        let currentHoveredItem = null;
-        let isAnimating = false;
-
-        function onModelLoaded(gltf) {
-            modelGroup = gltf.scene;
-            
-            // The top-level group node inside gltf.scene is 'RemoteTankMonitoring'
-            const rootNode = modelGroup.getObjectByName('RemoteTankMonitoring') || modelGroup;
-            
-            // Group Main & Pocket015 into LidAssembly under rootNode
-            const mainNode = rootNode.children.find(c => c.name === 'Main');
-            const pocketNode = rootNode.children.find(c => c.name === 'Pocket015');
-            let lidAssembly = null;
-            if (mainNode || pocketNode) {
-                lidAssembly = new THREE.Group();
-                lidAssembly.name = 'LidAssembly';
-                rootNode.add(lidAssembly);
-                if (mainNode) lidAssembly.add(mainNode);
-                if (pocketNode) lidAssembly.add(pocketNode);
-            }
-
-            // Scale and orient modelGroup
-            modelGroup.scale.set(10, 10, 10);
-            modelGroup.rotation.set(0, 0, 0); // No rotation (Y-up)
-
-            // Helper to get direct child of rootNode for any node
-            function getRootChildAncestor(node, rootNode) {
-                let curr = node;
-                while (curr && curr.parent !== rootNode) {
-                    curr = curr.parent;
-                }
-                return curr;
-            }
-
-            // Traverse and process nodes
-            modelGroup.traverse((node) => {
-                // Skip duplicate loose nodes directly under rootNode
-                const ancestor = getRootChildAncestor(node, rootNode);
-                if (ancestor && 
-                    ancestor.name !== 'Enclosure+TankMount' && 
-                    ancestor.name !== 'Main' && 
-                    ancestor.name !== 'Pocket015' && 
-                    ancestor.name !== 'LidAssembly') {
-                    if (node.isMesh) node.visible = false;
-                    return;
-                }
-
-                // Register nodes for explosion
-                const expConfig = getNodeExplodeConfig(node);
-                if (expConfig) {
-                    explodeItems.push({
-                        node: node,
-                        offsetVector: expConfig.offsetVector,
-                        origPosition: node.position.clone()
-                    });
-                }
-
-                // Register nodes for interaction
-                const intConfig = interactiveConfigs.find(c => c.match(node));
-                if (intConfig) {
-                    const box = new THREE.Box3().setFromObject(node);
-                    const worldCenter = box.getCenter(new THREE.Vector3());
-                    let parentCenter = worldCenter.clone();
-                    if (node.parent) {
-                        node.parent.worldToLocal(parentCenter);
-                    }
-                    const localCenterOffset = parentCenter.clone().sub(node.position);
-
-                    interactiveItems.push({
-                        node: node,
-                        label: intConfig.name,
-                        desc: intConfig.desc,
-                        origPosition: node.position.clone(),
-                        origQuaternion: node.quaternion.clone(),
-                        localCenterOffset: localCenterOffset,
-                        currentAngle: 0,
-                        targetAngle: 0,
-                        isHovered: false
-                    });
-                }
-            });
-
-            scene.add(modelGroup);
-            requestRender();
-            initScrollTrigger();
-        }
-
-        // Try loading optimized model first, fall back to unoptimized if it fails or is not found
-        const modelUrl = '../../img/RemoteTankMonitoring_optimized.gltf';
-        const fallbackUrl = '../../img/RemoteTankMonitoring.gltf';
-
-        loader.load(modelUrl, (gltf) => {
-            onModelLoaded(gltf);
-        }, undefined, (error) => {
-            console.warn('Optimized model not found. Falling back to unoptimized model...', error);
-            loader.load(fallbackUrl, (gltf) => {
-                onModelLoaded(gltf);
-            }, undefined, (fallbackError) => {
-                console.error('An error occurred loading the fallback GLTF model:', fallbackError);
-            });
         });
 
-        // 8. Scroll-Driven Explosion Logic
-        function initScrollTrigger() {
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: '#exploded-view-container',
-                    start: 'top top',
-                    end: '+=100%',
-                    pin: true,
-                    scrub: 1.2,
-                    onUpdate: (self) => {
-                        explodeState.progress = self.progress;
-                        updateExplosion(self.progress);
-                        
-                        // Handle prompts visibility
-                        if (self.progress > 0.9) {
-                            if (!currentHoveredItem) {
-                                scrollPrompt.style.opacity = '0';
-                                setTimeout(() => { if (explodeState.progress > 0.9 && !currentHoveredItem) scrollPrompt.style.display = 'none'; }, 300);
-                                hoverPrompt.style.display = 'block';
-                                setTimeout(() => { if (explodeState.progress > 0.9 && !currentHoveredItem) hoverPrompt.style.opacity = '1'; }, 50);
-                            }
-                        } else {
-                            hoverPrompt.style.opacity = '0';
-                            setTimeout(() => { if (explodeState.progress <= 0.9) hoverPrompt.style.display = 'none'; }, 300);
-                            scrollPrompt.style.display = 'block';
-                            setTimeout(() => { if (explodeState.progress <= 0.9) scrollPrompt.style.opacity = '1'; }, 50);
-                            
-                            // Reset tooltips and hovers on scroll back
-                            if (currentHoveredItem) {
-                                currentHoveredItem.isHovered = false;
-                                currentHoveredItem = null;
-                                tooltip.style.opacity = '0';
-                                setTimeout(() => { if (!currentHoveredItem) tooltip.style.display = 'none'; }, 250);
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateExplosion(progress) {
-            for (const item of explodeItems) {
-                const offsetVector = item.offsetVector.clone().multiplyScalar(progress);
-                item.node.position.copy(item.origPosition).add(offsetVector);
+        // Let's grab the top level children as parts
+        modelGroup.children.forEach(child => {
+            if (child.type === 'Mesh' || child.type === 'Group') {
+                // Calculate an outward explosion vector based on its position relative to center
+                const childBox = new THREE.Box3().setFromObject(child);
+                const childCenter = childBox.getCenter(new THREE.Vector3());
+                const dir = childCenter.clone().sub(new THREE.Vector3(0,0,0)).normalize();
                 
-                // PCB substrate opacity fading
-                if (item.node.name === 'RemoteTankMonitoring_PCB') {
-                    item.node.traverse((child) => {
-                        if (child.isMesh && child.material) {
-                            const materials = Array.isArray(child.material) ? child.material : [child.material];
-                            for (const mat of materials) {
-                                mat.transparent = progress > 0;
-                                mat.opacity = progress > 0 ? 0.45 : 1.0;
-                                mat.depthWrite = progress === 0;
-                                mat.needsUpdate = true;
-                            }
-                        }
-                    });
-                }
+                // Add some vertical spread
+                dir.y += (Math.random() - 0.5) * 0.5;
+                dir.normalize();
+
+                const offsetVector = dir.multiplyScalar(0.5); // Magnitude of explosion
+
+                parts.push({
+                    node: child,
+                    origPosition: child.position.clone(),
+                    offsetVector: offsetVector,
+                    origScale: child.scale.clone(),
+                    targetScale: child.scale.clone(),
+                    currentScale: child.scale.clone(),
+                    label: child.name || 'Component',
+                    desc: 'Details about ' + (child.name || 'this component') + ' will go here.',
+                    buttonEl: null
+                });
             }
-            requestRender();
-        }
+        });
 
-        // 9. Raycasting and Hover Interaction
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
+        scene.add(modelGroup);
+        
+        // Create mobile buttons
+        createMobileButtons();
+        
+        requestRender();
+    });
 
-        function onMouseMove(event) {
-            const rect = canvas.getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    // 6. Explosion Animation Logic
+    function setExplosionProgress(progress) {
+        explosionProgress.value = progress;
+        parts.forEach(part => {
+            const currentOffset = part.offsetVector.clone().multiplyScalar(progress);
+            part.node.position.copy(part.origPosition).add(currentOffset);
+        });
+        updateMobileButtons();
+        requestRender();
+    }
 
-            // Position tooltip near cursor
-            tooltip.style.left = `${event.clientX}px`;
-            tooltip.style.top = `${event.clientY}px`;
-
-            if (modelGroup && explodeState.progress > 0.9) {
-                checkRaycast();
-            }
-        }
-        window.addEventListener('mousemove', onMouseMove);
-
-        function checkRaycast() {
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(modelGroup.children, true);
-
-            let foundItem = null;
-            if (intersects.length > 0) {
-                let curr = intersects[0].object;
-                while (curr && curr !== modelGroup) {
-                    const matched = interactiveItems.find(item => item.node === curr);
-                    if (matched) {
-                        foundItem = matched;
-                        break;
-                    }
-                    curr = curr.parent;
-                }
-            }
-
-            if (foundItem !== currentHoveredItem) {
-                if (currentHoveredItem) {
-                    currentHoveredItem.isHovered = false;
-                }
-                currentHoveredItem = foundItem;
-                if (foundItem) {
-                    foundItem.isHovered = true;
-                    tooltipTitle.textContent = foundItem.label;
-                    tooltipDesc.textContent = foundItem.desc;
-                    tooltip.style.display = 'block';
-                    // Force offset calculation and opacity trigger
-                    setTimeout(() => {
-                        if (currentHoveredItem === foundItem) tooltip.style.opacity = '1';
-                    }, 20);
-
-                    // Show hover details state
-                    scrollPrompt.style.opacity = '0';
-                    hoverPrompt.style.opacity = '1';
-
-                    startActiveLoop();
+    function toggleExplosion(explode) {
+        if (explode === isExploded) return;
+        isExploded = explode;
+        
+        gsap.to(explosionProgress, {
+            value: isExploded ? 1 : 0,
+            duration: 1.0,
+            ease: "power2.out",
+            onUpdate: () => {
+                setExplosionProgress(explosionProgress.value);
+            },
+            onComplete: () => {
+                if (isMobile && isExploded) {
+                    showMobileButtons(true);
                 } else {
+                    showMobileButtons(false);
+                    // Hide tooltips if collapsing
                     tooltip.style.opacity = '0';
-                    setTimeout(() => {
-                        if (!currentHoveredItem) tooltip.style.display = 'none';
-                    }, 250);
-
-                    if (explodeState.progress > 0.9) {
-                        hoverPrompt.style.opacity = '1';
-                        scrollPrompt.style.opacity = '0';
-                    }
+                    setTimeout(() => tooltip.style.display = 'none', 300);
                 }
             }
-        }
+        });
+    }
 
-        // Rotate a node around its localCenterOffset in parent coordinate space
-        function applyMeshRotation(item, angle) {
-            const axis = new THREE.Vector3(0, 1, 0); // vertical axis in parent space
-            
-            // Get correct exploded resting position
-            const expConfig = getNodeExplodeConfig(item.node);
-            const offsetVector = expConfig ? expConfig.offsetVector : new THREE.Vector3();
-            const currentExplodeOffset = offsetVector.clone().multiplyScalar(explodeState.progress);
-            
-            const explodedPos = item.origPosition.clone().add(currentExplodeOffset);
-            
-            // Reset to default exploded position and rotation
-            item.node.position.copy(explodedPos);
-            item.node.quaternion.copy(item.origQuaternion);
-            
-            if (angle !== 0) {
-                // Compute rotation center in parent space
-                const rotationCenter = explodedPos.clone().add(item.localCenterOffset);
-                
-                // Translate, rotate position, translate back
-                item.node.position.sub(rotationCenter);
-                item.node.position.applyAxisAngle(axis, angle);
-                item.node.position.add(rotationCenter);
-                
-                // Rotate node itself
-                item.node.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(axis, angle));
+    // 7. Desktop Interaction (Mouse Enter/Leave/Hover)
+    container.addEventListener('mouseenter', () => {
+        if (!isMobile) toggleExplosion(true);
+    });
+
+    container.addEventListener('mouseleave', () => {
+        if (!isMobile) {
+            toggleExplosion(false);
+            if (currentHoveredPart) {
+                unhoverPart(currentHoveredPart);
+                currentHoveredPart = null;
             }
+            tooltip.style.opacity = '0';
+            setTimeout(() => tooltip.style.display = 'none', 300);
         }
+    });
 
-        // Active render loop for hover animations
-        function startActiveLoop() {
-            if (isAnimating) return;
-            isAnimating = true;
-            animate();
-        }
+    // Raycasting for Desktop Hover
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
 
-        function animate() {
-            if (!isAnimating) return;
-            requestAnimationFrame(animate);
+    container.addEventListener('mousemove', (event) => {
+        if (isMobile || !isExploded || explosionProgress.value < 0.9) return;
 
-            let anyAnimating = false;
-            for (const item of interactiveItems) {
-                if (item.isHovered) {
-                    item.targetAngle += 0.035; // continuous spin
-                } else {
-                    item.targetAngle = 0; // return to rest
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        tooltip.style.left = `${event.clientX + 15}px`;
+        tooltip.style.top = `${event.clientY}px`;
+
+        raycaster.setFromCamera(mouse, camera);
+        
+        // Collect all meshes
+        const meshes = parts.map(p => p.node);
+        const intersects = raycaster.intersectObjects(meshes, true);
+
+        let foundPart = null;
+        if (intersects.length > 0) {
+            // Find which part this mesh belongs to
+            let obj = intersects[0].object;
+            while (obj && obj !== modelGroup) {
+                const part = parts.find(p => p.node === obj);
+                if (part) {
+                    foundPart = part;
+                    break;
                 }
+                obj = obj.parent;
+            }
+        }
 
-                const diff = item.targetAngle - item.currentAngle;
-                if (Math.abs(diff) > 0.001 || item.isHovered) {
-                    item.currentAngle += diff * 0.12; // smooth lerp transition
-                    applyMeshRotation(item, item.currentAngle);
-                    anyAnimating = true;
-                } else if (item.currentAngle !== 0) {
-                    item.currentAngle = 0;
-                    applyMeshRotation(item, 0);
+        if (foundPart !== currentHoveredPart) {
+            if (currentHoveredPart) {
+                unhoverPart(currentHoveredPart);
+            }
+            currentHoveredPart = foundPart;
+            if (foundPart) {
+                hoverPart(foundPart);
+                tooltipTitle.textContent = foundPart.label;
+                tooltipDesc.textContent = foundPart.desc;
+                tooltip.style.display = 'block';
+                setTimeout(() => tooltip.style.opacity = '1', 10);
+            } else {
+                tooltip.style.opacity = '0';
+                setTimeout(() => { if(!currentHoveredPart) tooltip.style.display = 'none' }, 200);
+            }
+        }
+    });
+
+    let scaleAnimationId = null;
+    function hoverPart(part) {
+        part.targetScale = part.origScale.clone().multiplyScalar(1.1);
+        startScaleLoop();
+    }
+    function unhoverPart(part) {
+        part.targetScale = part.origScale.clone();
+        startScaleLoop();
+    }
+
+    function startScaleLoop() {
+        if (scaleAnimationId) return;
+        
+        function animateScale() {
+            let stillAnimating = false;
+            parts.forEach(part => {
+                part.currentScale.lerp(part.targetScale, 0.15);
+                part.node.scale.copy(part.currentScale);
+                if (part.currentScale.distanceTo(part.targetScale) > 0.001) {
+                    stillAnimating = true;
                 }
-            }
-
-            renderer.render(scene, camera);
-
-            if (!anyAnimating) {
-                isAnimating = false; // pause render loop to optimize GPU
-            }
-        }
-
-        // 10. Performance optimization: render on demand
-        function requestRender() {
-            if (!isAnimating) {
-                renderer.render(scene, camera);
-            }
-        }
-
-        // 11. Responsive resize handler
-        function onWindowResize() {
-            const width = container.clientWidth;
-            const height = container.clientHeight;
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-            renderer.setSize(width, height);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            });
             requestRender();
+            
+            if (stillAnimating) {
+                scaleAnimationId = requestAnimationFrame(animateScale);
+            } else {
+                scaleAnimationId = null;
+            }
         }
-        window.addEventListener('resize', onWindowResize);
+        animateScale();
+    }
 
-    </script>
+    // 8. Mobile Interaction (Intersection Observer & Plus Buttons)
+    const observer = new IntersectionObserver((entries) => {
+        if (!isMobile) return;
+        entries.forEach(entry => {
+            if (entry.isIntersecting && entry.intersectionRatio > 0.4) {
+                toggleExplosion(true);
+            } else if (!entry.isIntersecting || entry.intersectionRatio < 0.2) {
+                toggleExplosion(false);
+            }
+        });
+    }, { threshold: [0.2, 0.4, 0.6] });
+    observer.observe(container);
+
+    function createMobileButtons() {
+        parts.forEach(part => {
+            const btn = document.createElement('div');
+            btn.className = 'mobile-plus-btn';
+            btn.innerHTML = '<i class="fa fa-plus"></i>';
+            btn.style.display = 'none';
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Show tooltip in center
+                tooltipTitle.textContent = part.label;
+                tooltipDesc.textContent = part.desc;
+                tooltip.style.left = '50%';
+                tooltip.style.top = '50%';
+                tooltip.style.transform = 'translate(-50%, -50%)';
+                tooltip.style.display = 'block';
+                setTimeout(() => tooltip.style.opacity = '1', 10);
+            });
+            mobileButtonsContainer.appendChild(btn);
+            part.buttonEl = btn;
+        });
+    }
+
+    function updateMobileButtons() {
+        if (!isMobile || !isExploded) return;
+        const rect = container.getBoundingClientRect();
+        parts.forEach(part => {
+            if (!part.buttonEl) return;
+            // Get center of part
+            const box = new THREE.Box3().setFromObject(part.node);
+            const center = box.getCenter(new THREE.Vector3());
+            
+            // Project to 2D
+            center.project(camera);
+            
+            const x = (center.x *  .5 + .5) * rect.width;
+            const y = (center.y * -.5 + .5) * rect.height;
+            
+            part.buttonEl.style.left = `${x}px`;
+            part.buttonEl.style.top = `${y}px`;
+        });
+    }
+
+    function showMobileButtons(show) {
+        parts.forEach(part => {
+            if (part.buttonEl) {
+                if (show) {
+                    part.buttonEl.style.display = 'flex';
+                    setTimeout(() => part.buttonEl.style.opacity = '1', 10);
+                } else {
+                    part.buttonEl.style.opacity = '0';
+                    setTimeout(() => part.buttonEl.style.display = 'none', 300);
+                }
+            }
+        });
+        if (show) updateMobileButtons();
+    }
+
+    // Close tooltip on mobile tap anywhere else
+    document.addEventListener('click', () => {
+        if (isMobile && tooltip.style.opacity === '1') {
+            tooltip.style.opacity = '0';
+            setTimeout(() => tooltip.style.display = 'none', 300);
+        }
+    });
+
+    // 9. Window Resize
+    window.addEventListener('resize', () => {
+        isMobile = window.innerWidth <= 768;
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        updateMobileButtons();
+        requestRender();
+    });
+
+    // 10. On-Demand Render
+    function requestRender() {
+        renderer.render(scene, camera);
+    }
+</script>
+
 
 </body>
 
