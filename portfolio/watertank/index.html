@@ -312,7 +312,8 @@
     const mobileButtonsContainer = document.getElementById('mobile-buttons-container');
 
     // 1. Scene setup
-    const scene = new THREE.Scene();
+    const EXPLOSION_MODE = 'VERTICAL'; // Options: 'RADIAL', 'VERTICAL'
+      const scene = new THREE.Scene();
     let isLightMode = document.body.classList.contains('light-mode');
     scene.background = null; // Removed to allow CSS background to show through
 
@@ -490,7 +491,6 @@
             const cameraUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion).normalize();
             const numParts = explodeParts.length;
             
-            // 2. Ultimate Collision-Detection Packing Algorithm
             let casingMax = 10;
             if (bottomCasingPart) {
                 const box = new THREE.Box3().setFromObject(bottomCasingPart);
@@ -498,167 +498,250 @@
                 casingMax = Math.max(size.x, size.y, size.z);
             }
             
-            // Start with a microscopically small explosion radius
-            let optimalRadius = casingMax * 0.1; 
-            let bestPushX = Math.max(1.0, aspect);
-            let bestPushY = Math.max(1.0, 1.0 / aspect);
-            
-            // Progressively expand the explosion radius until no parts overlap
-            for (let radiusIter = 0; radiusIter < 60; radiusIter++) {
-                window.radius = optimalRadius;
+            if (EXPLOSION_MODE === 'RADIAL') {
+                // ... [PRESERVED RADIAL SHRINK-WRAP ALGORITHM] ...
+                parts.forEach(p => { p.currentRadius = casingMax * 0.1; });
+                let bestPushX = Math.max(1.0, aspect);
+                let bestPushY = Math.max(1.0, 1.0 / aspect);
                 
-                // Aspect Ratio Tuning Loop
-                let currentPushX = Math.max(1.0, aspect);
-                let currentPushY = Math.max(1.0, 1.0 / aspect);
-                
-                for (let iter = 0; iter < 10; iter++) {
-                    parts.forEach(p => {
-                        if (p.node === bottomCasingPart) {
-                            p.offsetVector = new THREE.Vector3(0,0,0);
-                            p.node.position.copy(p.origPosition);
-                            return;
+                for (let radiusIter = 0; radiusIter < 60; radiusIter++) {
+                    let currentPushX = Math.max(1.0, aspect);
+                    let currentPushY = Math.max(1.0, 1.0 / aspect);
+                    
+                    for (let iter = 0; iter < 10; iter++) {
+                        parts.forEach(p => {
+                            if (p.node === bottomCasingPart) {
+                                p.offsetVector = new THREE.Vector3(0,0,0);
+                                p.node.position.copy(p.origPosition);
+                                return;
+                            }
+                            const index = explodeParts.indexOf(p.node);
+                            if (index === -1) return;
+                            const angle = (index / numParts) * Math.PI * 2;
+                            const dirX = Math.cos(angle) * currentPushX; 
+                            const dirY = Math.sin(angle) * currentPushY; 
+                            const dir = new THREE.Vector3().addScaledVector(cameraRight, dirX).addScaledVector(cameraUp, dirY);
+                            const worldTranslation = dir.multiplyScalar(p.currentRadius);
+                            const worldPos = p.origPosition.clone();
+                            p.node.parent.localToWorld(worldPos);
+                            worldPos.add(worldTranslation);
+                            const targetLocalPos = p.node.parent.worldToLocal(worldPos);
+                            p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
+                            p.node.position.copy(p.origPosition).add(p.offsetVector);
+                        });
+                        modelGroup.updateMatrixWorld(true);
+                        
+                        let minX = Infinity, maxX = -Infinity;
+                        let minY = Infinity, maxY = -Infinity;
+                        parts.forEach(p => {
+                            const box = new THREE.Box3().setFromObject(p.node);
+                            const corners = [
+                                new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                                new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                                new THREE.Vector3(box.max.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                                new THREE.Vector3(box.max.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                            ];
+                            corners.forEach(c => {
+                                c.project(camera); 
+                                minX = Math.min(minX, c.x); maxX = Math.max(maxX, c.x);
+                                minY = Math.min(minY, c.y); maxY = Math.max(maxY, c.y);
+                            });
+                        });
+                        
+                        const ndcWidth = maxX - minX;
+                        const ndcHeight = maxY - minY;
+                        if (ndcHeight === 0 || ndcWidth === 0) break;
+                        const currentNdcRatio = ndcWidth / ndcHeight;
+                        if (Math.abs(currentNdcRatio - 1.0) < 0.02) {
+                            bestPushX = currentPushX; bestPushY = currentPushY; break;
                         }
-                        const index = explodeParts.indexOf(p.node);
-                        if (index === -1) return;
-                        
-                        const angle = (index / numParts) * Math.PI * 2;
-                        const dirX = Math.cos(angle) * currentPushX; 
-                        const dirY = Math.sin(angle) * currentPushY; 
-                        
-                        const dir = new THREE.Vector3()
-                            .addScaledVector(cameraRight, dirX)
-                            .addScaledVector(cameraUp, dirY);
-                            
-                        const worldTranslation = dir.multiplyScalar(window.radius);
-                        const worldPos = p.origPosition.clone();
-                        p.node.parent.localToWorld(worldPos);
-                        worldPos.add(worldTranslation);
-                        
-                        const targetLocalPos = p.node.parent.worldToLocal(worldPos);
-                        p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
-                        p.node.position.copy(p.origPosition).add(p.offsetVector);
-                    });
+                        if (currentNdcRatio < 1.0) currentPushX *= 1.05;
+                        else currentPushY *= 1.05;
+                        bestPushX = currentPushX; bestPushY = currentPushY;
+                    }
                     
-                    modelGroup.updateMatrixWorld(true);
-                    
-                    let minX = Infinity, maxX = -Infinity;
-                    let minY = Infinity, maxY = -Infinity;
-                    
+                    const partsNDC = [];
                     parts.forEach(p => {
                         const box = new THREE.Box3().setFromObject(p.node);
+                        let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity;
                         const corners = [
-                            new THREE.Vector3(box.min.x, box.min.y, box.min.z),
-                            new THREE.Vector3(box.min.x, box.min.y, box.max.z),
-                            new THREE.Vector3(box.min.x, box.max.y, box.min.z),
-                            new THREE.Vector3(box.min.x, box.max.y, box.max.z),
-                            new THREE.Vector3(box.max.x, box.min.y, box.min.z),
-                            new THREE.Vector3(box.max.x, box.min.y, box.max.z),
-                            new THREE.Vector3(box.max.x, box.max.y, box.min.z),
-                            new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                            new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                            new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                            new THREE.Vector3(box.max.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                            new THREE.Vector3(box.max.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
                         ];
                         corners.forEach(c => {
-                            c.project(camera); 
-                            minX = Math.min(minX, c.x);
-                            maxX = Math.max(maxX, c.x);
-                            minY = Math.min(minY, c.y);
-                            maxY = Math.max(maxY, c.y);
+                            c.project(camera);
+                            pMinX = Math.min(pMinX, c.x); pMaxX = Math.max(pMaxX, c.x);
+                            pMinY = Math.min(pMinY, c.y); pMaxY = Math.max(pMaxY, c.y);
                         });
+                        p.hasOverlap = false;
+                        partsNDC.push({part: p, minX: pMinX, maxX: pMaxX, minY: pMinY, maxY: pMaxY});
                     });
                     
-                    const ndcWidth = maxX - minX;
-                    const ndcHeight = maxY - minY;
-                    if (ndcHeight === 0 || ndcWidth === 0) break;
-                    
-                    const currentNdcRatio = ndcWidth / ndcHeight;
-                    if (Math.abs(currentNdcRatio - 1.0) < 0.02) {
-                        bestPushX = currentPushX;
-                        bestPushY = currentPushY;
-                        break;
+                    let anyOverlap = false;
+                    const margin = 0.03; 
+                    for (let i = 0; i < partsNDC.length; i++) {
+                        for (let j = i + 1; j < partsNDC.length; j++) {
+                            const a = partsNDC[i], b = partsNDC[j];
+                            if (!(a.maxX + margin < b.minX || a.minX - margin > b.maxX || a.maxY + margin < b.minY || a.minY - margin > b.maxY)) {
+                                a.part.hasOverlap = true; b.part.hasOverlap = true; anyOverlap = true;
+                            }
+                        }
                     }
-                    if (currentNdcRatio < 1.0) currentPushX *= 1.05;
-                    else currentPushY *= 1.05;
-                    
-                    bestPushX = currentPushX;
-                    bestPushY = currentPushY;
+                    if (!anyOverlap) break;
+                    parts.forEach(p => {
+                        if (p.hasOverlap && p.node !== bottomCasingPart) p.currentRadius += casingMax * 0.05;
+                    });
                 }
                 
-                // Now check for 2D Screen Space Overlaps!
-                const partsNDC = [];
                 parts.forEach(p => {
-                    const box = new THREE.Box3().setFromObject(p.node);
-                    let pMinX = Infinity, pMaxX = -Infinity;
-                    let pMinY = Infinity, pMaxY = -Infinity;
-                    const corners = [
-                        new THREE.Vector3(box.min.x, box.min.y, box.min.z),
-                        new THREE.Vector3(box.min.x, box.min.y, box.max.z),
-                        new THREE.Vector3(box.min.x, box.max.y, box.min.z),
-                        new THREE.Vector3(box.min.x, box.max.y, box.max.z),
-                        new THREE.Vector3(box.max.x, box.min.y, box.min.z),
-                        new THREE.Vector3(box.max.x, box.min.y, box.max.z),
-                        new THREE.Vector3(box.max.x, box.max.y, box.min.z),
-                        new THREE.Vector3(box.max.x, box.max.y, box.max.z),
-                    ];
-                    corners.forEach(c => {
-                        c.project(camera);
-                        pMinX = Math.min(pMinX, c.x);
-                        pMaxX = Math.max(pMaxX, c.x);
-                        pMinY = Math.min(pMinY, c.y);
-                        pMaxY = Math.max(pMaxY, c.y);
-                    });
-                    partsNDC.push({minX: pMinX, maxX: pMaxX, minY: pMinY, maxY: pMaxY});
+                    if (p.node === bottomCasingPart) { p.offsetVector = new THREE.Vector3(0,0,0); p.node.position.copy(p.origPosition); return; }
+                    const index = explodeParts.indexOf(p.node);
+                    if (index === -1) return;
+                    const angle = (index / numParts) * Math.PI * 2;
+                    const dirX = Math.cos(angle) * bestPushX; 
+                    const dirY = Math.sin(angle) * bestPushY; 
+                    const dir = new THREE.Vector3().addScaledVector(cameraRight, dirX).addScaledVector(cameraUp, dirY);
+                    const worldTranslation = dir.multiplyScalar(p.currentRadius);
+                    const worldPos = p.origPosition.clone();
+                    p.node.parent.localToWorld(worldPos);
+                    worldPos.add(worldTranslation);
+                    const targetLocalPos = p.node.parent.worldToLocal(worldPos);
+                    p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
+                    p.node.position.copy(p.origPosition).add(p.offsetVector);
                 });
+            } else if (EXPLOSION_MODE === 'VERTICAL') {
+                // --- BULLETPROOF SEQUENTIAL VERTICAL STACKING ---
+                const orderList = ['topcasing', 'mpcie', 'mainboard', 'battery', 'bottomcasing', 'casing2ultrasonic', 'ultrasonic', 'dyp'];
                 
-                let hasOverlap = false;
-                const margin = 0.03; // 3% of screen space minimum gap between parts
-                
-                for (let i = 0; i < partsNDC.length; i++) {
-                    for (let j = i + 1; j < partsNDC.length; j++) {
-                        const a = partsNDC[i];
-                        const b = partsNDC[j];
-                        if (!(a.maxX + margin < b.minX || a.minX - margin > b.maxX || 
-                              a.maxY + margin < b.minY || a.minY - margin > b.maxY)) {
-                            hasOverlap = true;
+                // Map all parts to their stack index
+                parts.forEach(p => {
+                    const name = p.node.name.toLowerCase();
+                    p.stackIndex = -1;
+                    for (let i = 0; i < orderList.length; i++) {
+                        if (name.includes(orderList[i])) {
+                            p.stackIndex = i;
                             break;
                         }
                     }
-                    if (hasOverlap) break;
-                }
-                
-                if (!hasOverlap) {
-                    break; // Perfection achieved!
-                }
-                
-                // If they overlap, push them slightly further apart and try again
-                optimalRadius += casingMax * 0.05;
-            }
-            
-            // 3. Apply the perfectly calculated non-overlapping offsets
-            parts.forEach(p => {
-                if (p.node === bottomCasingPart) {
+                    p.currentPushY = 0;
                     p.offsetVector = new THREE.Vector3(0,0,0);
                     p.node.position.copy(p.origPosition);
-                    return;
+                });
+                
+                const getPartByIndex = (idx) => parts.find(p => p.stackIndex === idx);
+                
+                const checkOverlap = (partA, placedParts) => {
+                    modelGroup.updateMatrixWorld(true); // Ensure positions are up to date
+                    
+                    const getNDCBox = (p) => {
+                        const box = new THREE.Box3().setFromObject(p.node);
+                        let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity;
+                        const corners = [
+                            new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                            new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                            new THREE.Vector3(box.max.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                            new THREE.Vector3(box.max.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                        ];
+                        corners.forEach(c => {
+                            c.project(camera);
+                            pMinX = Math.min(pMinX, c.x); pMaxX = Math.max(pMaxX, c.x);
+                            pMinY = Math.min(pMinY, c.y); pMaxY = Math.max(pMaxY, c.y);
+                        });
+                        return { minX: pMinX, maxX: pMaxX, minY: pMinY, maxY: pMaxY };
+                    };
+                    
+                    const boxA = getNDCBox(partA);
+                    const marginY = 0.01; // 1% vertical margin (almost touching)
+                    // Optional: a small horizontal margin just to be safe, though not strictly required for vertical stack
+                    const marginX = -0.1; // Allow some horizontal overlap visually if they are very wide, but mostly rely on Y.
+                    // Wait, for a vertical exploded view, we strictly care about VERTICAL overlap. 
+                    // If they overlap horizontally, they MUST not overlap vertically.
+                    
+                    for (let p of placedParts) {
+                        const boxB = getNDCBox(p);
+                        // If they overlap in BOTH X and Y, it's a collision
+                        if (!(boxA.maxX < boxB.minX || boxA.minX > boxB.maxX || boxA.maxY + marginY < boxB.minY || boxA.minY - marginY > boxB.maxY)) {
+                            return true; // Collision!
+                        }
+                    }
+                    return false; // Clear
+                };
+                
+                const placedParts = [];
+                const anchorIndex = 4; // BottomCasing
+                const anchorPart = getPartByIndex(anchorIndex);
+                if (anchorPart) {
+                    placedParts.push(anchorPart);
                 }
-                const index = explodeParts.indexOf(p.node);
-                if (index === -1) return;
-                const angle = (index / numParts) * Math.PI * 2;
-                const dirX = Math.cos(angle) * bestPushX; 
-                const dirY = Math.sin(angle) * bestPushY; 
-                const dir = new THREE.Vector3()
-                    .addScaledVector(cameraRight, dirX)
-                    .addScaledVector(cameraUp, dirY);
-                const worldTranslation = dir.multiplyScalar(optimalRadius);
-                const worldPos = p.origPosition.clone();
-                p.node.parent.localToWorld(worldPos);
-                worldPos.add(worldTranslation);
-                const targetLocalPos = p.node.parent.worldToLocal(worldPos);
-                p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
-                p.node.position.copy(p.origPosition).add(p.offsetVector);
-            });
+                
+                const pushStep = casingMax * 0.02;
+                const worldUp = new THREE.Vector3(0, 1, 0); // Isometrically, pushing along Y-axis forces it 'up' visually
+                
+                // 1. Upwards Pass (Indices 2, 1, 0)
+                for (let i = anchorIndex - 1; i >= 0; i--) {
+                    const part = getPartByIndex(i);
+                    if (!part) continue;
+                    
+                    const partBelow = getPartByIndex(i + 1);
+                    part.currentPushY = partBelow ? partBelow.currentPushY : 0;
+                    
+                    for (let iter = 0; iter < 500; iter++) {
+                        const worldTranslation = worldUp.clone().multiplyScalar(part.currentPushY);
+                        const worldPos = part.origPosition.clone();
+                        part.node.parent.localToWorld(worldPos);
+                        worldPos.add(worldTranslation);
+                        const targetLocalPos = part.node.parent.worldToLocal(worldPos);
+                        part.offsetVector = targetLocalPos.clone().sub(part.origPosition);
+                        part.node.position.copy(part.origPosition).add(part.offsetVector);
+                        
+                        if (!checkOverlap(part, placedParts)) {
+                            break; // Mathematically clear of ALL parts below it!
+                        }
+                        part.currentPushY += pushStep;
+                    }
+                    placedParts.push(part);
+                }
+                
+                // 2. Downwards Pass (Indices 4, 5, 6)
+                for (let i = anchorIndex + 1; i < orderList.length; i++) {
+                    const part = getPartByIndex(i);
+                    if (!part) continue;
+                    
+                    const partAbove = getPartByIndex(i - 1);
+                    part.currentPushY = partAbove ? partAbove.currentPushY : 0; // We will subtract this value
+                    
+                    for (let iter = 0; iter < 500; iter++) {
+                        // Push DOWN
+                        const worldTranslation = worldUp.clone().multiplyScalar(-part.currentPushY);
+                        const worldPos = part.origPosition.clone();
+                        part.node.parent.localToWorld(worldPos);
+                        worldPos.add(worldTranslation);
+                        const targetLocalPos = part.node.parent.worldToLocal(worldPos);
+                        part.offsetVector = targetLocalPos.clone().sub(part.origPosition);
+                        part.node.position.copy(part.origPosition).add(part.offsetVector);
+                        
+                        if (!checkOverlap(part, placedParts)) {
+                            break; // Mathematically clear of ALL parts above it!
+                        }
+                        part.currentPushY += pushStep;
+                    }
+                    placedParts.push(part);
+                }
+                
+                // Handle any unmapped parts (just dump them radially or keep them stationary to avoid breaking)
+                parts.forEach(p => {
+                    if (p.stackIndex === -1 && p.node !== bottomCasingPart) {
+                        p.offsetVector = new THREE.Vector3(casingMax, 0, 0); // Shunt unknown parts to the right
+                        p.node.position.copy(p.origPosition).add(p.offsetVector);
+                    }
+                });
+            }
             
             modelGroup.updateMatrixWorld(true);
             
-            // 4. Safe rough scale and centering
+            // --- FINAL SCALING (Shared by both modes) ---
             const rawBox = new THREE.Box3().setFromObject(modelGroup);
             const rawRadius = rawBox.getSize(new THREE.Vector3()).length();
             const safeScale = 1.0 / Math.max(0.1, rawRadius);
@@ -667,28 +750,19 @@
             modelGroup.position.sub(rawBox.getCenter(new THREE.Vector3()).multiplyScalar(safeScale));
             modelGroup.updateMatrixWorld(true);
             
-            // 5. Final precision pass to scale to exactly 95% of screen
-            let minX = Infinity, maxX = -Infinity;
-            let minY = Infinity, maxY = -Infinity;
-            
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
             parts.forEach(p => {
                 const box = new THREE.Box3().setFromObject(p.node);
                 const corners = [
-                    new THREE.Vector3(box.min.x, box.min.y, box.min.z),
-                    new THREE.Vector3(box.min.x, box.min.y, box.max.z),
-                    new THREE.Vector3(box.min.x, box.max.y, box.min.z),
-                    new THREE.Vector3(box.min.x, box.max.y, box.max.z),
-                    new THREE.Vector3(box.max.x, box.min.y, box.min.z),
-                    new THREE.Vector3(box.max.x, box.min.y, box.max.z),
-                    new THREE.Vector3(box.max.x, box.max.y, box.min.z),
-                    new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                    new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                    new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                    new THREE.Vector3(box.max.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                    new THREE.Vector3(box.max.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
                 ];
                 corners.forEach(c => {
                     c.project(camera); 
-                    minX = Math.min(minX, c.x);
-                    maxX = Math.max(maxX, c.x);
-                    minY = Math.min(minY, c.y);
-                    maxY = Math.max(maxY, c.y);
+                    minX = Math.min(minX, c.x); maxX = Math.max(maxX, c.x);
+                    minY = Math.min(minY, c.y); maxY = Math.max(maxY, c.y);
                 });
             });
             
