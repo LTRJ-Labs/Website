@@ -44,7 +44,7 @@
                   #exploded-view-container {
               position: relative;
               width: 100vw;
-              height: 70vh;
+              height: 90vh;
               left: 50%;
               right: 50%;
               margin-left: -50vw;
@@ -312,7 +312,7 @@
     const mobileButtonsContainer = document.getElementById('mobile-buttons-container');
 
     // 1. Scene setup
-    const EXPLOSION_MODE = 'VERTICAL'; // Options: 'RADIAL', 'VERTICAL'
+    const EXPLOSION_MODE = 'CIRCULAR'; // Options: 'RADIAL', 'VERTICAL', 'CIRCULAR' // Options: 'RADIAL', 'VERTICAL'
       const scene = new THREE.Scene();
     let isLightMode = document.body.classList.contains('light-mode');
     scene.background = null; // Removed to allow CSS background to show through
@@ -332,15 +332,15 @@
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     // 4. Lighting setup
-    const ambientLight = new THREE.AmbientLight(0xffffff, isLightMode ? 0.8 : 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, isLightMode ? 1.5 : 1.5);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, isLightMode ? 1.5 : 1.0);
-    dirLight1.position.set(5, 8, 5);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, isLightMode ? 3.5 : 3.5);
+    dirLight1.position.set(1, 25, 4);
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0xffffff, isLightMode ? 0.6 : 0.3);
-    dirLight2.position.set(-3, 4, -4);
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, isLightMode ? 1.0 : 1.0);
+    dirLight2.position.set(-10, 5, -5);
     scene.add(dirLight2);
 
     // Theme observer
@@ -348,9 +348,9 @@
         const isLight = document.body.classList.contains('light-mode');
         const targetColor = isLight ? 0xf9fafb : 0x0a0a0f;
         // scene.background.setHex(targetColor); // Disabled for true transparency
-        ambientLight.intensity = isLight ? 0.8 : 1.2; // Boosted dark mode ambient
-            dirLight1.intensity = isLight ? 1.5 : 2.0; // Boosted dark mode directional
-        dirLight2.intensity = isLight ? 0.6 : 0.3;
+        ambientLight.intensity = isLight ? 1.5 : 1.5; // Boosted dark mode ambient
+            dirLight1.intensity = isLight ? 3.5 : 3.5; // Boosted dark mode directional
+        dirLight2.intensity = isLight ? 1.0 : 1.0;
         requestRender();
     });
     themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
@@ -591,7 +591,7 @@
                     }
                     if (!anyOverlap) break;
                     parts.forEach(p => {
-                        if (p.hasOverlap && p.node !== bottomCasingPart) p.currentRadius += casingMax * 0.05;
+                        if (p.hasOverlap && p.node !== bottomCasingPart) p.currentRadius += casingMax * 0.02;
                     });
                 }
                 
@@ -611,31 +611,88 @@
                     p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
                     p.node.position.copy(p.origPosition).add(p.offsetVector);
                 });
-            } else if (EXPLOSION_MODE === 'VERTICAL') {
-                // --- BULLETPROOF SEQUENTIAL VERTICAL STACKING ---
-                const orderList = ['topcasing', 'mpcie', 'mainboard', 'battery', 'bottomcasing', 'casing2ultrasonic', 'ultrasonic', 'dyp'];
+            } else if (EXPLOSION_MODE === 'CIRCULAR') {
+                // --- PERCENTAGE-BASED CIRCULAR SHRINK-WRAP ---
                 
-                // Map all parts to their stack index
-                parts.forEach(p => {
-                    const name = p.node.name.toLowerCase();
-                    p.stackIndex = -1;
-                    for (let i = 0; i < orderList.length; i++) {
-                        if (name.includes(orderList[i])) {
-                            p.stackIndex = i;
-                            break;
-                        }
-                    }
-                    p.currentPushY = 0;
-                    p.offsetVector = new THREE.Vector3(0,0,0);
-                    p.node.position.copy(p.origPosition);
+                const dynamicParts = parts.filter(p => p.node !== bottomCasingPart);
+                
+                // 1. Calculate the physical "width" of each part for angular allocation
+                let totalPartWidth = 0;
+                // Mix up the array to prevent all large parts from clustering on one side!
+                // We'll sort them by size, then distribute them in an alternating pattern.
+                dynamicParts.forEach(p => {
+                    const box = new THREE.Box3().setFromObject(p.node);
+                    const size = box.getSize(new THREE.Vector3());
+                    p.width = Math.max(size.x, size.y, size.z); 
                 });
                 
-                const getPartByIndex = (idx) => parts.find(p => p.stackIndex === idx);
+                dynamicParts.sort((a, b) => b.width - a.width); // Largest first
+                const balancedParts = [];
+                let left = true;
+                dynamicParts.forEach(p => {
+                    if (left) balancedParts.push(p);
+                    else balancedParts.unshift(p);
+                    left = !left;
+                });
                 
-                const checkOverlap = (partA, placedParts) => {
-                    modelGroup.updateMatrixWorld(true); // Ensure positions are up to date
+                balancedParts.forEach(p => {
+                    totalPartWidth += p.width;
+                });
+                
+                // Add padding to total width to create visual angular gaps (e.g., 30% empty space)
+                const gapMultiplier = 1.3;
+                const totalEffectiveWidth = totalPartWidth * gapMultiplier;
+                
+                // 2. Distribute their target Angles based on their width percentages
+                let currentAngle = 0;
+                balancedParts.forEach(p => {
+                    const sliceAngle = ((p.width * gapMultiplier) / totalEffectiveWidth) * Math.PI * 2;
+                    currentAngle += sliceAngle / 2;
+                    p.targetAngle = currentAngle;
+                    currentAngle += sliceAngle / 2;
                     
-                    const getNDCBox = (p) => {
+                    // Initialize radius at 0 for shrink-wrap
+                    p.currentRadius = 0;
+                });
+                
+                // 3. Circular Shrink-Wrap Collision Engine
+                let casingMax = 10;
+                if (bottomCasingPart) {
+                    const box = new THREE.Box3().setFromObject(bottomCasingPart);
+                    const size = box.getSize(new THREE.Vector3());
+                    casingMax = Math.max(size.x, size.y, size.z);
+                }
+                
+                for (let radiusIter = 0; radiusIter < 300; radiusIter++) {
+                    // Apply current layout
+                    parts.forEach(p => {
+                        if (p.node === bottomCasingPart) {
+                            p.offsetVector = new THREE.Vector3(0,0,0);
+                            p.node.position.copy(p.origPosition);
+                            return;
+                        }
+                        
+                        const dirX = Math.cos(p.targetAngle); 
+                        const dirY = Math.sin(p.targetAngle); 
+                        const dir = new THREE.Vector3()
+                            .addScaledVector(cameraRight, dirX)
+                            .addScaledVector(cameraUp, dirY);
+                            
+                        const worldTranslation = dir.multiplyScalar(p.currentRadius);
+                        const worldPos = p.origPosition.clone();
+                        p.node.parent.localToWorld(worldPos);
+                        worldPos.add(worldTranslation);
+                        
+                        const targetLocalPos = p.node.parent.worldToLocal(worldPos);
+                        p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
+                        p.node.position.copy(p.origPosition).add(p.offsetVector);
+                    });
+                    
+                    modelGroup.updateMatrixWorld(true);
+                    
+                    // Check 2D Screen Space Overlaps!
+                    const partsNDC = [];
+                    parts.forEach(p => {
                         const box = new THREE.Box3().setFromObject(p.node);
                         let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity;
                         const corners = [
@@ -649,99 +706,40 @@
                             pMinX = Math.min(pMinX, c.x); pMaxX = Math.max(pMaxX, c.x);
                             pMinY = Math.min(pMinY, c.y); pMaxY = Math.max(pMaxY, c.y);
                         });
-                        return { minX: pMinX, maxX: pMaxX, minY: pMinY, maxY: pMaxY };
-                    };
+                        p.hasOverlap = false; 
+                        partsNDC.push({part: p, minX: pMinX, maxX: pMaxX, minY: pMinY, maxY: pMaxY});
+                    });
                     
-                    const boxA = getNDCBox(partA);
-                    const marginY = 0.01; // 1% vertical margin (almost touching)
-                    // Optional: a small horizontal margin just to be safe, though not strictly required for vertical stack
-                    const marginX = -0.1; // Allow some horizontal overlap visually if they are very wide, but mostly rely on Y.
-                    // Wait, for a vertical exploded view, we strictly care about VERTICAL overlap. 
-                    // If they overlap horizontally, they MUST not overlap vertically.
+                    let anyOverlap = false;
+                    const margin = 0.01; // 1% of screen space minimum gap
                     
-                    for (let p of placedParts) {
-                        const boxB = getNDCBox(p);
-                        // If they overlap in BOTH X and Y, it's a collision
-                        if (!(boxA.maxX < boxB.minX || boxA.minX > boxB.maxX || boxA.maxY + marginY < boxB.minY || boxA.minY - marginY > boxB.maxY)) {
-                            return true; // Collision!
+                    for (let i = 0; i < partsNDC.length; i++) {
+                        for (let j = i + 1; j < partsNDC.length; j++) {
+                            const a = partsNDC[i];
+                            const b = partsNDC[j];
+                            if (!(a.maxX + margin < b.minX || a.minX - margin > b.maxX || 
+                                  a.maxY + margin < b.minY || a.minY - margin > b.maxY)) {
+                                a.part.hasOverlap = true;
+                                b.part.hasOverlap = true;
+                                anyOverlap = true;
+                            }
                         }
                     }
-                    return false; // Clear
-                };
-                
-                const placedParts = [];
-                const anchorIndex = 4; // BottomCasing
-                const anchorPart = getPartByIndex(anchorIndex);
-                if (anchorPart) {
-                    placedParts.push(anchorPart);
-                }
-                
-                const pushStep = casingMax * 0.02;
-                const worldUp = new THREE.Vector3(0, 1, 0); // Isometrically, pushing along Y-axis forces it 'up' visually
-                
-                // 1. Upwards Pass (Indices 2, 1, 0)
-                for (let i = anchorIndex - 1; i >= 0; i--) {
-                    const part = getPartByIndex(i);
-                    if (!part) continue;
                     
-                    const partBelow = getPartByIndex(i + 1);
-                    part.currentPushY = partBelow ? partBelow.currentPushY : 0;
+                    if (!anyOverlap) {
+                        break; // Perfection achieved!
+                    }
                     
-                    for (let iter = 0; iter < 500; iter++) {
-                        const worldTranslation = worldUp.clone().multiplyScalar(part.currentPushY);
-                        const worldPos = part.origPosition.clone();
-                        part.node.parent.localToWorld(worldPos);
-                        worldPos.add(worldTranslation);
-                        const targetLocalPos = part.node.parent.worldToLocal(worldPos);
-                        part.offsetVector = targetLocalPos.clone().sub(part.origPosition);
-                        part.node.position.copy(part.origPosition).add(part.offsetVector);
-                        
-                        if (!checkOverlap(part, placedParts)) {
-                            break; // Mathematically clear of ALL parts below it!
+                    // Increase radius ONLY for parts that are currently overlapping!
+                    parts.forEach(p => {
+                        if (p.hasOverlap && p.node !== bottomCasingPart) {
+                            p.currentRadius += casingMax * 0.02;
                         }
-                        part.currentPushY += pushStep;
-                    }
-                    placedParts.push(part);
+                    });
                 }
-                
-                // 2. Downwards Pass (Indices 4, 5, 6)
-                for (let i = anchorIndex + 1; i < orderList.length; i++) {
-                    const part = getPartByIndex(i);
-                    if (!part) continue;
-                    
-                    const partAbove = getPartByIndex(i - 1);
-                    part.currentPushY = partAbove ? partAbove.currentPushY : 0; // We will subtract this value
-                    
-                    for (let iter = 0; iter < 500; iter++) {
-                        // Push DOWN
-                        const worldTranslation = worldUp.clone().multiplyScalar(-part.currentPushY);
-                        const worldPos = part.origPosition.clone();
-                        part.node.parent.localToWorld(worldPos);
-                        worldPos.add(worldTranslation);
-                        const targetLocalPos = part.node.parent.worldToLocal(worldPos);
-                        part.offsetVector = targetLocalPos.clone().sub(part.origPosition);
-                        part.node.position.copy(part.origPosition).add(part.offsetVector);
-                        
-                        if (!checkOverlap(part, placedParts)) {
-                            break; // Mathematically clear of ALL parts above it!
-                        }
-                        part.currentPushY += pushStep;
-                    }
-                    placedParts.push(part);
-                }
-                
-                // Handle any unmapped parts (just dump them radially or keep them stationary to avoid breaking)
-                parts.forEach(p => {
-                    if (p.stackIndex === -1 && p.node !== bottomCasingPart) {
-                        p.offsetVector = new THREE.Vector3(casingMax, 0, 0); // Shunt unknown parts to the right
-                        p.node.position.copy(p.origPosition).add(p.offsetVector);
-                    }
-                });
-            }
             
-            modelGroup.updateMatrixWorld(true);
-            
-            // --- FINAL SCALING (Shared by both modes) ---
+            } // END CIRCULAR BLOCK
+              // --- FINAL SCALING (Shared by both modes) ---
             const rawBox = new THREE.Box3().setFromObject(modelGroup);
             const rawRadius = rawBox.getSize(new THREE.Vector3()).length();
             const safeScale = 1.0 / Math.max(0.1, rawRadius);
