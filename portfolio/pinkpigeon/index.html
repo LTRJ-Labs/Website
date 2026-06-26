@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Case study of the custom diagnostics breakout board designed and routed by LTRJ Labs for Pink Pigeon Innovations' PCB system validation.">
+    <meta name="author" content="LTRJ Labs">
+
+    <meta name="keywords" content="PCB layout, routing, diagnostics breakout, impedance matching, test points, signal integrity, Pink Pigeon Innovations, Victoria BC">
+
+    <title>Pink Pigeon Breakout Board - LTRJ Labs</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../../img/SVGLogos/Small_Logo.svg">
+    <link rel="icon" type="image/png" href="../../img/HiResLogos/Small_Logo.png">
+
+    <!-- Modern CSS Layout -->
+    <link href="../../css/modern-layout.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../../css/agency.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styling for the project details section -->
+    <style>
+        .project-detail-img {
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            background: #2a2a2a;
+            max-width: 100%;
+            height: auto;
+            margin: 30px auto;
+            display: block;
+        }
+        body.light-mode .project-detail-img {
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: #eaeaea;
+        }
+        .project-details-fallback {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 350px;
+            background: #2a2a2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            margin: 30px auto;
+        }
+        body.light-mode .project-details-fallback {
+            background: #eaeaea;
+            color: #555;
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+
+</head>
+
+<body id="page-top" class="index"><script>(function(){const t=localStorage.getItem("theme")||"dark";document.body.classList.add(t+"-mode");})();</script>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../"><img src="../../img/logos/ltrj-logo.png" alt="LTRJ Labs Ltd Logo"></a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a href="../../services/#_services">Services</a>
+                    </li>
+                    <li class="active-page">
+                        <a href="../../portfolio/#_portfolio">Portfolio</a>
+                    </li>
+                    <li>
+                        <a href="../../team/#_team">Team</a>
+                    </li>
+                    <li>
+                        <a href="../../contact/">Contact</a>
+                    </li>
+                    <li>
+                        <div class="theme-switch-wrapper">
+                            <div id="theme-toggle" class="theme-switch" role="button" aria-label="Toggle Dark and Light Mode">
+                                <div class="theme-switch-track">
+                                    <div class="theme-switch-handle">
+                                        <span class="theme-switch-icon"><span class="theme-switch-icon-moon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FF6600" stroke="#FF6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span><span class="theme-switch-icon-sun"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e65c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Project Details Section -->
+    <section id="project-details" style="padding-top: 150px; padding-bottom: 80px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" style="text-transform: none;">Pink Pigeon Breakout Board</h2>
+                    <h3 class="section-subheading text-muted" style="margin-bottom: 30px;"><strong>Pink Pigeon Innovations</strong></h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <!-- Project Image / Fallback -->
+                    <img src="../../img/portfolio/pink_pigeon_breakout.png" alt="Pink Pigeon Breakout Board" class="img-responsive project-detail-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="project-details-fallback">
+                        <i class="fa fa-plug fa-5x" style="color: #FF6600; margin-bottom: 20px;"></i>
+                        <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 16px; letter-spacing: 1px;">Pink Pigeon Breakout Board</span>
+                        <span style="font-size: 12px; margin-top: 10px; opacity: 0.7;">Place image at: img/portfolio/pink_pigeon_breakout.png</span>
+                    </div>
+
+
+
+
+                    <!-- Project Description -->
+                    <div class="project-description text-muted" style="font-size: 16px; line-height: 1.8; margin-top: 40px;">
+                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-bottom: 15px;">Project Overview</h4>
+                        <p style="margin-bottom: 20px;">Our team was engaged to design and route a custom breakout board to assist with diagnostic signal verification. This board serves as an interface utility for system testing, allowing signal inspection during hardware verification cycles.</p>
+                        
+                        <p style="margin-bottom: 20px;">By providing dedicated test point areas and clean routing channels, the layout facilitates convenient instrumentation hookups while ensuring signal stability for laboratory diagnostics.</p>
+                        
+                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-top: 30px; margin-bottom: 15px;">Key Focus Areas</h4>
+                        <ul style="margin-bottom: 30px; padding-left: 20px;">
+                            <li><strong>Signal Integrity:</strong> Optimal trace spacing and signal routing to prevent noise coupling during measurements.</li>
+                            <li><strong>Instrument Integration:</strong> Convenient test points for logic analyzers and measurement probes.</li>
+                            <li><strong>Reliable Connectivity:</strong> Secure connectors and header configurations for hardware testing.</li>
+                        </ul>
+
+                        <!-- Interactive PCB Layer Visualizer -->
+                        <div class="pcb-visualizer">
+                            <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 16px; color: #FF6600; margin-bottom: 20px; text-align: center;">Interactive PCB Layer Inspector</h4>
+                            <div class="pcb-canvas-container" style="background: #0a192f; border-color: #222;">
+                                <!-- Board Outline (Always Visible) -->
+                                <div class="pcb-layer" id="layer-board" style="opacity: 1;">
+                                    <svg viewBox="0 0 320 220">
+                                        <!-- PCB Blue Board -->
+                                        <rect x="10" y="10" width="300" height="200" rx="8" fill="#0a192f" stroke="#a0a0a0" stroke-width="3" />
+                                        <!-- Corner Mount Holes -->
+                                        <circle cx="25" cy="25" r="8" fill="#151515" stroke="#a0a0a0" stroke-width="2" />
+                                        <circle cx="295" cy="25" r="8" fill="#151515" stroke="#a0a0a0" stroke-width="2" />
+                                        <circle cx="25" cy="195" r="8" fill="#151515" stroke="#a0a0a0" stroke-width="2" />
+                                        <circle cx="295" cy="195" r="8" fill="#151515" stroke="#a0a0a0" stroke-width="2" />
+                                    </svg>
+                                </div>
+                                
+                                <!-- Copper Traces Layer (Silver/Tin lines) -->
+                                <div class="pcb-layer" id="layer-copper" style="opacity: 0.9;">
+                                    <svg viewBox="0 0 320 220">
+                                        <!-- Solder Pads -->
+                                        <circle cx="50" cy="70" r="4" fill="#a0a0a0" />
+                                        <circle cx="50" cy="90" r="4" fill="#a0a0a0" />
+                                        <circle cx="50" cy="110" r="4" fill="#a0a0a0" />
+                                        <circle cx="50" cy="130" r="4" fill="#a0a0a0" />
+                                        <circle cx="50" cy="150" r="4" fill="#a0a0a0" />
+                                        
+                                        <circle cx="270" cy="70" r="4" fill="#a0a0a0" />
+                                        <circle cx="270" cy="90" r="4" fill="#a0a0a0" />
+                                        <circle cx="270" cy="110" r="4" fill="#a0a0a0" />
+                                        <circle cx="270" cy="130" r="4" fill="#a0a0a0" />
+                                        <circle cx="270" cy="150" r="4" fill="#a0a0a0" />
+                                        
+                                        <!-- Trace lines -->
+                                        <path d="M 50,70 L 100,70 L 120,90 L 200,90 L 220,70 L 270,70" fill="none" stroke="#a0a0a0" stroke-width="1.5" />
+                                        <path d="M 50,90 L 95,90 L 115,110 L 205,110 L 225,90 L 270,90" fill="none" stroke="#a0a0a0" stroke-width="1.5" />
+                                        <path d="M 50,110 L 270,110" fill="none" stroke="#a0a0a0" stroke-width="1.5" />
+                                        <path d="M 50,130 L 95,130 L 115,150 L 205,150 L 225,130 L 270,130" fill="none" stroke="#a0a0a0" stroke-width="1.5" />
+                                        <path d="M 50,150 L 100,150 L 120,130 L 200,130 L 220,150 L 270,150" fill="none" stroke="#a0a0a0" stroke-width="1.5" />
+                                        
+                                        <!-- Test Point Vias -->
+                                        <circle cx="160" cy="70" r="5" fill="#a0a0a0" stroke="#d4af37" stroke-width="1" />
+                                        <circle cx="160" cy="95" r="5" fill="#a0a0a0" stroke="#d4af37" stroke-width="1" />
+                                        <circle cx="160" cy="120" r="5" fill="#a0a0a0" stroke="#d4af37" stroke-width="1" />
+                                        <circle cx="160" cy="145" r="5" fill="#a0a0a0" stroke="#d4af37" stroke-width="1" />
+                                    </svg>
+                                </div>
+                                
+                                <!-- Silkscreen Layer (White text & outlines) -->
+                                <div class="pcb-layer" id="layer-silk" style="opacity: 0.9;">
+                                    <svg viewBox="0 0 320 220">
+                                        <!-- Component Outlines -->
+                                        <rect x="42" y="55" width="16" height="110" fill="none" stroke="#ffffff" stroke-width="1.5" />
+                                        <rect x="262" y="55" width="16" height="110" fill="none" stroke="#ffffff" stroke-width="1.5" />
+                                        
+                                        <!-- Text Annotations -->
+                                        <text x="160" y="35" fill="#ffffff" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">PINK PIGEON DIAGNOSTICS</text>
+                                        <text x="50" y="50" fill="#ffffff" font-family="sans-serif" font-size="8" text-anchor="middle">INPUT</text>
+                                        <text x="270" y="50" fill="#ffffff" font-family="sans-serif" font-size="8" text-anchor="middle">OUTPUT</text>
+                                        
+                                        <!-- Test Point Labels -->
+                                        <text x="180" y="73" fill="#ffffff" font-family="sans-serif" font-size="7" text-anchor="start">TP_SDA</text>
+                                        <text x="180" y="98" fill="#ffffff" font-family="sans-serif" font-size="7" text-anchor="start">TP_SCL</text>
+                                        <text x="180" y="123" fill="#ffffff" font-family="sans-serif" font-size="7" text-anchor="start">TP_TXD</text>
+                                        <text x="180" y="148" fill="#ffffff" font-family="sans-serif" font-size="7" text-anchor="start">TP_RXD</text>
+                                        
+                                        <text x="160" y="185" fill="#ffffff" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">LTRJ LABS LTD</text>
+                                        <text x="160" y="198" fill="#ffffff" font-family="sans-serif" font-size="7" text-anchor="middle">REV 1.0 (C) 2026</text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <!-- Layer Control Buttons -->
+                            <div class="pcb-layer-controls">
+                                <button class="layer-toggle-btn active" data-layer="board">Board Outline</button>
+                                <button class="layer-toggle-btn active" data-layer="copper">Copper Traces</button>
+                                <button class="layer-toggle-btn active" data-layer="silk">Silkscreen</button>
+                            </div>
+                        </div>
+                        <div class="theme-info-box" style="margin-bottom: 30px;">
+                            <strong>Status: In Progress</strong><br>
+                            Our team is currently testing prototypes and finalizing hardware layouts. Check back soon for updates!
+                        </div>
+
+                        <!-- Client Testimonial -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-quote">"Placeholder quote for Landon Brown. Feedback regarding LTRJ Labs' custom sensor expansion breakout board and PCB routing services will be published here once finalized."</div>
+                            <div class="testimonial-author">Landon Brown</div>
+                            <div class="testimonial-company">Pink Pigeon Innovations</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-left">
+                    <span class="copyright" style="color: #888;">Copyright &copy; LTRJ Labs 2026</span>
+                </div>
+                <div class="col-md-6 text-right">
+                    <ul class="list-inline quicklinks" style="margin-bottom: 0;">
+                        <li><a href="../../privacy/" style="color: #FF6600; text-decoration: none;">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Native Theme & Navigation Scripts -->
+    <script src="../../js/theme.js"></script>
+    <script src="../../js/agency.js"></script>
+
+    <!-- PCB Layer Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toggleBtns = document.querySelectorAll('.layer-toggle-btn');
+            toggleBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var layerId = btn.getAttribute('data-layer');
+                    var layer = document.getElementById('layer-' + layerId);
+                    if (layer) {
+                        btn.classList.toggle('active');
+                        if (btn.classList.contains('active')) {
+                            layer.style.opacity = (layerId === 'board') ? '1' : '0.9';
+                        } else {
+                            layer.style.opacity = '0';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Technical specifications and documentation for LTRJ Labs' custom Remote Water Tank Monitoring system.">
+    <meta name="author" content="LTRJ Labs">
+
+    <meta name="keywords" content="telemetry, water tank monitoring, LoRa, cellular modem, low power MCU, IoT hardware, Victoria BC">
+
+    <title>Remote Water Tank Monitoring - LTRJ Labs</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../../img/SVGLogos/Small_Logo.svg">
+    <link rel="icon" type="image/png" href="../../img/HiResLogos/Small_Logo.png">
+
+    <!-- Modern CSS Layout -->
+    <link href="../../css/modern-layout.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../../css/agency.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!-- Import Map for ES Modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.171.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.171.0/examples/jsm/",
+            "gsap": "https://esm.sh/gsap@3.12.2",
+            "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.2/ScrollTrigger"
+        }
+    }
+    </script>
+
+    <style>
+        /* Exploded 3D view breakout styling */
+                  #exploded-view-container {
+              position: relative;
+              width: 100vw;
+              height: 90vh;
+              left: 50%;
+              right: 50%;
+              margin-left: -50vw;
+              margin-right: -50vw;
+              background: transparent;
+              overflow: hidden;
+              margin-top: 20px;
+              margin-bottom: 40px;
+          }
+          body.light-mode #exploded-view-container {
+              background: transparent;
+          }
+        /* Glassmorphic tooltips */
+        #exploded-view-tooltip {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2000;
+            background: rgba(17, 17, 24, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 280px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.25s ease-out;
+            transform: translate(15px, -50%);
+        }
+        body.light-mode #exploded-view-tooltip {
+            background: rgba(255, 255, 255, 0.92);
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        #tooltip-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: #FF6600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        #tooltip-desc {
+            font-size: 11px;
+            color: #ccc;
+            line-height: 1.5;
+            margin: 0;
+        }
+        body.light-mode #tooltip-desc {
+            color: #4b5563;
+        }
+        #mobile-buttons-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .mobile-plus-btn {
+            position: absolute;
+            width: 32px; height: 32px;
+            background: rgba(255, 102, 0, 0.8);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            pointer-events: auto;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: opacity 0.3s;
+            
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styling for the project details section -->
+    <style>
+        .project-detail-img {
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            background: #2a2a2a;
+            max-width: 100%;
+            height: auto;
+            margin: 30px auto;
+            display: block;
+        }
+        body.light-mode .project-detail-img {
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: #eaeaea;
+        }
+        .project-details-fallback {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 350px;
+            background: #2a2a2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            margin: 30px auto;
+        }
+        body.light-mode .project-details-fallback {
+            background: #eaeaea;
+            color: #555;
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+
+</head>
+
+<body id="page-top" class="index"><script>(function(){const t=localStorage.getItem("theme")||"dark";document.body.classList.add(t+"-mode");})();</script>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../"><img src="../../img/logos/ltrj-logo.png" alt="LTRJ Labs Ltd Logo"></a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a href="../../services/#_services">Services</a>
+                    </li>
+                    <li class="active-page">
+                        <a href="../../portfolio/#_portfolio">Portfolio</a>
+                    </li>
+                    <li>
+                        <a href="../../team/#_team">Team</a>
+                    </li>
+                    <li>
+                        <a href="../../contact/">Contact</a>
+                    </li>
+                    <li>
+                        <div class="theme-switch-wrapper">
+                            <div id="theme-toggle" class="theme-switch" role="button" aria-label="Toggle Dark and Light Mode">
+                                <div class="theme-switch-track">
+                                    <div class="theme-switch-handle">
+                                        <span class="theme-switch-icon"><span class="theme-switch-icon-moon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FF6600" stroke="#FF6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span><span class="theme-switch-icon-sun"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e65c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Project Details Section -->
+    <section id="project-details" style="padding-top: 150px; padding-bottom: 80px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" style="text-transform: none;">Remote Water Tank Monitoring</h2>
+                    <h3 class="section-subheading text-muted" style="margin-bottom: 30px;"><strong>LTRJ Labs - R&D Initiative</strong></h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <!-- Exploded View Full-Width WebGL Section -->
+                    <div id="exploded-view-container">
+                        <canvas id="exploded-view-canvas"></canvas>
+                        
+                        <div id="mobile-buttons-container"></div>
+                        
+                        <!-- Tooltip Overlay -->
+                        <div id="exploded-view-tooltip" style="display: none;">
+                            <div id="tooltip-title">Component Name</div>
+                            <div id="tooltip-desc">Component description...</div>
+                        </div>
+                    </div>
+
+                    <!-- Project Description -->
+                    <div class="project-description text-muted" style="font-size: 16px; line-height: 1.8; margin-top: 40px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin: 0;">Project Overview</h4>
+                        </div>
+                        <p style="margin-bottom: 20px;">The Remote Water Tank Monitoring system is a flagship internal research and development initiative at LTRJ Labs. Designed to address the challenges of tracking water resources in rural and off-grid environments, this system eliminates the need for manual inspections by delivering real-time telemetry from remote storage tanks directly to a central cloud platform.</p>
+                        
+                        <p style="margin-bottom: 20px;">By employing energy-efficient MCU architectures combined with long-range sub-GHz wireless transmitters (such as LoRa) and cellular modems, the device monitors hydrostatic pressure, temperature, and system battery levels. This project is currently in the prototyping phase and represents a key step toward launching our own commercial hardware product and subscription services.</p>
+                        
+                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-top: 30px; margin-bottom: 15px;">Key Features</h4>
+                        <ul style="margin-bottom: 30px; padding-left: 20px;">
+                            <li><strong>Long-Range Wireless Telemetry:</strong> Integrates sub-GHz wireless transceivers to transmit data reliably across several kilometers in rural terrain.</li>
+                            <li><strong>Ultra-Low Power Operations:</strong> Engineered to run on solar-charged lithium battery configurations, achieving multi-year operational cycles without manual recharging.</li>
+                            <li><strong>High-Precision Liquid Level Sensing:</strong> Employs temperature-compensated hydrostatic pressure sensors to log micro-changes in water volume.</li>
+                            <li><strong>Cloud Alert Dashboard:</strong> Feeds telemetry into an online portal configured to dispatch email and SMS notifications when water levels drop below key thresholds.</li>
+                        </ul>
+                        
+
+                        <div class="theme-info-box">
+                            <strong>Status: In Prototyping & Testing</strong><br>
+                            Our engineering team is actively constructing prototypes, calibrating level sensors, and optimizing the low-power sleeping loops. Check back soon for schematics and source files!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-left">
+                    <span class="copyright" style="color: #888;">Copyright &copy; LTRJ Labs 2026</span>
+                </div>
+                <div class="col-md-6 text-right">
+                    <ul class="list-inline quicklinks" style="margin-bottom: 0;">
+                        <li><a href="../../privacy/" style="color: #FF6600; text-decoration: none;">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Native Theme & Navigation Scripts -->
+    <script src="../../js/theme.js"></script>
+    <script src="../../js/agency.js"></script>
+
+    <!-- 3D Exploded View Logic -->
+    <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import gsap from 'gsap';
+
+    const container = document.getElementById('exploded-view-container');
+    const canvas = document.getElementById('exploded-view-canvas');
+    const tooltip = document.getElementById('exploded-view-tooltip');
+    const tooltipTitle = document.getElementById('tooltip-title');
+    const tooltipDesc = document.getElementById('tooltip-desc');
+    
+    // We will dynamically create mobile plus buttons
+    const mobileButtonsContainer = document.getElementById('mobile-buttons-container');
+
+    // 1. Scene setup
+    const EXPLOSION_MODE = 'CIRCULAR'; // Options: 'RADIAL', 'VERTICAL', 'CIRCULAR' // Options: 'RADIAL', 'VERTICAL'
+      const scene = new THREE.Scene();
+    let isLightMode = document.body.classList.contains('light-mode');
+    scene.background = null; // Removed to allow CSS background to show through
+
+    // 2. Camera setup - fixed isometric perspective
+    // Adjust camera to fit the 70vh container
+    const camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(2.0, 1.5, 2.0);
+    camera.lookAt(0, 0, 0);
+
+    // 3. Renderer setup
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    // 4. Lighting setup
+    const ambientLight = new THREE.AmbientLight(0xffffff, isLightMode ? 1.5 : 1.5);
+    scene.add(ambientLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, isLightMode ? 3.5 : 3.5);
+    dirLight1.position.set(1, 25, 4);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, isLightMode ? 1.0 : 1.0);
+    dirLight2.position.set(-10, 5, -5);
+    scene.add(dirLight2);
+
+    // Theme observer
+    const themeObserver = new MutationObserver(() => {
+        const isLight = document.body.classList.contains('light-mode');
+        const targetColor = isLight ? 0xf9fafb : 0x0a0a0f;
+        // scene.background.setHex(targetColor); // Disabled for true transparency
+        ambientLight.intensity = isLight ? 1.5 : 1.5; // Boosted dark mode ambient
+            dirLight1.intensity = isLight ? 3.5 : 3.5; // Boosted dark mode directional
+        dirLight2.intensity = isLight ? 1.0 : 1.0;
+        requestRender();
+    });
+    themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    // 5. Model Loading
+    const loader = new GLTFLoader();
+    const modelUrl = '../../img/RemoteTankMonitoring-Enclosure+TankMount.gltf?v=' + new Date().getTime();
+
+    let modelGroup = null;
+    const parts = []; // Store parts for explosion
+    let isExploded = false;
+    let explosionProgress = { value: 0 };
+    let currentHoveredPart = null;
+    let isMobile = window.innerWidth <= 768;
+
+    loader.load(modelUrl, (gltf) => {
+        modelGroup = gltf.scene;
+
+        const rootNode = modelGroup.children[0] || modelGroup;
+        let bottomCasingPart = null;
+        const explodeParts = [];
+        
+        rootNode.children.forEach(child => {
+            if (child.isObject3D && !child.isLight && !child.isCamera) {
+                if (child.name.includes('BottomCasing') || child.name.includes('Casing')) {
+                    if (!bottomCasingPart) bottomCasingPart = child;
+                    else explodeParts.push(child);
+                } else {
+                    explodeParts.push(child);
+                }
+            }
+        });
+
+        if (!bottomCasingPart && explodeParts.length > 0) {
+            bottomCasingPart = explodeParts.shift();
+        }
+
+        modelGroup.updateMatrixWorld(true);
+
+        // Force EVERYTHING to be visible to ensure TopCasing isn't hidden
+        modelGroup.traverse(node => {
+            node.visible = true;
+            if (node.isMesh && node.material) {
+                node.material.visible = true;
+                node.material.opacity = 1.0;
+                node.material.transparent = false;
+            }
+        });
+
+        const bottomCasingBox = new THREE.Box3().setFromObject(bottomCasingPart);
+        const casingSize = bottomCasingBox.getSize(new THREE.Vector3());
+        
+        let maxPartDim = 0;
+        window.radius = 0; // Global for fitModelToScreen
+        explodeParts.forEach(child => {
+            const childBox = new THREE.Box3().setFromObject(child);
+            const size = childBox.getSize(new THREE.Vector3());
+            maxPartDim = Math.max(maxPartDim, Math.max(size.x, size.z));
+        });
+        
+        // Baseline explosion parameters
+          // Dynamic radius using max 3D diagonal to ensure it clears the casing visually from any angle
+        const casingMax = Math.max(casingSize.x, casingSize.y, casingSize.z);
+        window.radius = (casingMax * 0.5 + maxPartDim * 0.5) * 1.15;
+
+        if (bottomCasingPart) {
+            const childBox = new THREE.Box3().setFromObject(bottomCasingPart);
+            const childCenterWorld = childBox.getCenter(new THREE.Vector3());
+            const childCenterParent = bottomCasingPart.parent.worldToLocal(childCenterWorld);
+            const pivotOffset = childCenterParent.clone().sub(bottomCasingPart.position);
+
+            const hitboxGeo = new THREE.BoxGeometry(casingSize.x, casingSize.y, casingSize.z);
+            const hitboxMat = new THREE.MeshBasicMaterial({ visible: false });
+            const hitbox = new THREE.Mesh(hitboxGeo, hitboxMat);
+            bottomCasingPart.worldToLocal(childCenterWorld.clone());
+            hitbox.position.copy(bottomCasingPart.worldToLocal(childBox.getCenter(new THREE.Vector3())));
+            bottomCasingPart.add(hitbox);
+
+            parts.push({
+                hitbox: hitbox,
+                node: bottomCasingPart,
+                origPosition: bottomCasingPart.position.clone(),
+                offsetVector: new THREE.Vector3(0, 0, 0),
+                pivotOffset: pivotOffset,
+                origScale: bottomCasingPart.scale.clone(),
+                targetScale: bottomCasingPart.scale.clone(),
+                currentScale: bottomCasingPart.scale.clone(),
+                label: bottomCasingPart.name || 'Bottom Casing',
+                desc: 'The main base enclosure.',
+                buttonEl: null
+            });
+        }
+        
+        const numParts = explodeParts.length;
+        explodeParts.forEach((child, index) => {
+            const angle = (index / numParts) * Math.PI * 2;
+            
+            // offsetVector will be calculated dynamically in fitModelToScreen
+              const translation = new THREE.Vector3(0,0,0);
+            
+            const childBox = new THREE.Box3().setFromObject(child);
+            const childSize = childBox.getSize(new THREE.Vector3());
+            const childCenterWorld = childBox.getCenter(new THREE.Vector3());
+            const childCenterParent = child.parent.worldToLocal(childCenterWorld.clone());
+            const pivotOffset = childCenterParent.clone().sub(child.position);
+
+            const hitboxGeo = new THREE.BoxGeometry(childSize.x, childSize.y, childSize.z);
+            const hitboxMat = new THREE.MeshBasicMaterial({ visible: false });
+            const hitbox = new THREE.Mesh(hitboxGeo, hitboxMat);
+            hitbox.position.copy(child.worldToLocal(childCenterWorld.clone()));
+            child.add(hitbox);
+
+            parts.push({
+                hitbox: hitbox,
+                node: child,
+                origPosition: child.position.clone(),
+                offsetVector: translation,
+                pivotOffset: pivotOffset,
+                origScale: child.scale.clone(),
+                targetScale: child.scale.clone(),
+                currentScale: child.scale.clone(),
+                label: child.name || 'Component',
+                desc: 'Component details for ' + child.name,
+                buttonEl: null
+            });
+        });
+
+        function fitModelToScreen() {
+            // 1. Reset everything to baseline origin
+            modelGroup.scale.set(1,1,1);
+            modelGroup.position.set(0,0,0);
+            parts.forEach(p => p.node.position.copy(p.origPosition));
+            modelGroup.updateMatrixWorld(true);
+            
+            const aspect = container.clientWidth / container.clientHeight;
+            camera.updateMatrixWorld();
+            const cameraRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion).normalize();
+            const cameraUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion).normalize();
+            const numParts = explodeParts.length;
+            
+            let casingMax = 10;
+            if (bottomCasingPart) {
+                const box = new THREE.Box3().setFromObject(bottomCasingPart);
+                const size = box.getSize(new THREE.Vector3());
+                casingMax = Math.max(size.x, size.y, size.z);
+            }
+            
+            if (EXPLOSION_MODE === 'RADIAL') {
+                // ... [PRESERVED RADIAL SHRINK-WRAP ALGORITHM] ...
+                parts.forEach(p => { p.currentRadius = casingMax * 0.1; });
+                let bestPushX = Math.max(1.0, aspect);
+                let bestPushY = Math.max(1.0, 1.0 / aspect);
+                
+                for (let radiusIter = 0; radiusIter < 60; radiusIter++) {
+                    let currentPushX = Math.max(1.0, aspect);
+                    let currentPushY = Math.max(1.0, 1.0 / aspect);
+                    
+                    for (let iter = 0; iter < 10; iter++) {
+                        parts.forEach(p => {
+                            if (p.node === bottomCasingPart) {
+                                p.offsetVector = new THREE.Vector3(0,0,0);
+                                p.node.position.copy(p.origPosition);
+                                return;
+                            }
+                            const index = explodeParts.indexOf(p.node);
+                            if (index === -1) return;
+                            const angle = (index / numParts) * Math.PI * 2;
+                            const dirX = Math.cos(angle) * currentPushX; 
+                            const dirY = Math.sin(angle) * currentPushY; 
+                            const dir = new THREE.Vector3().addScaledVector(cameraRight, dirX).addScaledVector(cameraUp, dirY);
+                            const worldTranslation = dir.multiplyScalar(p.currentRadius);
+                            const worldPos = p.origPosition.clone();
+                            p.node.parent.localToWorld(worldPos);
+                            worldPos.add(worldTranslation);
+                            const targetLocalPos = p.node.parent.worldToLocal(worldPos);
+                            p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
+                            p.node.position.copy(p.origPosition).add(p.offsetVector);
+                        });
+                        modelGroup.updateMatrixWorld(true);
+                        
+                        let minX = Infinity, maxX = -Infinity;
+                        let minY = Infinity, maxY = -Infinity;
+                        parts.forEach(p => {
+                            const box = new THREE.Box3().setFromObject(p.node);
+                            const corners = [
+                                new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                                new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                                new THREE.Vector3(box.max.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                                new THREE.Vector3(box.max.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                            ];
+                            corners.forEach(c => {
+                                c.project(camera); 
+                                minX = Math.min(minX, c.x); maxX = Math.max(maxX, c.x);
+                                minY = Math.min(minY, c.y); maxY = Math.max(maxY, c.y);
+                            });
+                        });
+                        
+                        const ndcWidth = maxX - minX;
+                        const ndcHeight = maxY - minY;
+                        if (ndcHeight === 0 || ndcWidth === 0) break;
+                        const currentNdcRatio = ndcWidth / ndcHeight;
+                        if (Math.abs(currentNdcRatio - 1.0) < 0.02) {
+                            bestPushX = currentPushX; bestPushY = currentPushY; break;
+                        }
+                        if (currentNdcRatio < 1.0) currentPushX *= 1.05;
+                        else currentPushY *= 1.05;
+                        bestPushX = currentPushX; bestPushY = currentPushY;
+                    }
+                    
+                    const partsNDC = [];
+                    parts.forEach(p => {
+                        const box = new THREE.Box3().setFromObject(p.node);
+                        let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity;
+                        const corners = [
+                            new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                            new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                            new THREE.Vector3(box.max.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                            new THREE.Vector3(box.max.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                        ];
+                        corners.forEach(c => {
+                            c.project(camera);
+                            pMinX = Math.min(pMinX, c.x); pMaxX = Math.max(pMaxX, c.x);
+                            pMinY = Math.min(pMinY, c.y); pMaxY = Math.max(pMaxY, c.y);
+                        });
+                        p.hasOverlap = false;
+                        partsNDC.push({part: p, minX: pMinX, maxX: pMaxX, minY: pMinY, maxY: pMaxY});
+                    });
+                    
+                    let anyOverlap = false;
+                    const margin = 0.03; 
+                    for (let i = 0; i < partsNDC.length; i++) {
+                        for (let j = i + 1; j < partsNDC.length; j++) {
+                            const a = partsNDC[i], b = partsNDC[j];
+                            if (!(a.maxX + margin < b.minX || a.minX - margin > b.maxX || a.maxY + margin < b.minY || a.minY - margin > b.maxY)) {
+                                a.part.hasOverlap = true; b.part.hasOverlap = true; anyOverlap = true;
+                            }
+                        }
+                    }
+                    if (!anyOverlap) break;
+                    parts.forEach(p => {
+                        if (p.hasOverlap && p.node !== bottomCasingPart) p.currentRadius += casingMax * 0.02;
+                    });
+                }
+                
+                parts.forEach(p => {
+                    if (p.node === bottomCasingPart) { p.offsetVector = new THREE.Vector3(0,0,0); p.node.position.copy(p.origPosition); return; }
+                    const index = explodeParts.indexOf(p.node);
+                    if (index === -1) return;
+                    const angle = (index / numParts) * Math.PI * 2;
+                    const dirX = Math.cos(angle) * bestPushX; 
+                    const dirY = Math.sin(angle) * bestPushY; 
+                    const dir = new THREE.Vector3().addScaledVector(cameraRight, dirX).addScaledVector(cameraUp, dirY);
+                    const worldTranslation = dir.multiplyScalar(p.currentRadius);
+                    const worldPos = p.origPosition.clone();
+                    p.node.parent.localToWorld(worldPos);
+                    worldPos.add(worldTranslation);
+                    const targetLocalPos = p.node.parent.worldToLocal(worldPos);
+                    p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
+                    p.node.position.copy(p.origPosition).add(p.offsetVector);
+                });
+            } else if (EXPLOSION_MODE === 'CIRCULAR') {
+                // --- PERCENTAGE-BASED CIRCULAR SHRINK-WRAP ---
+                
+                const dynamicParts = parts.filter(p => p.node !== bottomCasingPart);
+                
+                // 1. Calculate the physical "width" of each part for angular allocation
+                let totalPartWidth = 0;
+                // Mix up the array to prevent all large parts from clustering on one side!
+                // We'll sort them by size, then distribute them in an alternating pattern.
+                dynamicParts.forEach(p => {
+                    const box = new THREE.Box3().setFromObject(p.node);
+                    const size = box.getSize(new THREE.Vector3());
+                    p.width = Math.max(size.x, size.y, size.z); 
+                });
+                
+                dynamicParts.sort((a, b) => b.width - a.width); // Largest first
+                const balancedParts = [];
+                let left = true;
+                dynamicParts.forEach(p => {
+                    if (left) balancedParts.push(p);
+                    else balancedParts.unshift(p);
+                    left = !left;
+                });
+                
+                balancedParts.forEach(p => {
+                    totalPartWidth += p.width;
+                });
+                
+                // Add padding to total width to create visual angular gaps (e.g., 30% empty space)
+                const gapMultiplier = 1.3;
+                const totalEffectiveWidth = totalPartWidth * gapMultiplier;
+                
+                // 2. Distribute their target Angles based on their width percentages
+                let currentAngle = 0;
+                balancedParts.forEach(p => {
+                    const sliceAngle = ((p.width * gapMultiplier) / totalEffectiveWidth) * Math.PI * 2;
+                    currentAngle += sliceAngle / 2;
+                    p.targetAngle = currentAngle;
+                    currentAngle += sliceAngle / 2;
+                    
+                    // Initialize radius at 0 for shrink-wrap
+                    p.currentRadius = 0;
+                });
+                
+                // 3. Circular Shrink-Wrap Collision Engine
+                let casingMax = 10;
+                if (bottomCasingPart) {
+                    const box = new THREE.Box3().setFromObject(bottomCasingPart);
+                    const size = box.getSize(new THREE.Vector3());
+                    casingMax = Math.max(size.x, size.y, size.z);
+                }
+                
+                for (let radiusIter = 0; radiusIter < 300; radiusIter++) {
+                    // Apply current layout
+                    parts.forEach(p => {
+                        if (p.node === bottomCasingPart) {
+                            p.offsetVector = new THREE.Vector3(0,0,0);
+                            p.node.position.copy(p.origPosition);
+                            return;
+                        }
+                        
+                        const dirX = Math.cos(p.targetAngle); 
+                        const dirY = Math.sin(p.targetAngle); 
+                        const dir = new THREE.Vector3()
+                            .addScaledVector(cameraRight, dirX)
+                            .addScaledVector(cameraUp, dirY);
+                            
+                        const worldTranslation = dir.multiplyScalar(p.currentRadius);
+                        const worldPos = p.origPosition.clone();
+                        p.node.parent.localToWorld(worldPos);
+                        worldPos.add(worldTranslation);
+                        
+                        const targetLocalPos = p.node.parent.worldToLocal(worldPos);
+                        p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
+                        p.node.position.copy(p.origPosition).add(p.offsetVector);
+                    });
+                    
+                    modelGroup.updateMatrixWorld(true);
+                    
+                    // Check 2D Screen Space Overlaps!
+                    const partsNDC = [];
+                    parts.forEach(p => {
+                        const box = new THREE.Box3().setFromObject(p.node);
+                        let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity;
+                        const corners = [
+                            new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                            new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                            new THREE.Vector3(box.max.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                            new THREE.Vector3(box.max.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                        ];
+                        corners.forEach(c => {
+                            c.project(camera);
+                            pMinX = Math.min(pMinX, c.x); pMaxX = Math.max(pMaxX, c.x);
+                            pMinY = Math.min(pMinY, c.y); pMaxY = Math.max(pMaxY, c.y);
+                        });
+                        p.hasOverlap = false; 
+                        partsNDC.push({part: p, minX: pMinX, maxX: pMaxX, minY: pMinY, maxY: pMaxY});
+                    });
+                    
+                    let anyOverlap = false;
+                    const margin = 0.01; // 1% of screen space minimum gap
+                    
+                    for (let i = 0; i < partsNDC.length; i++) {
+                        for (let j = i + 1; j < partsNDC.length; j++) {
+                            const a = partsNDC[i];
+                            const b = partsNDC[j];
+                            if (!(a.maxX + margin < b.minX || a.minX - margin > b.maxX || 
+                                  a.maxY + margin < b.minY || a.minY - margin > b.maxY)) {
+                                a.part.hasOverlap = true;
+                                b.part.hasOverlap = true;
+                                anyOverlap = true;
+                            }
+                        }
+                    }
+                    
+                    if (!anyOverlap) {
+                        break; // Perfection achieved!
+                    }
+                    
+                    // Increase radius ONLY for parts that are currently overlapping!
+                    parts.forEach(p => {
+                        if (p.hasOverlap && p.node !== bottomCasingPart) {
+                            p.currentRadius += casingMax * 0.02;
+                        }
+                    });
+                }
+            
+            } // END CIRCULAR BLOCK
+              // --- FINAL SCALING (Shared by both modes) ---
+            const rawBox = new THREE.Box3().setFromObject(modelGroup);
+            const rawRadius = rawBox.getSize(new THREE.Vector3()).length();
+            const safeScale = 1.0 / Math.max(0.1, rawRadius);
+            
+            modelGroup.scale.set(safeScale, safeScale, safeScale);
+            modelGroup.position.sub(rawBox.getCenter(new THREE.Vector3()).multiplyScalar(safeScale));
+            modelGroup.updateMatrixWorld(true);
+            
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            parts.forEach(p => {
+                const box = new THREE.Box3().setFromObject(p.node);
+                const corners = [
+                    new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                    new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                    new THREE.Vector3(box.max.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                    new THREE.Vector3(box.max.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                ];
+                corners.forEach(c => {
+                    c.project(camera); 
+                    minX = Math.min(minX, c.x); maxX = Math.max(maxX, c.x);
+                    minY = Math.min(minY, c.y); maxY = Math.max(maxY, c.y);
+                });
+            });
+            
+            const ndcWidth = maxX - minX;
+            const ndcHeight = maxY - minY;
+            const targetNdcSize = 1.9; // 95% of screen
+            
+            const fineScale = Math.min(targetNdcSize / Math.max(0.01, ndcWidth), targetNdcSize / Math.max(0.01, ndcHeight));
+            const finalScale = safeScale * fineScale;
+            
+            modelGroup.scale.set(finalScale, finalScale, finalScale);
+            modelGroup.position.set(0,0,0);
+            modelGroup.updateMatrixWorld(true);
+            
+            const finalExplodedBox = new THREE.Box3().setFromObject(modelGroup);
+            modelGroup.position.sub(finalExplodedBox.getCenter(new THREE.Vector3()));
+            
+            parts.forEach(p => p.node.position.copy(p.origPosition));
+            requestRender();
+        }
+        
+        window.fitModelToScreen = fitModelToScreen;
+        fitModelToScreen();
+
+        scene.add(modelGroup);
+        createMobileButtons();
+        requestRender();
+    });
+
+    // 6. Explosion Animation Logic
+    function setExplosionProgress(progress) {
+        explosionProgress.value = progress;
+        parts.forEach(part => {
+            const currentOffset = part.offsetVector.clone().multiplyScalar(progress);
+            part.node.position.copy(part.origPosition).add(currentOffset);
+        });
+        updateMobileButtons();
+        requestRender();
+    }
+
+    function toggleExplosion(explode) {
+        if (explode === isExploded) return;
+        isExploded = explode;
+        
+        gsap.to(explosionProgress, {
+            value: isExploded ? 1 : 0,
+            duration: 1.0,
+            ease: "power2.out",
+            onUpdate: () => {
+                setExplosionProgress(explosionProgress.value);
+            },
+            onComplete: () => {
+                if (isMobile && isExploded) {
+                    showMobileButtons(true);
+                } else {
+                    showMobileButtons(false);
+                    // Hide tooltips if collapsing
+                    tooltip.style.opacity = '0';
+                    setTimeout(() => tooltip.style.display = 'none', 300);
+                }
+            }
+        });
+    }
+
+    // 7. Desktop Interaction (Mouse Enter/Leave/Hover)
+    container.addEventListener('mouseenter', () => {
+        if (!isMobile) toggleExplosion(true);
+    });
+
+    container.addEventListener('mouseleave', () => {
+        if (!isMobile) {
+            toggleExplosion(false);
+            if (currentHoveredPart) {
+                unhoverPart(currentHoveredPart);
+                currentHoveredPart = null;
+            }
+            tooltip.style.opacity = '0';
+            setTimeout(() => tooltip.style.display = 'none', 300);
+        }
+    });
+
+    // Raycasting for Desktop Hover
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    container.addEventListener('mousemove', (event) => {
+        if (isMobile || !isExploded || explosionProgress.value < 0.9) return;
+
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        tooltip.style.left = `${event.clientX + 15}px`;
+        tooltip.style.top = `${event.clientY}px`;
+
+        raycaster.setFromCamera(mouse, camera);
+        
+        // Invisible Bounding Box Raycasting
+        const hitboxes = parts.map(p => p.hitbox);
+        const intersects = raycaster.intersectObjects(hitboxes, false);
+
+        let foundPart = null;
+        if (intersects.length > 0) {
+            const hitObject = intersects[0].object;
+            const part = parts.find(p => p.hitbox === hitObject);
+            if (part) { foundPart = part; }
+        }
+
+        if (foundPart !== currentHoveredPart) {
+            if (currentHoveredPart) unhoverPart(currentHoveredPart);
+            currentHoveredPart = foundPart;
+            if (foundPart) {
+                hoverPart(foundPart);
+                tooltipTitle.textContent = foundPart.label;
+                tooltipDesc.textContent = foundPart.desc;
+                tooltip.style.display = 'block';
+                setTimeout(() => tooltip.style.opacity = '1', 10);
+            } else {
+                tooltip.style.opacity = '0';
+                setTimeout(() => { if(!currentHoveredPart) tooltip.style.display = 'none' }, 200);
+            }
+        }
+    });
+
+    let scaleAnimationId = null;
+    function hoverPart(part) {
+        part.targetScale = part.origScale.clone().multiplyScalar(1.1);
+        part.isHovered = true;
+        startScaleLoop();
+    }
+    function unhoverPart(part) {
+        part.targetScale = part.origScale.clone();
+        part.isHovered = false;
+        startScaleLoop();
+    }
+
+    function startScaleLoop() {
+        if (scaleAnimationId) return;
+        
+        function animateScale() {
+            let stillAnimating = false;
+            parts.forEach(part => {
+                part.currentScale.lerp(part.targetScale, 0.15);
+                part.node.scale.copy(part.currentScale);
+                if (part.currentScale.distanceTo(part.targetScale) > 0.001) {
+                    stillAnimating = true;
+                }
+
+                if (!part.origQuaternion) {
+                    part.origQuaternion = part.node.quaternion.clone();
+                }
+
+                if (part.isHovered) {
+                    if (part.currentRotationY === undefined) part.currentRotationY = 0;
+                    part.currentRotationY += 0.015; 
+                    stillAnimating = true;
+                } else if (part.currentRotationY !== undefined && part.currentRotationY > 0) {
+                    part.currentRotationY += (0 - part.currentRotationY) * 0.1;
+                    if (part.currentRotationY < 0.001) part.currentRotationY = 0;
+                    else stillAnimating = true;
+                }
+
+                if (part.currentRotationY !== undefined) {
+                    const basePos = part.origPosition.clone().add(part.offsetVector.clone().multiplyScalar(explosionProgress.value));
+                    part.node.position.copy(basePos);
+                    part.node.quaternion.copy(part.origQuaternion);
+
+                    if (part.currentRotationY > 0) {
+                        const axis = new THREE.Vector3(0,1,0);
+                        const q = new THREE.Quaternion().setFromAxisAngle(axis, part.currentRotationY);
+                        
+                        // Pivot is exactly offset from basePos
+                        const pivot = basePos.clone().add(part.pivotOffset);
+                        
+                        part.node.position.sub(pivot);
+                        part.node.position.applyQuaternion(q);
+                        part.node.position.add(pivot);
+                        
+                        part.node.quaternion.premultiply(q);
+                    }
+                }
+            });
+            
+            requestRender();
+            
+            if (stillAnimating) {
+                scaleAnimationId = requestAnimationFrame(animateScale);
+            } else {
+                scaleAnimationId = null;
+            }
+        }
+        animateScale();
+    }
+
+    // 8. Mobile Interaction (Intersection Observer & Plus Buttons)
+    const observer = new IntersectionObserver((entries) => {
+        if (!isMobile) return;
+        entries.forEach(entry => {
+            if (entry.isIntersecting && entry.intersectionRatio > 0.4) {
+                toggleExplosion(true);
+            } else if (!entry.isIntersecting || entry.intersectionRatio < 0.2) {
+                toggleExplosion(false);
+            }
+        });
+    }, { threshold: [0.2, 0.4, 0.6] });
+    observer.observe(container);
+
+    function createMobileButtons() {
+        parts.forEach(part => {
+            const btn = document.createElement('div');
+            btn.className = 'mobile-plus-btn';
+            btn.innerHTML = '<i class="fa fa-plus"></i>';
+            btn.style.display = 'none';
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Show tooltip in center
+                tooltipTitle.textContent = part.label;
+                tooltipDesc.textContent = part.desc;
+                tooltip.style.left = '50%';
+                tooltip.style.top = '50%';
+                tooltip.style.transform = 'translate(-50%, -50%)';
+                tooltip.style.display = 'block';
+                setTimeout(() => tooltip.style.opacity = '1', 10);
+            });
+            mobileButtonsContainer.appendChild(btn);
+            part.buttonEl = btn;
+        });
+    }
+
+    function updateMobileButtons() {
+        if (!isMobile || !isExploded) return;
+        const rect = container.getBoundingClientRect();
+        parts.forEach(part => {
+            if (!part.buttonEl) return;
+            // Get center of part
+            const box = new THREE.Box3().setFromObject(part.node);
+            const center = box.getCenter(new THREE.Vector3());
+            
+            // Project to 2D
+            center.project(camera);
+            
+            const x = (center.x *  .5 + .5) * rect.width;
+            const y = (center.y * -.5 + .5) * rect.height;
+            
+            part.buttonEl.style.left = `${x}px`;
+            part.buttonEl.style.top = `${y}px`;
+        });
+    }
+
+    function showMobileButtons(show) {
+        parts.forEach(part => {
+            if (part.buttonEl) {
+                if (show) {
+                    part.buttonEl.style.display = 'flex';
+                    setTimeout(() => part.buttonEl.style.opacity = '1', 10);
+                } else {
+                    part.buttonEl.style.opacity = '0';
+                    setTimeout(() => part.buttonEl.style.display = 'none', 300);
+                }
+            }
+        });
+        if (show) updateMobileButtons();
+    }
+
+    // Close tooltip on mobile tap anywhere else
+    document.addEventListener('click', () => {
+        if (isMobile && tooltip.style.opacity === '1') {
+            tooltip.style.opacity = '0';
+            setTimeout(() => tooltip.style.display = 'none', 300);
+        }
+    });
+
+    // 9. Window Resize
+    window.addEventListener('resize', () => {
+        isMobile = window.innerWidth <= 768;
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        if (window.fitModelToScreen) window.fitModelToScreen();
+        updateMobileButtons();
+        requestRender();
+    });
+
+    // 10. On-Demand Render
+    function requestRender() {
+        renderer.render(scene, camera);
+    }
+</script>
+
+
+</body>
+
+</html>
+
