@@ -378,7 +378,7 @@
         
         rootNode.children.forEach(child => {
             if (child.isObject3D && !child.isLight && !child.isCamera) {
-                if (child.name.includes('MainBoard')) {
+                if (child.name.includes('BottomCasing') || child.name.includes('Casing')) {
                     if (!bottomCasingPart) bottomCasingPart = child;
                     else explodeParts.push(child);
                 } else {
@@ -443,8 +443,8 @@
                 origScale: bottomCasingPart.scale.clone(),
                 targetScale: bottomCasingPart.scale.clone(),
                 currentScale: bottomCasingPart.scale.clone(),
-                label: bottomCasingPart.name || 'Main Board',
-                desc: 'The central electronics board.',
+                label: bottomCasingPart.name || 'Bottom Casing',
+                desc: 'The main base enclosure.',
                 buttonEl: null
             });
         }
@@ -686,7 +686,7 @@
                     p.targetAngle = (i / n) * Math.PI * 2 - Math.PI / 2; // Start from top
                 });
                 
-                const simMargin = 0.03;
+                const simMargin = 0.0065;
                 let radius = 0.05;
                 
                 for (let r = 0; r < 500; r++) {
@@ -788,7 +788,7 @@
             
             const ndcWidth = maxX - minX;
             const ndcHeight = maxY - minY;
-            const targetNdcSize = 1.9; // 95% of screen
+            const targetNdcSize = 1.8; // 90% of viewport, leaves room for hover scale + rotation
             
             const fineScale = Math.min(targetNdcSize / Math.max(0.01, ndcWidth), targetNdcSize / Math.max(0.01, ndcHeight));
             const finalScale = safeScale * fineScale;
