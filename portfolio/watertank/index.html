@@ -6,12 +6,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Technical specifications and documentation for LTRJ Labs' custom Remote Water Tank Monitoring system.">
+    <meta name="description" content="Technical specifications and documentation for LTRJ Labs' custom MothNode system.">
     <meta name="author" content="LTRJ Labs">
 
     <meta name="keywords" content="telemetry, water tank monitoring, LoRa, cellular modem, low power MCU, IoT hardware, Victoria BC">
 
-    <title>Remote Water Tank Monitoring - LTRJ Labs</title>
+    <title>MothNode - LTRJ Labs</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="../../img/SVGLogos/Small_Logo.svg">
@@ -229,7 +229,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2 class="section-heading" style="text-transform: none;">Remote Water Tank Monitoring</h2>
+                    <h2 class="section-heading" style="text-transform: none;">MothNode</h2>
                     <h3 class="section-subheading text-muted" style="margin-bottom: 30px;"><strong>LTRJ Labs - R&D Initiative</strong></h3>
                 </div>
             </div>
@@ -253,7 +253,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin: 0;">Project Overview</h4>
                         </div>
-                        <p style="margin-bottom: 20px;">The Remote Water Tank Monitoring system is a flagship internal research and development initiative at LTRJ Labs. Designed to address the challenges of tracking water resources in rural and off-grid environments, this system eliminates the need for manual inspections by delivering real-time telemetry from remote storage tanks directly to a central cloud platform.</p>
+                        <p style="margin-bottom: 20px;">The MothNode system is a flagship internal research and development initiative at LTRJ Labs. Designed to address the challenges of tracking water resources in rural and off-grid environments, this system eliminates the need for manual inspections by delivering real-time telemetry from remote storage tanks directly to a central cloud platform.</p>
                         
                         <p style="margin-bottom: 20px;">By employing energy-efficient MCU architectures combined with long-range sub-GHz wireless transmitters (such as LoRa) and cellular modems, the device monitors hydrostatic pressure, temperature, and system battery levels. This project is currently in the prototyping phase and represents a key step toward launching our own commercial hardware product and subscription services.</p>
                         
@@ -326,31 +326,34 @@
     // 3. Renderer setup
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Reduced max DPR for performance
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    // 4. Lighting setup
-    const ambientLight = new THREE.AmbientLight(0xffffff, isLightMode ? 1.5 : 1.5);
+    // 4. Lighting setup (FreeCAD style 3-point)
+    const ambientLight = new THREE.AmbientLight(0xffffff, isLightMode ? 0.9 : 0.7);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, isLightMode ? 3.5 : 3.5);
-    dirLight1.position.set(1, 25, 4);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, isLightMode ? 3.0 : 2.5);
+    dirLight1.position.set(10, 20, 15);
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0xffffff, isLightMode ? 1.0 : 1.0);
-    dirLight2.position.set(-10, 5, -5);
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, isLightMode ? 1.5 : 1.2);
+    dirLight2.position.set(-15, 5, 10);
     scene.add(dirLight2);
+
+    const dirLight3 = new THREE.DirectionalLight(0xffffff, isLightMode ? 2.0 : 1.5);
+    dirLight3.position.set(0, 15, -20);
+    scene.add(dirLight3);
 
     // Theme observer
     const themeObserver = new MutationObserver(() => {
         const isLight = document.body.classList.contains('light-mode');
-        const targetColor = isLight ? 0xf9fafb : 0x0a0a0f;
-        // scene.background.setHex(targetColor); // Disabled for true transparency
-        ambientLight.intensity = isLight ? 1.5 : 1.5; // Boosted dark mode ambient
-            dirLight1.intensity = isLight ? 3.5 : 3.5; // Boosted dark mode directional
-        dirLight2.intensity = isLight ? 1.0 : 1.0;
+        ambientLight.intensity = isLight ? 0.9 : 0.7;
+        dirLight1.intensity = isLight ? 3.0 : 2.5;
+        dirLight2.intensity = isLight ? 1.5 : 1.2;
+        dirLight3.intensity = isLight ? 2.0 : 1.5;
         requestRender();
     });
     themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
@@ -375,7 +378,7 @@
         
         rootNode.children.forEach(child => {
             if (child.isObject3D && !child.isLight && !child.isCamera) {
-                if (child.name.includes('BottomCasing') || child.name.includes('Casing')) {
+                if (child.name.includes('MainBoard')) {
                     if (!bottomCasingPart) bottomCasingPart = child;
                     else explodeParts.push(child);
                 } else {
@@ -393,10 +396,12 @@
         // Force EVERYTHING to be visible to ensure TopCasing isn't hidden
         modelGroup.traverse(node => {
             node.visible = true;
-            if (node.isMesh && node.material) {
-                node.material.visible = true;
-                node.material.opacity = 1.0;
-                node.material.transparent = false;
+            if (node.isMesh) {
+                if (node.material) {
+                    node.material.visible = true;
+                    node.material.opacity = 1.0;
+                    node.material.transparent = false;
+                }
             }
         });
 
@@ -438,8 +443,8 @@
                 origScale: bottomCasingPart.scale.clone(),
                 targetScale: bottomCasingPart.scale.clone(),
                 currentScale: bottomCasingPart.scale.clone(),
-                label: bottomCasingPart.name || 'Bottom Casing',
-                desc: 'The main base enclosure.',
+                label: bottomCasingPart.name || 'Main Board',
+                desc: 'The central electronics board.',
                 buttonEl: null
             });
         }
@@ -612,132 +617,149 @@
                     p.node.position.copy(p.origPosition).add(p.offsetVector);
                 });
             } else if (EXPLOSION_MODE === 'CIRCULAR') {
-                // --- PERCENTAGE-BASED CIRCULAR SHRINK-WRAP ---
+                // --- FORCE-DIRECTED LAYOUT (NDC-SPACE) ---
                 
                 const dynamicParts = parts.filter(p => p.node !== bottomCasingPart);
                 
-                // 1. Calculate the physical "width" of each part for angular allocation
-                let totalPartWidth = 0;
-                // Mix up the array to prevent all large parts from clustering on one side!
-                // We'll sort them by size, then distribute them in an alternating pattern.
-                dynamicParts.forEach(p => {
-                    const box = new THREE.Box3().setFromObject(p.node);
-                    const size = box.getSize(new THREE.Vector3());
-                    p.width = Math.max(size.x, size.y, size.z); 
-                });
-                
-                dynamicParts.sort((a, b) => b.width - a.width); // Largest first
-                const balancedParts = [];
-                let left = true;
-                dynamicParts.forEach(p => {
-                    if (left) balancedParts.push(p);
-                    else balancedParts.unshift(p);
-                    left = !left;
-                });
-                
-                balancedParts.forEach(p => {
-                    totalPartWidth += p.width;
-                });
-                
-                // Add padding to total width to create visual angular gaps (e.g., 30% empty space)
-                const gapMultiplier = 1.3;
-                const totalEffectiveWidth = totalPartWidth * gapMultiplier;
-                
-                // 2. Distribute their target Angles based on their width percentages
-                let currentAngle = 0;
-                balancedParts.forEach(p => {
-                    const sliceAngle = ((p.width * gapMultiplier) / totalEffectiveWidth) * Math.PI * 2;
-                    currentAngle += sliceAngle / 2;
-                    p.targetAngle = currentAngle;
-                    currentAngle += sliceAngle / 2;
-                    
-                    // Initialize radius at 0 for shrink-wrap
-                    p.currentRadius = 0;
-                });
-                
-                // 3. Circular Shrink-Wrap Collision Engine
-                let casingMax = 10;
-                if (bottomCasingPart) {
-                    const box = new THREE.Box3().setFromObject(bottomCasingPart);
-                    const size = box.getSize(new THREE.Vector3());
-                    casingMax = Math.max(size.x, size.y, size.z);
+                // 1. Compute NDC bounding boxes for all parts at their ORIGINAL assembled positions
+                function getPartNDCBounds(node) {
+                    const box = new THREE.Box3().setFromObject(node);
+                    let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity;
+                    [
+                        new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                        new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                        new THREE.Vector3(box.max.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                        new THREE.Vector3(box.max.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+                    ].forEach(c => {
+                        c.project(camera);
+                        pMinX = Math.min(pMinX, c.x); pMaxX = Math.max(pMaxX, c.x);
+                        pMinY = Math.min(pMinY, c.y); pMaxY = Math.max(pMaxY, c.y);
+                    });
+                    return { minX: pMinX, maxX: pMaxX, minY: pMinY, maxY: pMaxY,
+                             cx: (pMinX + pMaxX) / 2, cy: (pMinY + pMaxY) / 2,
+                             w: pMaxX - pMinX, h: pMaxY - pMinY };
                 }
                 
-                for (let radiusIter = 0; radiusIter < 300; radiusIter++) {
-                    // Apply current layout
-                    parts.forEach(p => {
-                        if (p.node === bottomCasingPart) {
-                            p.offsetVector = new THREE.Vector3(0,0,0);
-                            p.node.position.copy(p.origPosition);
-                            return;
+                dynamicParts.forEach(p => {
+                    const b = getPartNDCBounds(p.node);
+                    p.ndcW = b.w;
+                    p.ndcH = b.h;
+                    p.ndcOrigCX = b.cx;
+                    p.ndcOrigCY = b.cy;
+                });
+                
+                // Center piece NDC bounds
+                let centerBounds = { cx: 0, cy: 0, w: 0.1, h: 0.1 };
+                if (bottomCasingPart) {
+                    centerBounds = getPartNDCBounds(bottomCasingPart);
+                }
+                
+                // DEBUG: Log all parts sorted by NDC screen area (biggest first)
+                const debugParts = [
+                    { name: bottomCasingPart ? (bottomCasingPart.name || 'CENTER') : 'N/A', 
+                      w: centerBounds.w, h: centerBounds.h, 
+                      area: centerBounds.w * centerBounds.h, role: '(CENTER)' }
+                ];
+                dynamicParts.forEach(p => {
+                    debugParts.push({ 
+                        name: p.node.name || 'unnamed', 
+                        w: p.ndcW, h: p.ndcH, 
+                        area: p.ndcW * p.ndcH, role: '' 
+                    });
+                });
+                debugParts.sort((a, b) => b.area - a.area);
+                console.log('%c=== EXPLODED VIEW: Part NDC Sizes (biggest → smallest) ===', 'color: #FF6600; font-weight: bold;');
+                debugParts.forEach((d, i) => {
+                    console.log(`${i+1}. ${d.name} ${d.role} — NDC W: ${d.w.toFixed(4)}, H: ${d.h.toFixed(4)}, Area: ${d.area.toFixed(6)}`);
+                });
+                
+                // 2. Calibrate: how many NDC units does 1 world-unit of translation produce?
+                const ndcOrigin = new THREE.Vector3(0, 0, 0).project(camera);
+                const ndcTestRight = cameraRight.clone().project(camera);
+                const ndcTestUp = cameraUp.clone().project(camera);
+                const ndcPerWorldRight = ndcTestRight.x - ndcOrigin.x;
+                const ndcPerWorldUp = ndcTestUp.y - ndcOrigin.y;
+                
+                // 3. Evenly distribute parts around a circle, expand radius until no overlaps
+                const n = dynamicParts.length;
+                dynamicParts.forEach((p, i) => {
+                    p.targetAngle = (i / n) * Math.PI * 2 - Math.PI / 2; // Start from top
+                });
+                
+                const simMargin = 0.03;
+                let radius = 0.05;
+                
+                for (let r = 0; r < 500; r++) {
+                    // Position all parts at current radius
+                    dynamicParts.forEach(p => {
+                        p.simX = centerBounds.cx + Math.cos(p.targetAngle) * radius;
+                        p.simY = centerBounds.cy + Math.sin(p.targetAngle) * radius;
+                    });
+                    
+                    let hasOverlap = false;
+                    
+                    for (let i = 0; i < n && !hasOverlap; i++) {
+                        const a = dynamicParts[i];
+                        const aL = a.simX - a.ndcW / 2, aR = a.simX + a.ndcW / 2;
+                        const aT = a.simY - a.ndcH / 2, aB = a.simY + a.ndcH / 2;
+                        
+                        // Check against center piece
+                        const cL = centerBounds.cx - centerBounds.w / 2;
+                        const cR = centerBounds.cx + centerBounds.w / 2;
+                        const cT = centerBounds.cy - centerBounds.h / 2;
+                        const cB = centerBounds.cy + centerBounds.h / 2;
+                        
+                        if (!(aR + simMargin < cL || aL - simMargin > cR ||
+                              aB + simMargin < cT || aT - simMargin > cB)) {
+                            hasOverlap = true;
+                            break;
                         }
                         
-                        const dirX = Math.cos(p.targetAngle); 
-                        const dirY = Math.sin(p.targetAngle); 
-                        const dir = new THREE.Vector3()
-                            .addScaledVector(cameraRight, dirX)
-                            .addScaledVector(cameraUp, dirY);
+                        // Check against other parts
+                        for (let j = i + 1; j < n; j++) {
+                            const b = dynamicParts[j];
+                            const bL = b.simX - b.ndcW / 2, bR = b.simX + b.ndcW / 2;
+                            const bT = b.simY - b.ndcH / 2, bB = b.simY + b.ndcH / 2;
                             
-                        const worldTranslation = dir.multiplyScalar(p.currentRadius);
-                        const worldPos = p.origPosition.clone();
-                        p.node.parent.localToWorld(worldPos);
-                        worldPos.add(worldTranslation);
-                        
-                        const targetLocalPos = p.node.parent.worldToLocal(worldPos);
-                        p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
-                        p.node.position.copy(p.origPosition).add(p.offsetVector);
-                    });
-                    
-                    modelGroup.updateMatrixWorld(true);
-                    
-                    // Check 2D Screen Space Overlaps!
-                    const partsNDC = [];
-                    parts.forEach(p => {
-                        const box = new THREE.Box3().setFromObject(p.node);
-                        let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity;
-                        const corners = [
-                            new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.min.x, box.min.y, box.max.z),
-                            new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.min.x, box.max.y, box.max.z),
-                            new THREE.Vector3(box.max.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
-                            new THREE.Vector3(box.max.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
-                        ];
-                        corners.forEach(c => {
-                            c.project(camera);
-                            pMinX = Math.min(pMinX, c.x); pMaxX = Math.max(pMaxX, c.x);
-                            pMinY = Math.min(pMinY, c.y); pMaxY = Math.max(pMaxY, c.y);
-                        });
-                        p.hasOverlap = false; 
-                        partsNDC.push({part: p, minX: pMinX, maxX: pMaxX, minY: pMinY, maxY: pMaxY});
-                    });
-                    
-                    let anyOverlap = false;
-                    const margin = 0.01; // 1% of screen space minimum gap
-                    
-                    for (let i = 0; i < partsNDC.length; i++) {
-                        for (let j = i + 1; j < partsNDC.length; j++) {
-                            const a = partsNDC[i];
-                            const b = partsNDC[j];
-                            if (!(a.maxX + margin < b.minX || a.minX - margin > b.maxX || 
-                                  a.maxY + margin < b.minY || a.minY - margin > b.maxY)) {
-                                a.part.hasOverlap = true;
-                                b.part.hasOverlap = true;
-                                anyOverlap = true;
+                            if (!(aR + simMargin < bL || aL - simMargin > bR ||
+                                  aB + simMargin < bT || aT - simMargin > bB)) {
+                                hasOverlap = true;
+                                break;
                             }
                         }
                     }
                     
-                    if (!anyOverlap) {
-                        break; // Perfection achieved!
+                    if (!hasOverlap) break;
+                    radius += 0.01;
+                }
+                
+                console.log(`%cCircular layout settled at radius: ${radius.toFixed(3)} NDC`, 'color: #FF6600;');
+                
+                // 4. Convert final NDC positions back to 3D world offsets
+                parts.forEach(p => {
+                    if (p.node === bottomCasingPart) {
+                        p.offsetVector = new THREE.Vector3(0, 0, 0);
+                        p.node.position.copy(p.origPosition);
+                        return;
                     }
                     
-                    // Increase radius ONLY for parts that are currently overlapping!
-                    parts.forEach(p => {
-                        if (p.hasOverlap && p.node !== bottomCasingPart) {
-                            p.currentRadius += casingMax * 0.02;
-                        }
-                    });
-                }
-            
+                    const ndcDeltaX = p.simX - p.ndcOrigCX;
+                    const ndcDeltaY = p.simY - p.ndcOrigCY;
+                    
+                    const worldDeltaRight = ndcDeltaX / ndcPerWorldRight;
+                    const worldDeltaUp = ndcDeltaY / ndcPerWorldUp;
+                    
+                    const worldTranslation = cameraRight.clone().multiplyScalar(worldDeltaRight)
+                        .add(cameraUp.clone().multiplyScalar(worldDeltaUp));
+                    
+                    const worldPos = p.origPosition.clone();
+                    p.node.parent.localToWorld(worldPos);
+                    worldPos.add(worldTranslation);
+                    
+                    const targetLocalPos = p.node.parent.worldToLocal(worldPos);
+                    p.offsetVector = targetLocalPos.clone().sub(p.origPosition);
+                    p.node.position.copy(p.origPosition).add(p.offsetVector);
+                });
             } // END CIRCULAR BLOCK
               // --- FINAL SCALING (Shared by both modes) ---
             const rawBox = new THREE.Box3().setFromObject(modelGroup);
@@ -775,8 +797,14 @@
             modelGroup.position.set(0,0,0);
             modelGroup.updateMatrixWorld(true);
             
-            const finalExplodedBox = new THREE.Box3().setFromObject(modelGroup);
-            modelGroup.position.sub(finalExplodedBox.getCenter(new THREE.Vector3()));
+            // Center on the MainBoard (center piece) so it stays in the middle of the viewport
+            if (bottomCasingPart) {
+                const centerBox = new THREE.Box3().setFromObject(bottomCasingPart);
+                modelGroup.position.sub(centerBox.getCenter(new THREE.Vector3()));
+            } else {
+                const finalExplodedBox = new THREE.Box3().setFromObject(modelGroup);
+                modelGroup.position.sub(finalExplodedBox.getCenter(new THREE.Vector3()));
+            }
             
             parts.forEach(p => p.node.position.copy(p.origPosition));
             requestRender();
@@ -845,6 +873,7 @@
     // Raycasting for Desktop Hover
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
+    let isRaycasting = false;
 
     container.addEventListener('mousemove', (event) => {
         if (isMobile || !isExploded || explosionProgress.value < 0.9) return;
@@ -853,9 +882,30 @@
         mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
-        tooltip.style.left = `${event.clientX + 15}px`;
-        tooltip.style.top = `${event.clientY}px`;
+        if (!isRaycasting) {
+            isRaycasting = true;
+            requestAnimationFrame(() => {
+                performRaycast();
+                isRaycasting = false;
+            });
+        }
+    });
 
+    function positionTooltip(part) {
+        const box = new THREE.Box3().setFromObject(part.node);
+        const center = box.getCenter(new THREE.Vector3());
+        center.project(camera);
+        
+        const rect = container.getBoundingClientRect();
+        const x = (center.x * 0.5 + 0.5) * rect.width;
+        const y = (center.y * -0.5 + 0.5) * rect.height;
+        
+        // Position at the top right of the part's center
+        tooltip.style.left = `${x + 20}px`;
+        tooltip.style.top = `${y - 20}px`;
+    }
+
+    function performRaycast() {
         raycaster.setFromCamera(mouse, camera);
         
         // Invisible Bounding Box Raycasting
@@ -876,6 +926,9 @@
                 hoverPart(foundPart);
                 tooltipTitle.textContent = foundPart.label;
                 tooltipDesc.textContent = foundPart.desc;
+                
+                positionTooltip(foundPart);
+                
                 tooltip.style.display = 'block';
                 setTimeout(() => tooltip.style.opacity = '1', 10);
             } else {
@@ -883,11 +936,11 @@
                 setTimeout(() => { if(!currentHoveredPart) tooltip.style.display = 'none' }, 200);
             }
         }
-    });
+    }
 
     let scaleAnimationId = null;
     function hoverPart(part) {
-        part.targetScale = part.origScale.clone().multiplyScalar(1.1);
+        part.targetScale = part.origScale.clone().multiplyScalar(1.25);
         part.isHovered = true;
         startScaleLoop();
     }
@@ -915,12 +968,19 @@
 
                 if (part.isHovered) {
                     if (part.currentRotationY === undefined) part.currentRotationY = 0;
-                    part.currentRotationY += 0.015; 
+                    part.currentRotationY += 0.015;
+                    if (part.currentRotationY >= Math.PI * 2) {
+                        part.currentRotationY -= Math.PI * 2;
+                    }
                     stillAnimating = true;
-                } else if (part.currentRotationY !== undefined && part.currentRotationY > 0) {
-                    part.currentRotationY += (0 - part.currentRotationY) * 0.1;
-                    if (part.currentRotationY < 0.001) part.currentRotationY = 0;
-                    else stillAnimating = true;
+                } else if (part.currentRotationY !== undefined && (part.currentRotationY > 0 || part.currentRotationY < 0)) {
+                    let target = (part.currentRotationY > Math.PI) ? Math.PI * 2 : 0;
+                    part.currentRotationY += (target - part.currentRotationY) * 0.25; // Snaps back significantly faster than hover speed (0.015 per frame)
+                    if (Math.abs(part.currentRotationY - target) < 0.005) {
+                        part.currentRotationY = 0;
+                    } else {
+                        stillAnimating = true;
+                    }
                 }
 
                 if (part.currentRotationY !== undefined) {
