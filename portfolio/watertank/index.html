@@ -853,20 +853,40 @@
         });
     }
 
-    // 7. Desktop Interaction (Mouse Enter/Leave/Hover)
+    // 7. Desktop Interaction — instant trigger with 100ms cooldown before opposite state can fire
+    let lastToggleTime = 0;
+    let pendingToggle = null;
+    
+    function throttledToggle(explode, cleanup) {
+        clearTimeout(pendingToggle);
+        const elapsed = Date.now() - lastToggleTime;
+        if (elapsed >= 100) {
+            lastToggleTime = Date.now();
+            toggleExplosion(explode);
+            if (cleanup) cleanup();
+        } else {
+            pendingToggle = setTimeout(() => {
+                lastToggleTime = Date.now();
+                toggleExplosion(explode);
+                if (cleanup) cleanup();
+            }, 100 - elapsed);
+        }
+    }
+    
     container.addEventListener('mouseenter', () => {
-        if (!isMobile) toggleExplosion(true);
+        if (!isMobile) throttledToggle(true);
     });
 
     container.addEventListener('mouseleave', () => {
         if (!isMobile) {
-            toggleExplosion(false);
-            if (currentHoveredPart) {
-                unhoverPart(currentHoveredPart);
-                currentHoveredPart = null;
-            }
-            tooltip.style.opacity = '0';
-            setTimeout(() => tooltip.style.display = 'none', 300);
+            throttledToggle(false, () => {
+                if (currentHoveredPart) {
+                    unhoverPart(currentHoveredPart);
+                    currentHoveredPart = null;
+                }
+                tooltip.style.opacity = '0';
+                setTimeout(() => tooltip.style.display = 'none', 300);
+            });
         }
     });
 
@@ -893,16 +913,57 @@
 
     function positionTooltip(part) {
         const box = new THREE.Box3().setFromObject(part.node);
-        const center = box.getCenter(new THREE.Vector3());
-        center.project(camera);
-        
         const rect = container.getBoundingClientRect();
-        const x = (center.x * 0.5 + 0.5) * rect.width;
-        const y = (center.y * -0.5 + 0.5) * rect.height;
         
-        // Position at the top right of the part's center
-        tooltip.style.left = `${x + 20}px`;
-        tooltip.style.top = `${y - 20}px`;
+        // Get the part's 2D screen bounding box
+        let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity;
+        [
+            new THREE.Vector3(box.min.x, box.min.y, box.min.z), new THREE.Vector3(box.max.x, box.min.y, box.min.z),
+            new THREE.Vector3(box.min.x, box.max.y, box.min.z), new THREE.Vector3(box.max.x, box.max.y, box.min.z),
+            new THREE.Vector3(box.min.x, box.min.y, box.max.z), new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+            new THREE.Vector3(box.min.x, box.max.y, box.max.z), new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+        ].forEach(c => {
+            c.project(camera);
+            const sx = rect.left + (c.x * 0.5 + 0.5) * rect.width;
+            const sy = rect.top + (c.y * -0.5 + 0.5) * rect.height;
+            pMinX = Math.min(pMinX, sx); pMaxX = Math.max(pMaxX, sx);
+            pMinY = Math.min(pMinY, sy); pMaxY = Math.max(pMaxY, sy);
+        });
+        
+        const gap = 10;
+        const tooltipW = tooltip.offsetWidth || 280;
+        const tooltipH = tooltip.offsetHeight || 60;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        
+        let tx, ty;
+        const centerY = (pMinY + pMaxY) / 2 - tooltipH / 2;
+        
+        // Try right of part
+        tx = pMaxX + gap;
+        ty = centerY;
+        
+        if (tx + tooltipW > vw - 5) {
+            // Try left of part
+            tx = pMinX - gap - tooltipW;
+        }
+        if (tx < 5) {
+            // Try centered below part
+            tx = (pMinX + pMaxX) / 2 - tooltipW / 2;
+            ty = pMaxY + gap;
+        }
+        if (ty + tooltipH > vh - 5) {
+            // Try above part
+            ty = pMinY - gap - tooltipH;
+        }
+        
+        // Final clamp to viewport
+        tx = Math.max(5, Math.min(tx, vw - tooltipW - 5));
+        ty = Math.max(5, Math.min(ty, vh - tooltipH - 5));
+        
+        tooltip.style.left = `${tx}px`;
+        tooltip.style.top = `${ty}px`;
+        tooltip.style.transform = 'none';
     }
 
     function performRaycast() {
