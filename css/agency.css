@@ -412,7 +412,7 @@ header {
     padding: 0;
     text-align: center;
     color: #fff;
-    background: url(../img/pcb-banner-3.png) center center / cover no-repeat;
+    background: url(../img/RemoteTankBanner.png) center center / cover no-repeat;
 }
 
 header::before {
@@ -1651,7 +1651,7 @@ body.light-mode .contact-linkedin-icon:hover {
 /* Testimonial Carousel Styles */
 .testimonial-carousel {
     position: relative;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     min-height: 220px;
     display: flex;
@@ -1661,7 +1661,7 @@ body.light-mode .contact-linkedin-icon:hover {
     border: 1px solid #333;
     border-left: 5px solid #FF6600;
     border-radius: 8px;
-    padding: 40px 30px;
+    padding: 40px 80px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 body.light-mode .testimonial-carousel {

@@ -360,7 +360,7 @@
 
     // 5. Model Loading
     const loader = new GLTFLoader();
-    const modelUrl = '../../img/RemoteTankMonitoring-Enclosure+TankMount.gltf?v=' + new Date().getTime();
+    const modelUrl = '../../img/RemoteTankMonitoring-Enclosure+TankMount.glb?v=' + new Date().getTime();
 
     let modelGroup = null;
     const parts = []; // Store parts for explosion
@@ -368,6 +368,31 @@
     let explosionProgress = { value: 0 };
     let currentHoveredPart = null;
     let isMobile = window.innerWidth <= 768;
+
+    // --- PERFORMANCE: Pre-allocated scratch objects to avoid GC pressure ---
+    const _scratchVec3A = new THREE.Vector3();
+    const _scratchVec3B = new THREE.Vector3();
+    const _scratchVec3C = new THREE.Vector3();
+    const _scratchQuat = new THREE.Quaternion();
+    const _yAxis = new THREE.Vector3(0, 1, 0);
+
+    // --- PERFORMANCE: Coalesced rendering via dirty flag ---
+    let _renderDirty = false;
+    let _renderRAFId = null;
+    function requestRender() {
+        if (!_renderDirty) {
+            _renderDirty = true;
+            _renderRAFId = requestAnimationFrame(() => {
+                renderer.render(scene, camera);
+                _renderDirty = false;
+            });
+        }
+    }
+    // Force an immediate render (used at init / resize)
+    function forceRender() {
+        renderer.render(scene, camera);
+        _renderDirty = false;
+    }
 
     loader.load(modelUrl, (gltf) => {
         modelGroup = gltf.scene;
@@ -822,10 +847,11 @@
     function setExplosionProgress(progress) {
         explosionProgress.value = progress;
         parts.forEach(part => {
-            const currentOffset = part.offsetVector.clone().multiplyScalar(progress);
-            part.node.position.copy(part.origPosition).add(currentOffset);
+            // PERFORMANCE: reuse scratch vector instead of clone()
+            _scratchVec3A.copy(part.offsetVector).multiplyScalar(progress);
+            part.node.position.copy(part.origPosition).add(_scratchVec3A);
         });
-        updateMobileButtons();
+        if (isMobile) updateMobileButtons();
         requestRender();
     }
 
@@ -853,40 +879,28 @@
         });
     }
 
-    // 7. Desktop Interaction — instant trigger with 100ms cooldown before opposite state can fire
-    let lastToggleTime = 0;
-    let pendingToggle = null;
-    
-    function throttledToggle(explode, cleanup) {
-        clearTimeout(pendingToggle);
-        const elapsed = Date.now() - lastToggleTime;
-        if (elapsed >= 100) {
-            lastToggleTime = Date.now();
-            toggleExplosion(explode);
-            if (cleanup) cleanup();
-        } else {
-            pendingToggle = setTimeout(() => {
-                lastToggleTime = Date.now();
-                toggleExplosion(explode);
-                if (cleanup) cleanup();
-            }, 100 - elapsed);
-        }
-    }
-    
+    // 7. Desktop Interaction — delayed collapse by 100ms
+    let collapseTimeout = null;
+
     container.addEventListener('mouseenter', () => {
-        if (!isMobile) throttledToggle(true);
+        if (!isMobile) {
+            clearTimeout(collapseTimeout);
+            toggleExplosion(true);
+        }
     });
 
     container.addEventListener('mouseleave', () => {
         if (!isMobile) {
-            throttledToggle(false, () => {
+            clearTimeout(collapseTimeout);
+            collapseTimeout = setTimeout(() => {
+                toggleExplosion(false);
                 if (currentHoveredPart) {
                     unhoverPart(currentHoveredPart);
                     currentHoveredPart = null;
                 }
                 tooltip.style.opacity = '0';
                 setTimeout(() => tooltip.style.display = 'none', 300);
-            });
+            }, 100);
         }
     });
 
@@ -966,6 +980,9 @@
         tooltip.style.transform = 'none';
     }
 
+    let _tooltipHideTimeout = null;
+    let _tooltipShowTimeout = null;
+
     function performRaycast() {
         raycaster.setFromCamera(mouse, camera);
         
@@ -981,6 +998,10 @@
         }
 
         if (foundPart !== currentHoveredPart) {
+            // Cancel any pending show/hide from the previous hover
+            clearTimeout(_tooltipHideTimeout);
+            clearTimeout(_tooltipShowTimeout);
+
             if (currentHoveredPart) unhoverPart(currentHoveredPart);
             currentHoveredPart = foundPart;
             if (foundPart) {
@@ -988,13 +1009,16 @@
                 tooltipTitle.textContent = foundPart.label;
                 tooltipDesc.textContent = foundPart.desc;
                 
-                positionTooltip(foundPart);
-                
+                // Immediately make visible at correct position (no stale fade-out can interfere)
                 tooltip.style.display = 'block';
-                setTimeout(() => tooltip.style.opacity = '1', 10);
+                tooltip.style.opacity = '0';
+                positionTooltip(foundPart);
+                _tooltipShowTimeout = setTimeout(() => tooltip.style.opacity = '1', 10);
             } else {
                 tooltip.style.opacity = '0';
-                setTimeout(() => { if(!currentHoveredPart) tooltip.style.display = 'none' }, 200);
+                _tooltipHideTimeout = setTimeout(() => {
+                    if (!currentHoveredPart) tooltip.style.display = 'none';
+                }, 200);
             }
         }
     }
@@ -1036,7 +1060,7 @@
                     stillAnimating = true;
                 } else if (part.currentRotationY !== undefined && (part.currentRotationY > 0 || part.currentRotationY < 0)) {
                     let target = (part.currentRotationY > Math.PI) ? Math.PI * 2 : 0;
-                    part.currentRotationY += (target - part.currentRotationY) * 0.25; // Snaps back significantly faster than hover speed (0.015 per frame)
+                    part.currentRotationY += (target - part.currentRotationY) * 0.25;
                     if (Math.abs(part.currentRotationY - target) < 0.005) {
                         part.currentRotationY = 0;
                     } else {
@@ -1045,22 +1069,24 @@
                 }
 
                 if (part.currentRotationY !== undefined) {
-                    const basePos = part.origPosition.clone().add(part.offsetVector.clone().multiplyScalar(explosionProgress.value));
-                    part.node.position.copy(basePos);
+                    // PERFORMANCE: reuse scratch vectors instead of clone()
+                    _scratchVec3B.copy(part.offsetVector).multiplyScalar(explosionProgress.value);
+                    _scratchVec3C.copy(part.origPosition).add(_scratchVec3B); // basePos
+                    part.node.position.copy(_scratchVec3C);
                     part.node.quaternion.copy(part.origQuaternion);
 
                     if (part.currentRotationY > 0) {
-                        const axis = new THREE.Vector3(0,1,0);
-                        const q = new THREE.Quaternion().setFromAxisAngle(axis, part.currentRotationY);
+                        // PERFORMANCE: reuse pre-allocated axis and quaternion
+                        _scratchQuat.setFromAxisAngle(_yAxis, part.currentRotationY);
                         
                         // Pivot is exactly offset from basePos
-                        const pivot = basePos.clone().add(part.pivotOffset);
+                        _scratchVec3B.copy(_scratchVec3C).add(part.pivotOffset); // pivot
                         
-                        part.node.position.sub(pivot);
-                        part.node.position.applyQuaternion(q);
-                        part.node.position.add(pivot);
+                        part.node.position.sub(_scratchVec3B);
+                        part.node.position.applyQuaternion(_scratchQuat);
+                        part.node.position.add(_scratchVec3B);
                         
-                        part.node.quaternion.premultiply(q);
+                        part.node.quaternion.premultiply(_scratchQuat);
                     }
                 }
             });
@@ -1165,10 +1191,7 @@
         requestRender();
     });
 
-    // 10. On-Demand Render
-    function requestRender() {
-        renderer.render(scene, camera);
-    }
+    // 10. On-Demand Render — now handled by coalesced requestRender() defined above
 </script>
 
 
