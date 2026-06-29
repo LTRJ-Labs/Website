@@ -1991,7 +1991,8 @@ body.light-mode .pcb-visualizer {
     align-items: center;
     justify-content: center;
 }
-.pcb-layer svg {
+.pcb-layer svg,
+.pcb-layer img {
     width: 90%;
     height: 90%;
 }

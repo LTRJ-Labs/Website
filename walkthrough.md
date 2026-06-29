@@ -79,3 +79,17 @@ python -m http.server 8000
 npx serve .
 ```
 Then open `http://localhost:8000/portfolio/watertank/viewer.html`.
+
+---
+
+## 4. STM32 Nucleo PCB Layout SVG Replacement
+
+- **[MODIFY] [portfolio/nucleof446re/index.html](file:///c:/Users/ryan2/Documents/GitHub/Website/portfolio/nucleof446re/index.html)**: Replaced the inline placeholder SVGs for board outline, copper traces, and silkscreen with the actual SVGs provided in the `img/` folder.
+- **[MODIFY] [css/agency.css](file:///c:/Users/ryan2/Documents/GitHub/Website/css/agency.css)**: Updated the `.pcb-layer svg` selector to also target `.pcb-layer img` for width and height styling.
+- **Technical Details**:
+  - The SVGs are loaded via `<img>` tags and stacked using absolute positioning.
+  - Solder mask green is rendered using an inline background SVG matching the updated `0 0 206.9846 71.9836` viewBox, styled inside the board outline layer.
+  - Zoomed the board layout in by setting the canvas container height to `170px` and the SVG/image scale to `120%` (filling nearly the entire space and eliminating wide margins).
+  - Added a dark background style (`#111111`) to the canvas container to make the green PCB stand out.
+  - Edge cuts and copper traces are styled using a premium CSS gold filter (`filter: brightness(0) saturate(100%) invert(68%) sepia(48%) saturate(928%) hue-rotate(369deg) brightness(98%) contrast(92%);`) to simulate an ENIG finish.
+  - Silkscreen layer is styled with a white filter (`filter: brightness(0) saturate(100%) invert(100%);`).
