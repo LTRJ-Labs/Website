@@ -1,3 +1,11 @@
+/* AGENT-INFO
+=========================================================
+LTRJ LABS STYLESHEET
+- Architecture: This file contains the primary theme colors, typography (Montserrat, Roboto Slab), and layout overrides.
+- Subpages: Components like .testimonial-card, .service-card, and .team-member are styled here.
+- GPU Acceleration: Watch for transform: translateZ(0) on animations to prevent pixelation.
+=========================================================
+*/
 /*!
  * Start Bootstrap - Agency Bootstrap Theme (http://startbootstrap.com)
  * Code licensed under the Apache License v2.0.

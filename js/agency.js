@@ -1,3 +1,10 @@
+/* AGENT-INFO
+=========================================================
+LTRJ LABS JAVASCRIPT
+- Functionality: Handles scrolling navbar collapse, smooth page transitions, modal loading, and contact form anti-scraping logic.
+- jQuery is heavily used for the legacy Bootstrap 3 plugins, while modern features (like clipboard copying) use Vanilla JS.
+=========================================================
+*/
 /*!
  * Start Bootstrap - Agency Bootstrap Theme (http://startbootstrap.com)
  * Code licensed under the Apache License v2.0.

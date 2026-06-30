@@ -1,3 +1,10 @@
+/* AGENT-INFO
+=========================================================
+LTRJ LABS JAVASCRIPT
+- Functionality: Handles scrolling navbar collapse, smooth page transitions, modal loading, and contact form anti-scraping logic.
+- jQuery is heavily used for the legacy Bootstrap 3 plugins, while modern features (like clipboard copying) use Vanilla JS.
+=========================================================
+*/
 // Centralized Theme Toggle Logic & Mobile Navbar Toggler - LTRJ Labs
 document.addEventListener('DOMContentLoaded', function() {
     const toggle = document.getElementById('theme-toggle');
