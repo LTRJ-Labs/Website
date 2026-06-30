@@ -268,82 +268,25 @@
         <!-- /.container-fluid -->
     </nav>
 
-    <!-- Contact Form Section -->
-    <section id="contact" style="padding-top: 150px; padding-bottom: 80px; background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('../img/RemoteTankBanner.png'); background-position: center; background-size: cover; background-repeat: no-repeat;">
+    <section id="contact" style="padding-top: 150px; padding-bottom: 80px; background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('../img/RemoteTankBanner.png'); background-position: center; background-size: cover; background-repeat: no-repeat; min-height: 100vh;">
         <div class="container">
-
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Request a Consultation</h2>
-                    <h3 class="section-subheading text-muted" style="color: #bbb; text-transform: none; font-weight: normal;">Please fill out the form below and we will get back to you as soon as possible.</h3>
+                    <h2 class="section-heading">We want to hear from you!</h2>
+                    <h3 class="section-subheading text-muted" style="color: #bbb; text-transform: none; font-weight: normal; margin-bottom: 50px;">Click the button below to copy our email address to your clipboard.</h3>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <form name="sentMessage" id="contactForm" novalidate data-mail-url="../mail/contact_me.php">
-                        <!-- Honeypot Field to trap spam bots (visually hidden) -->
-                        <div style="display:none;" aria-hidden="true">
-                            <label for="website_url">Leave this field blank</label>
-                            <input type="text" name="website_url" id="website_url" tabindex="-1" autocomplete="off">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <select class="form-control" id="topic" required data-validation-required-message="Please select a topic.">
-                                        <option value="" disabled selected>Select a Topic *</option>
-                                        <option value="Electronics Consultation">Electronics Consultation</option>
-                                        <option value="Idea">An Idea</option>
-                                        <option value="Electronics Services">Electronics Services</option>
-                                    </select>
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="First Name *" id="firstName" required data-validation-required-message="Please enter your first name.">
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Last Name *" id="lastName" required data-validation-required-message="Please enter your last name.">
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="email" class="form-control" placeholder="Email Address *" id="email" required data-validation-required-message="Please enter your email address.">
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="tel" class="form-control" placeholder="Phone Number *" id="phone" required data-validation-required-message="Please enter your phone number.">
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <textarea class="form-control" placeholder="Additional Details *" id="message" required data-validation-required-message="Please enter your message/additional details."></textarea>
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="col-md-12 text-center privacy-agreement-container">
-                                <div class="form-group">
-                                    <label class="privacy-agreement-label">
-                                        <input type="checkbox" id="agreePrivacy" name="agreePrivacy" required data-validation-required-message="You must agree to the privacy policy to submit a request.">
-                                        I agree to the <a href="../privacy/" target="_blank">Privacy Policy</a> *
-                                    </label>
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 text-center">
-                                <div id="success"></div>
-                                <button type="submit" class="btn btn-xl">Send Request</button>
-                            </div>
-                        </div>
-                    </form>
+                    <div style="background: #2a2a2a; border: 3px solid #333; border-radius: 8px; max-width: 450px; margin: 0 auto; padding: 40px 30px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                        <i class="fa fa-envelope fa-4x" style="color: #FF6600; margin-bottom: 20px;"></i>
+                        <h4 style="font-family: Montserrat, sans-serif; font-weight: 700; text-transform: uppercase; margin-bottom: 15px; color: #fff; font-size: 22px;">Get In Touch</h4>
+                        <p style="color: #ccc; margin-bottom: 30px; font-size: 15px; line-height: 1.6;">Let us know what you are thinking about! Our operating hours are Monday to Friday, 9:00 AM to 5:00 PM PST. You can expect a response within 0-2 business days.</p>
+                        <button id="copyEmailBtn" class="btn btn-xl" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px;">
+                            <i class="fa fa-clipboard fa-lg"></i> <span>Copy Email Address</span>
+                        </button>
+                        <p id="copySuccessMsg" style="color: #4CAF50; font-family: Montserrat, sans-serif; font-weight: 700; text-transform: uppercase; font-size: 13px; margin-top: 15px; opacity: 0; transition: opacity 0.3s ease; height: 18px; letter-spacing: 1px;">Email Copied!</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -370,104 +313,41 @@
 
 
 
-    <!-- Custom Form Submit Script (Vanilla JS replacement) -->
+    <!-- Secure Copy Email Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var form = document.getElementById('contactForm');
-            var successDiv = document.getElementById('success');
+            var btn = document.getElementById('copyEmailBtn');
+            var msg = document.getElementById('copySuccessMsg');
             
-            if (form) {
-                form.addEventListener('submit', function(event) {
-                    event.preventDefault();
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Assemble the email address from a base64 string to prevent bot scraping
+                    var secureEmail = atob('cHVyaXRjaEBsdHJqbGFicy5jb20='); // puritch@ltrjlabs.com
                     
-                    successDiv.innerHTML = '';
-                    
-                    var firstName = document.getElementById('firstName').value.trim();
-                    var lastName = document.getElementById('lastName').value.trim();
-                    var email = document.getElementById('email').value.trim();
-                    var phone = document.getElementById('phone').value.trim();
-                    var topic = document.getElementById('topic').value;
-                    var messageDetails = document.getElementById('message').value.trim();
-                    var websiteUrl = document.getElementById('website_url').value;
-                    var agreePrivacy = document.getElementById('agreePrivacy').checked;
-                    
-                    if (!topic) {
-                        showError("Please select a topic.");
-                        return;
-                    }
-                    if (!firstName || !lastName) {
-                        showError("Please enter your name.");
-                        return;
-                    }
-                    if (!email) {
-                        showError("Please enter your email.");
-                        return;
-                    }
-                    if (!phone) {
-                        showError("Please enter your phone number.");
-                        return;
-                    }
-                    if (!messageDetails) {
-                        showError("Please enter your message details.");
-                        return;
-                    }
-                    if (!agreePrivacy) {
-                        showError("You must agree to the privacy policy to submit a request.");
-                        return;
-                    }
-                    
-                    var submitBtn = form.querySelector('button[type=submit]');
-                    var originalBtnText = submitBtn.textContent;
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Sending...';
-                    
-                    var data = new URLSearchParams();
-                    data.append('name', firstName + ' ' + lastName);
-                    data.append('email', email);
-                    data.append('phone', phone);
-                    data.append('message', "Topic: " + topic + "\n\nAdditional Details:\n" + messageDetails);
-                    data.append('website_url', websiteUrl);
-                    
-                    var mailUrl = form.getAttribute('data-mail-url') || '../mail/contact_me.php';
-                    
-                    fetch(mailUrl, {
-                        method: 'POST',
-                        body: data,
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    })
-                    .then(function(response) {
-                        if (response.ok) {
-                            showSuccess("Your message has been sent. Thank you!");
-                            form.reset();
-                        } else {
-                            throw new Error("Server error");
-                        }
-                    })
-                    .catch(function(error) {
-                        showError("Sorry " + firstName + ", it seems that the mail server is not responding. Please try again later!");
-                    })
-                    .finally(function() {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = originalBtnText;
+                    navigator.clipboard.writeText(secureEmail).then(function() {
+                        var btnSpan = btn.querySelector('span');
+                        var btnIcon = btn.querySelector('i');
+                        
+                        btnSpan.innerText = 'Copied to Clipboard!';
+                        btnIcon.className = 'fa fa-check fa-lg';
+                        btn.style.backgroundColor = '#4CAF50';
+                        btn.style.borderColor = '#4CAF50';
+                        
+                        msg.style.opacity = '1';
+                        
+                        setTimeout(function() {
+                            btnSpan.innerText = 'Copy Email Address';
+                            btnIcon.className = 'fa fa-clipboard fa-lg';
+                            btn.style.backgroundColor = '';
+                            btn.style.borderColor = '';
+                            msg.style.opacity = '0';
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('Could not copy text: ', err);
+                        alert("Failed to copy email automatically. The address is: " + secureEmail);
                     });
                 });
-                
-                var inputs = form.querySelectorAll('input, textarea, select');
-                inputs.forEach(function(input) {
-                    input.addEventListener('focus', function() {
-                        successDiv.innerHTML = '';
-                    });
-                });
-            }
-            
-            function showError(message) {
-                successDiv.innerHTML = "<div class='alert alert-danger' style='background-color:#c0392b; color:#fff; padding:15px; border-radius:4px; margin-bottom:20px; font-family:Montserrat,sans-serif; font-size:12px; font-weight:700; text-transform:uppercase;'>" + message + "</div>";
-            }
-            
-            function showSuccess(message) {
-                successDiv.innerHTML = "<div class='alert alert-success' style='background-color:#4cd137; color:#fff; padding:15px; border-radius:4px; margin-bottom:20px; font-family:Montserrat,sans-serif; font-size:12px; font-weight:700; text-transform:uppercase;'>" + message + "</div>";
             }
         });
     </script>
