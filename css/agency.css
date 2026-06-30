@@ -647,6 +647,12 @@ body.light-mode .section-subheading {
     max-width: 400px;
 }
 
+#portfolio .portfolio-item .portfolio-link img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
 #portfolio .portfolio-item .portfolio-link .portfolio-hover {
     position: absolute;
     width: 100%;
@@ -1733,103 +1739,8 @@ body.light-mode .testimonial-project-link a:hover {
     color: #e65c00;
 }
 
-/* ==========================================
-   Global Theme Transitions & Switch Styles
-   ========================================== */
-body, header, section, footer, .service-card, .team-scroll-card, .testimonial-carousel, .form-control, .navbar, .navbar-default, .navbar-default .nav li a, .navbar-default .navbar-brand {
-    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-}
 
-/* Custom Sliding Theme Switch */
-.theme-switch-wrapper {
-    display: flex;
-    align-items: center;
-    padding: 8px 15px;
-}
-@media (min-width: 768px) {
-    .theme-switch-wrapper {
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-}
-.theme-switch {
-    width: 54px;
-    height: 28px;
-    background-color: #1a1a1a;
-    border: 2px solid #FF6600;
-    border-radius: 20px;
-    position: relative;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.3s, border-color 0.3s;
-}
-body.light-mode .theme-switch {
-    background-color: #e0e0e0;
-    border-color: #e65c00;
-}
-.theme-switch-track {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-.theme-switch-handle {
-    width: 20px;
-    height: 20px;
-    background-color: transparent;
-    border-radius: 50%;
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-body.light-mode .theme-switch-handle {
-    transform: translateX(26px);
-}
-.theme-switch-icon {
-    position: relative;
-    width: 16px;
-    height: 16px;
-    display: block;
-}
-.theme-switch-icon-moon, .theme-switch-icon-sun {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-body.dark-mode .theme-switch-icon-moon {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-}
-body.dark-mode .theme-switch-icon-sun {
-    opacity: 0;
-    transform: scale(0) rotate(-180deg);
-}
-body.light-mode .theme-switch-icon-moon {
-    opacity: 0;
-    transform: scale(0) rotate(180deg);
-}
-body.light-mode .theme-switch-icon-sun {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-}
-.theme-switch-icon-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-.theme-switch, .theme-switch *, .theme-switch:focus, .theme-switch *:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
+
 
 /* ==========================================
    Testimonial Carousel Manual Controls
@@ -2034,3 +1945,47 @@ body.light-mode .layer-toggle-btn {
 
 
 
+
+/* ==========================================
+   Portfolio Back Arrow (Left side animation)
+   ========================================== */
+.portfolio-back-arrow {
+    display: inline-flex;
+    align-items: center;
+    color: #FF6600;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+    margin-bottom: 20px; 
+}
+.portfolio-back-arrow:hover {
+    background: rgba(255, 102, 0, 0.1);
+    color: #FF6600;
+    text-decoration: none;
+}
+.portfolio-back-arrow i {
+    font-size: 28px;
+    transition: transform 0.3s ease;
+}
+.portfolio-back-text {
+    font-family: Montserrat, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    transform: translateX(-15px);
+    transition: max-width 0.4s ease, opacity 0.3s ease, transform 0.4s ease, margin-left 0.3s ease;
+}
+.portfolio-back-arrow:hover .portfolio-back-text {
+    max-width: 150px;
+    opacity: 1;
+    transform: translateX(0);
+    margin-left: 12px;
+}
+.portfolio-back-arrow:hover i {
+    transform: translateX(-3px);
+}

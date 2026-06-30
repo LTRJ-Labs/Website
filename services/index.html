@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: #222;">
 
 <head>
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#222222">
+    <style>html, body { background-color: #222 !important; color: #fff !important; }</style>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -223,9 +226,55 @@
 
     </style>
 
+
+    <!-- Smooth Page Transition Script -->
+    <style>
+        body { opacity: 0; transition: opacity 0.1s ease-in-out; }
+    </style>
+    <script>
+        let fadedIn = false;
+        function fadeIn() {
+            if (!fadedIn) {
+                document.body.style.opacity = "1";
+                fadedIn = true;
+            }
+        }
+        
+        // Fade in immediately as soon as the DOM starts rendering to keep it feeling ultra-fast
+        document.addEventListener("DOMContentLoaded", fadeIn);
+        setTimeout(fadeIn, 50); // Instant fallback
+
+        // Intercept link clicks to fade out BEFORE navigating
+        document.addEventListener("click", function(e) {
+            let target = e.target.closest('a');
+            if (!target) return;
+            
+            let href = target.getAttribute('href');
+            if (!href) return;
+            
+            let isInternal = target.host === window.location.host;
+            let isSamePage = target.pathname === window.location.pathname || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:');
+            let isBlank = target.target === "_blank";
+            
+            if (isInternal && !isSamePage && !isBlank) {
+                e.preventDefault(); // Stop instant navigation
+                document.body.style.opacity = "0"; // Trigger fade out
+                setTimeout(function() {
+                    window.location.href = target.href; // Navigate after fade completes
+                }, 100);
+            }
+        });
+        
+        // Handle back/forward cache restore
+        window.addEventListener("pageshow", function(e) {
+            if (e.persisted) {
+                fadeIn();
+            }
+        });
+    </script>
 </head>
 
-<body id="page-top" class="index"><script>(function(){const t=localStorage.getItem("theme")||"dark";document.body.classList.add(t+"-mode");})();</script>
+<body id="page-top" class="index" style="background-color: #222;">
 
 
     <!-- Navigation -->
@@ -260,17 +309,7 @@
                     <li>
                         <a href="../contact/">Contact</a>
                     </li>
-                    <li>
-                        <div class="theme-switch-wrapper">
-                            <div id="theme-toggle" class="theme-switch" role="button" aria-label="Toggle Dark and Light Mode">
-                                <div class="theme-switch-track">
-                                    <div class="theme-switch-handle">
-                                        <span class="theme-switch-icon"><span class="theme-switch-icon-moon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FF6600" stroke="#FF6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span><span class="theme-switch-icon-sun"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e65c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                    
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -294,6 +333,8 @@
                     <div class="service-card" id="svc-design">
                         <span class="service-number">01</span>
 
+
+                        <img src="../img/ElectronicsDesignServicesPage.jpg" alt="Electronics Design" class="service-card-img-placeholder" style="border: none; background: none; object-fit: cover;">
                         <div class="service-card-body">
                             <h3>Electronics Design</h3>
                             <p class="service-desc">Have an electronics problem? Let us make things easy for you. We deliver quality, professional hardware design at a better price point — from schematic capture to production-ready PCB layouts.</p>
@@ -316,6 +357,8 @@
                     <div class="service-card" id="svc-consult">
                         <span class="service-number">02</span>
 
+
+                        <img src="../img/ConsultationServicesPage.jpg" alt="Consultation" class="service-card-img-placeholder" style="border: none; background: none; object-fit: cover;">
                         <div class="service-card-body">
                             <h3>Consultation</h3>
                             <p class="service-desc">From small-scope technical questions to design strategy and troubleshooting, we apply our hands-on experience and engineering knowledge to help you solve real-world hardware challenges.</p>
@@ -338,6 +381,8 @@
                     <div class="service-card" id="svc-product">
                         <span class="service-number">03</span>
 
+
+                        <img src="../img/ProductDevelopmentServicesPage.jpg" alt="Product Development" class="service-card-img-placeholder" style="border: none; background: none; object-fit: cover;">
                         <div class="service-card-body">
                             <h3>Product Development</h3>
                             <p class="service-desc">Have an idea but haven't found a way to make it a reality? We offer ground-up development services, turning concepts into working prototypes and production-ready products at an affordable price.</p>

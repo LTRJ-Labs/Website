@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: #222;">
 
 <head>
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#222222">
+    <style>html, body { background-color: #222 !important; color: #fff !important; }</style>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -170,9 +173,55 @@
         }
     </style>
 
+
+    <!-- Smooth Page Transition Script -->
+    <style>
+        body { opacity: 0; transition: opacity 0.1s ease-in-out; }
+    </style>
+    <script>
+        let fadedIn = false;
+        function fadeIn() {
+            if (!fadedIn) {
+                document.body.style.opacity = "1";
+                fadedIn = true;
+            }
+        }
+        
+        // Fade in immediately as soon as the DOM starts rendering to keep it feeling ultra-fast
+        document.addEventListener("DOMContentLoaded", fadeIn);
+        setTimeout(fadeIn, 50); // Instant fallback
+
+        // Intercept link clicks to fade out BEFORE navigating
+        document.addEventListener("click", function(e) {
+            let target = e.target.closest('a');
+            if (!target) return;
+            
+            let href = target.getAttribute('href');
+            if (!href) return;
+            
+            let isInternal = target.host === window.location.host;
+            let isSamePage = target.pathname === window.location.pathname || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:');
+            let isBlank = target.target === "_blank";
+            
+            if (isInternal && !isSamePage && !isBlank) {
+                e.preventDefault(); // Stop instant navigation
+                document.body.style.opacity = "0"; // Trigger fade out
+                setTimeout(function() {
+                    window.location.href = target.href; // Navigate after fade completes
+                }, 100);
+            }
+        });
+        
+        // Handle back/forward cache restore
+        window.addEventListener("pageshow", function(e) {
+            if (e.persisted) {
+                fadeIn();
+            }
+        });
+    </script>
 </head>
 
-<body id="page-top" class="index"><script>(function(){const t=localStorage.getItem("theme")||"dark";document.body.classList.add(t+"-mode");})();</script>
+<body id="page-top" class="index" style="background-color: #222;">
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -206,17 +255,7 @@
                     <li>
                         <a href="../../contact/">Contact</a>
                     </li>
-                    <li>
-                        <div class="theme-switch-wrapper">
-                            <div id="theme-toggle" class="theme-switch" role="button" aria-label="Toggle Dark and Light Mode">
-                                <div class="theme-switch-track">
-                                    <div class="theme-switch-handle">
-                                        <span class="theme-switch-icon"><span class="theme-switch-icon-moon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FF6600" stroke="#FF6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span><span class="theme-switch-icon-sun"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e65c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-switch-icon-svg"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                    
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -226,11 +265,23 @@
 
     <!-- Project Details Section -->
     <section id="project-details" style="padding-top: 20px; padding-bottom: 20px;">
-        <div class="container">
+                <div class="container">
             <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading" style="text-transform: none;">MothNode</h2>
-                    <h3 class="section-subheading text-muted" style="margin-bottom: 30px;"><strong>A Remote Tank Monitoring System</strong></h3>
+                <div class="col-lg-12" style="position: relative;">
+                    <!-- Centered Titles with inline back arrow -->
+                    <div class="text-center">
+                        <div style="display: inline-block; position: relative;">
+                            <!-- Back Arrow positioned absolute relative to the text block -->
+                            <div style="position: absolute; right: 100%; top: 50%; transform: translateY(-50%); padding-right: 20px; z-index: 10; white-space: nowrap;">
+                                <a href="../../portfolio/" class="portfolio-back-arrow" style="margin-bottom: 0;">
+                                    <i class="fa fa-long-arrow-left"></i>
+                                    <span class="portfolio-back-text">Back to Portfolio</span>
+                                </a>
+                            </div>
+                            <h2 class="section-heading" style="text-transform: none; margin-top: 5px; text-align: left; margin-bottom: 0;">MothNode</h2>
+                        </div>
+                        <h3 class="section-subheading text-muted" style="margin-top: 10px; margin-bottom: 30px;"><strong>A Remote Tank Monitoring System</strong></h3>
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -253,22 +304,27 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin: 0;">Project Overview</h4>
                         </div>
-                        <p style="margin-bottom: 20px;">The MothNode system is a flagship internal research and development initiative at LTRJ Labs. Designed to address the challenges of tracking water resources in rural and off-grid environments, this system eliminates the need for manual inspections by delivering real-time telemetry from remote storage tanks directly to a central cloud platform.</p>
+                        <p style="margin-bottom: 20px;">For rural fire departments that lack access to city water, relying on Fire Cisterns/Dry Hydrants is the reality for implementing fire protection infrastructure. These systems require routine maintenance and fill checks to remain a dependable asset. Our system solves the uncertainty, assures the reliability, and enables collaboration across departments.</p>
                         
-                        <p style="margin-bottom: 20px;">By employing energy-efficient MCU architectures combined with long-range sub-GHz wireless transmitters (such as LoRa) and cellular modems, the device monitors hydrostatic pressure, temperature, and system battery levels. This project is currently in the prototyping phase and represents a key step toward launching our own commercial hardware product and subscription services.</p>
+                        <p style="margin-bottom: 20px;">By employing energy-efficient MCU architectures combined with long-range sub-GHz wireless transmitters (such as LoRa) and cellular modems, the device monitors water levels and system battery levels. This project is currently in the prototyping phase and represents a key step toward launching our own commercial hardware product and solutions plan.</p>
                         
+                        <!-- MothNode Photo 1 with 20% crop (middle 60% remains) -->
+                        <div style="width: 100%; overflow: hidden; margin: 40px auto; border-radius: 8px; display: flex; justify-content: center; align-items: center; border: 1px solid #333;">
+                            <img src="../../img/MothNodePhoto1.jpg" alt="MothNode Installation" style="width: 100%; transform: scale(1.6666); transform-origin: center center;">
+                        </div>
+
                         <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-top: 30px; margin-bottom: 15px;">Key Features</h4>
                         <ul style="margin-bottom: 30px; padding-left: 20px;">
-                            <li><strong>Long-Range Wireless Telemetry:</strong> Integrates sub-GHz wireless transceivers to transmit data reliably across several kilometers in rural terrain.</li>
-                            <li><strong>Ultra-Low Power Operations:</strong> Engineered to run on solar-charged lithium battery configurations, achieving multi-year operational cycles without manual recharging.</li>
-                            <li><strong>High-Precision Liquid Level Sensing:</strong> Employs temperature-compensated hydrostatic pressure sensors to log micro-changes in water volume.</li>
-                            <li><strong>Cloud Alert Dashboard:</strong> Feeds telemetry into an online portal configured to dispatch email and SMS notifications when water levels drop below key thresholds.</li>
+                            <li><strong>LoRa and Cellular Telemetry:</strong> Integrates sub-GHz wireless transceivers combined with cellular modems to transmit data reliably to the dashboard in all conditions.</li>
+                            <li><strong>Long-Term Operation:</strong> Engineered to run on solar-charged lithium battery configurations, achieving multi-year operational cycles without even considering manual maintenance.</li>
+                            <li><strong>High-Precision Liquid Level Sensing:</strong> Employs ultrasonic/hydrostatic pressure sensors to log micro-changes in water volume.</li>
+                            <li><strong>Two-Way Communication:</strong> Feeds telemetry into an online portal configured to dispatch email and SMS notifications when water levels drop below key thresholds. Has on-demand monitoring for real time updates for on-site intel.</li>
                         </ul>
                         
 
                         <div class="theme-info-box">
                             <strong>Status: In Prototyping & Testing</strong><br>
-                            Our engineering team is actively constructing prototypes, calibrating level sensors, and optimizing the low-power sleeping loops. Check back soon for schematics and source files!
+                            Our design team is actively Iterating, exploring technologies, and optimizing the low-power sleeping loops. Check back soon for a demo!
                         </div>
                     </div>
                 </div>
