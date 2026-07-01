@@ -108,7 +108,7 @@
         }
         .mobile-plus-btn {
             position: absolute;
-            width: 32px; height: 32px;
+            width: 16px; height: 16px;
             background: rgba(255, 102, 0, 0.8);
             border: 2px solid #fff;
             border-radius: 50%;
@@ -116,7 +116,7 @@
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 14px;
+            font-size: 8px;
             pointer-events: auto;
             transform: translate(-50%, -50%);
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
@@ -229,7 +229,7 @@
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
+                    
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -304,7 +304,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin: 0;">Project Overview</h4>
                         </div>
-                        <p style="margin-bottom: 20px;">For rural fire departments that lack access to city water, relying on Fire Cisterns/Dry Hydrants is the reality for implementing fire protection infrastructure. These systems require routine maintenance and fill checks to remain a dependable asset. Our system solves the uncertainty, assures the reliability, and enables collaboration across departments.</p>
+                        <p style="margin-bottom: 20px;">Rural fire departments without access to city water, rely on Fire Cisterns/Dry hydrants for implementing fire protection infrastructure.These systems require active level monitoring, maintenance, and fill checks to remain a dependable asset. Our system turns monitoring into an automated process, assures the reliability of the source through alerts when problems arise, and enables collaboration across departments to unify water supply data.</p>
                         
                         <p style="margin-bottom: 20px;">By employing energy-efficient MCU architectures combined with long-range sub-GHz wireless transmitters (such as LoRa) and cellular modems, the device monitors water levels and system battery levels. This project is currently in the prototyping phase and represents a key step toward launching our own commercial hardware product and solutions plan.</p>
                         
@@ -502,6 +502,28 @@
         const casingMax = Math.max(casingSize.x, casingSize.y, casingSize.z);
         window.radius = (casingMax * 0.5 + maxPartDim * 0.5) * 1.15;
 
+        // Dictionary for easy configuration of part titles and descriptions
+        const partInfoMap = {
+            'BottomCasing': { title: 'Bottom Casing', desc: 'The bottom half of the enclosure. Includes all mounting points for the battery holder, MainBoard, mPCIE module, and cable grommet.' },
+            'TopCasing': { title: 'Top Casing', desc: 'The waterproof top cover that protects the internal electronics from the elements.' },
+            'PCB': { title: 'Main Board', desc: 'The central processing unit, power management, and primary sensor interfaces.' },
+            'Battery': { title: 'Battery Pack', desc: 'Securely holds the power cells to ensure long-term remote operation.' },
+            'BG95mPCIE': { title: 'mPCIE Cellular Module', desc: 'Cellular communication module for data transmission to the cloud.' },
+            'UltrasonicMount': { title: 'SensorMount', desc: 'Robust mounting bracket for securing the sensor in an vertical orientation to the water level.' },
+            'DYP-A02': { title: 'Ultrasonic Sensor', desc: 'High-precision ultrasonic sensor for monitoring liquid levels.' },
+            'Casing2Ultrasonic': { title: 'Sensor mount to enclosure adapter', desc: 'Secures the mounting of the entire assembly together onto one assembly.' }
+        };
+
+        function getPartInfo(name) {
+            if (!name) return { title: 'Component', desc: 'Component details for this part.' };
+            for (const key in partInfoMap) {
+                if (name.includes(key)) return partInfoMap[key];
+            }
+            // Optional fallback formatting
+            let formattedName = name.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim();
+            return { title: formattedName, desc: 'Component details for ' + formattedName + '.' };
+        }
+
         if (bottomCasingPart) {
             const childBox = new THREE.Box3().setFromObject(bottomCasingPart);
             const childCenterWorld = childBox.getCenter(new THREE.Vector3());
@@ -515,6 +537,7 @@
             hitbox.position.copy(bottomCasingPart.worldToLocal(childBox.getCenter(new THREE.Vector3())));
             bottomCasingPart.add(hitbox);
 
+            const info = getPartInfo(bottomCasingPart.name);
             parts.push({
                 hitbox: hitbox,
                 node: bottomCasingPart,
@@ -524,8 +547,8 @@
                 origScale: bottomCasingPart.scale.clone(),
                 targetScale: bottomCasingPart.scale.clone(),
                 currentScale: bottomCasingPart.scale.clone(),
-                label: bottomCasingPart.name || 'Bottom Casing',
-                desc: 'The main base enclosure.',
+                label: info.title,
+                desc: info.desc,
                 buttonEl: null
             });
         }
@@ -549,6 +572,7 @@
             hitbox.position.copy(child.worldToLocal(childCenterWorld.clone()));
             child.add(hitbox);
 
+            const info = getPartInfo(child.name);
             parts.push({
                 hitbox: hitbox,
                 node: child,
@@ -558,8 +582,8 @@
                 origScale: child.scale.clone(),
                 targetScale: child.scale.clone(),
                 currentScale: child.scale.clone(),
-                label: child.name || 'Component',
-                desc: 'Component details for ' + child.name,
+                label: info.title,
+                desc: info.desc,
                 buttonEl: null
             });
         });
@@ -914,6 +938,7 @@
     function toggleExplosion(explode) {
         if (explode === isExploded) return;
         isExploded = explode;
+        updateMobileButtonsVisibility();
         
         gsap.to(explosionProgress, {
             value: isExploded ? 1 : 0,
@@ -924,9 +949,9 @@
             },
             onComplete: () => {
                 if (isMobile && isExploded) {
-                    showMobileButtons(true);
+                    
                 } else {
-                    showMobileButtons(false);
+                    
                     // Hide tooltips if collapsing
                     tooltip.style.opacity = '0';
                     setTimeout(() => tooltip.style.display = 'none', 300);
@@ -1158,49 +1183,79 @@
         animateScale();
     }
 
-    // 8. Mobile Interaction (Intersection Observer & Plus Buttons)
-    const observer = new IntersectionObserver((entries) => {
+    // 8. Mobile Interaction (Tap to Trigger)
+    container.addEventListener('click', (e) => {
         if (!isMobile) return;
-        entries.forEach(entry => {
-            if (entry.isIntersecting && entry.intersectionRatio > 0.4) {
-                toggleExplosion(true);
-            } else if (!entry.isIntersecting || entry.intersectionRatio < 0.2) {
-                toggleExplosion(false);
-            }
-        });
-    }, { threshold: [0.2, 0.4, 0.6] });
-    observer.observe(container);
+        if (e.target.closest('.mobile-plus-btn')) return;
+        
+        const newState = !isExploded;
+        toggleExplosion(newState);
+        
+        if (!newState) {
+            tooltip.style.opacity = '0';
+            setTimeout(() => tooltip.style.display = 'none', 300);
+        }
+    });
 
     function createMobileButtons() {
         parts.forEach(part => {
             const btn = document.createElement('div');
             btn.className = 'mobile-plus-btn';
             btn.innerHTML = '<i class="fa fa-plus"></i>';
-            btn.style.display = 'none';
+            btn.style.display = 'flex';
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                // Show tooltip in center
+                
+                // If collapsed, clicking a plus button should explode it
+                if (!isExploded) {
+                    toggleExplosion(true);
+                    return;
+                }
+
+                // Show tooltip near the part
                 tooltipTitle.textContent = part.label;
                 tooltipDesc.textContent = part.desc;
-                tooltip.style.left = '50%';
-                tooltip.style.top = '50%';
-                tooltip.style.transform = 'translate(-50%, -50%)';
                 tooltip.style.display = 'block';
+                positionTooltip(part);
                 setTimeout(() => tooltip.style.opacity = '1', 10);
             });
             mobileButtonsContainer.appendChild(btn);
             part.buttonEl = btn;
         });
+        updateMobileButtonsVisibility();
+    }
+    
+    function updateMobileButtonsVisibility() {
+        if (!isMobile) return;
+        parts.forEach((part, index) => {
+            if (part.buttonEl) {
+                if (isExploded) {
+                    part.buttonEl.style.display = 'flex';
+                    setTimeout(() => part.buttonEl.style.opacity = '1', 10);
+                } else {
+                    // When collapsed, only show the FIRST plus icon
+                    if (index === 0) {
+                        part.buttonEl.style.display = 'flex';
+                        setTimeout(() => part.buttonEl.style.opacity = '1', 10);
+                    } else {
+                        part.buttonEl.style.opacity = '0';
+                        setTimeout(() => part.buttonEl.style.display = 'none', 300);
+                    }
+                }
+            }
+        });
+        updateMobileButtons();
     }
 
     function updateMobileButtons() {
-        if (!isMobile || !isExploded) return;
+        if (!isMobile) return;
         const rect = container.getBoundingClientRect();
         parts.forEach(part => {
             if (!part.buttonEl) return;
-            // Get center of part
+            // Get corner of part
             const box = new THREE.Box3().setFromObject(part.node);
-            const center = box.getCenter(new THREE.Vector3());
+            // using top right front corner
+            const center = new THREE.Vector3(box.max.x, box.max.y, box.max.z);
             
             // Project to 2D
             center.project(camera);
