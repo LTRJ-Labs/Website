@@ -296,7 +296,7 @@ LTRJ LABS WEBSITE ARCHITECTURE
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../"><img src="../img/logos/ltrj-logo.png" alt="LTRJ Labs Ltd Logo"></a>
+                <a class="navbar-brand" href="../"><img src="../img/SVGLogos/Full_Logo.svg" alt="LTRJ Labs Ltd Logo"></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -439,12 +439,33 @@ LTRJ LABS WEBSITE ARCHITECTURE
                     entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
                             entry.target.classList.add('visible');
-                        } else {
-                            entry.target.classList.remove('visible');
+                            observer.unobserve(entry.target);
                         }
                     });
                 }, { threshold: 0.15 });
                 cards.forEach(function(card) { observer.observe(card); });
+
+                // Safety net: if a card is skipped past without ever
+                // intersecting — a fast flick, anchor jump, or reload with
+                // scroll restoration — the observer never fires for it and it
+                // would stay blank. Reveal any card already at or above the
+                // viewport bottom, and disconnect once all cards are shown.
+                function revealPassed() {
+                    var remaining = 0;
+                    cards.forEach(function(card) {
+                        if (card.classList.contains('visible')) return;
+                        if (card.getBoundingClientRect().top < window.innerHeight) {
+                            card.classList.add('visible');
+                            observer.unobserve(card);
+                        } else {
+                            remaining++;
+                        }
+                    });
+                    if (remaining === 0) window.removeEventListener('scroll', revealPassed);
+                }
+                window.addEventListener('scroll', revealPassed, { passive: true });
+                window.addEventListener('load', revealPassed);
+                revealPassed();
             } else {
                 cards.forEach(function(card) { card.classList.add('visible'); });
             }
