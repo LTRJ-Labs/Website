@@ -27,7 +27,7 @@ body {
 
 body {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    background-color: #222;
+    background-color: #0a0a0a;
     color: #fff;
     padding-top: 70px;
     max-width: 100vw;
@@ -109,7 +109,7 @@ body.dark-mode .bg-light-gray {
 }
 
 .bg-darkest-gray {
-    background-color: #222;
+    background-color: #0a0a0a;
 }
 
 .btn-primary {
@@ -219,7 +219,7 @@ fieldset[disabled] .btn-xl.active {
     width: 100%;
     z-index: 1030;
     border-color: transparent;
-    background-color: #222;
+    background-color: #0a0a0a;
 }
 
 .navbar-default .navbar-brand {
@@ -371,7 +371,7 @@ body.light-mode .navbar-default .navbar-toggle {
 
     .navbar-default {
         padding: 0 !important;
-        background-color: rgba(34, 34, 34, 0.9);
+        background-color: rgba(10, 10, 10, 0.9);
         transition: background-color .3s;
     }
 
@@ -388,7 +388,7 @@ body.light-mode .navbar-default .navbar-toggle {
 
     .navbar-default.navbar-shrink {
         padding: 0 !important;
-        background-color: #222;
+        background-color: #0a0a0a;
     }
 
     .navbar-default.navbar-shrink .container {
@@ -701,7 +701,7 @@ body.light-mode .section-subheading {
     padding: 20px;
     max-width: 400px;
     text-align: center;
-    background-color: #222;
+    background-color: #0a0a0a;
     border-top: 1px solid #333;
 }
 
@@ -978,7 +978,7 @@ aside.clients img {
 }
 
 section#contact {
-    background-color: #222;
+    background-color: #0a0a0a;
     background-image: url(../img/map-image.png);
     background-position: center;
     background-repeat: no-repeat;
@@ -1094,7 +1094,7 @@ section#contact .text-danger {
 
 footer {
     width: 100%;
-    background-color: #222;
+    background-color: #0a0a0a;
     padding: 25px 0;
     text-align: center;
 }
@@ -1134,7 +1134,7 @@ ul.social-buttons li a {
     font-size: 20px;
     outline: 0;
     color: #fff;
-    background-color: #222;
+    background-color: #0a0a0a;
     -webkit-transition: all .3s;
     -moz-transition: all .3s;
     transition: all .3s;
@@ -1143,7 +1143,7 @@ ul.social-buttons li a {
 ul.social-buttons li a:hover,
 ul.social-buttons li a:focus,
 ul.social-buttons li a:active {
-    background-color: #222;
+    background-color: #0a0a0a;
     color: #FF6600;
 }
 
@@ -1209,7 +1209,7 @@ ul.social-buttons li a:active {
     width: 1px;
     height: 75px;
     margin-left: 35px;
-    background-color: #222;
+    background-color: #0a0a0a;
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
@@ -1219,7 +1219,7 @@ ul.social-buttons li a:active {
     z-index: 1052;
     width: 1px;
     height: 75px;
-    background-color: #222;
+    background-color: #0a0a0a;
     -webkit-transform: rotate(90deg);
     -ms-transform: rotate(90deg);
     transform: rotate(90deg);
@@ -1465,15 +1465,20 @@ body.light-mode .tech-badge {
 
 /* Client Testimonials */
 .testimonial-card {
-    background-color: #1a1a1a;
+    background-color: #111;
     border: 1px solid #333;
-    border-left: 5px solid #FF6600;
     padding: 30px;
-    border-radius: 8px;
+    border-radius: 2px;
     margin-top: 40px;
     margin-bottom: 30px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
     position: relative;
+}
+.testimonial-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: #444;
 }
 .testimonial-card::before {
     content: '\201C';
@@ -1487,10 +1492,11 @@ body.light-mode .tech-badge {
     line-height: 1;
 }
 body.light-mode .testimonial-card {
-    background-color: #fff;
-    border-color: #e0e0e0;
-    border-left-color: #FF6600;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    background-color: #fcfcfc;
+    border-color: #e5e5e5;
+}
+body.light-mode .testimonial-card::after {
+    background: #ccc;
 }
 .testimonial-quote {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -1525,22 +1531,30 @@ body.light-mode .testimonial-author {
     display: flex;
     align-items: center;
     gap: 35px;
-    background: #111111;
-    border-radius: 12px;
+    background: #111;
+    border-radius: 2px;
     padding: 35px 30px;
     margin-bottom: 40px;
-    border: 1px solid #2a2a2a;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    border: 1px solid #333;
     position: relative;
     overflow: hidden;
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(20px);
     transition: opacity 0.6s ease, transform 0.6s ease;
 }
+.team-scroll-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: #444;
+}
 body.light-mode .team-scroll-card {
-    background: #ffffff;
-    border-color: #e8e8e8;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+    background: #fcfcfc;
+    border-color: #e5e5e5;
+}
+body.light-mode .team-scroll-card::before {
+    background: #ccc;
 }
 .team-scroll-card.visible {
     opacity: 1;
@@ -1553,15 +1567,13 @@ body.light-mode .team-scroll-card {
     width: 180px;
     height: 180px;
     flex-shrink: 0;
-    border-radius: 8px;
+    border-radius: 2px;
     overflow: hidden;
-    border: 3px solid #222;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    border: 1px solid #333;
     position: relative;
 }
 body.light-mode .team-card-image {
-    border-color: #fff;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    border-color: #e5e5e5;
 }
 .team-card-image img {
     width: 100%;
@@ -1675,18 +1687,24 @@ body.light-mode .contact-linkedin-icon:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #1a1a1a;
+    background-color: #111;
     border: 1px solid #333;
-    border-left: 5px solid #FF6600;
-    border-radius: 8px;
+    border-radius: 2px;
     padding: 40px 80px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+.testimonial-carousel::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: #444;
 }
 body.light-mode .testimonial-carousel {
-    background-color: #fff;
-    border-color: #e0e0e0;
-    border-left-color: #FF6600;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    background-color: #fcfcfc;
+    border-color: #e5e5e5;
+}
+body.light-mode .testimonial-carousel::after {
+    background: #ccc;
 }
 .testimonial-slide {
     position: absolute;
