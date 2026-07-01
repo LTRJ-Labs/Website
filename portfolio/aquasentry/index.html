@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: #222;">
+
+<head>
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#222222">
+    <style>html, body { background-color: #222 !important; color: #fff !important; }</style>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Case study of the custom diagnostics breakout board designed and routed by LTRJ Labs for Pink Pigeon Innovations' PCB system validation.">
+    <meta name="author" content="LTRJ Labs">
+
+    <meta name="keywords" content="PCB layout, routing, diagnostics breakout, impedance matching, test points, signal integrity, Pink Pigeon Innovations, Victoria BC">
+
+    <title>Pink Pigeon Breakout Board - LTRJ Labs</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../../img/SVGLogos/Small_Logo.svg">
+    <link rel="icon" type="image/png" href="../../img/HiResLogos/Small_Logo.png">
+
+    <!-- Modern CSS Layout -->
+    <link href="../../css/modern-layout.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../../css/agency.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styling for the project details section -->
+    <style>
+        .project-detail-img {
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            background: #2a2a2a;
+            max-width: 100%;
+            height: auto;
+            margin: 30px auto;
+            display: block;
+        }
+        body.light-mode .project-detail-img {
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: #eaeaea;
+        }
+        .project-details-fallback {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 350px;
+            background: #2a2a2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid #222;
+            margin: 30px auto;
+        }
+        body.light-mode .project-details-fallback {
+            background: #eaeaea;
+            color: #555;
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+
+
+    <!-- Smooth Page Transition Script -->
+    <style>
+        body { opacity: 0; transition: opacity 0.1s ease-in-out; }
+    </style>
+    <script>
+        let fadedIn = false;
+        function fadeIn() {
+            if (!fadedIn) {
+                document.body.style.opacity = "1";
+                fadedIn = true;
+            }
+        }
+        
+        // Fade in immediately as soon as the DOM starts rendering to keep it feeling ultra-fast
+        document.addEventListener("DOMContentLoaded", fadeIn);
+        setTimeout(fadeIn, 50); // Instant fallback
+
+        // Intercept link clicks to fade out BEFORE navigating
+        document.addEventListener("click", function(e) {
+            let target = e.target.closest('a');
+            if (!target) return;
+            
+            let href = target.getAttribute('href');
+            if (!href) return;
+            
+            let isInternal = target.host === window.location.host;
+            let isSamePage = target.pathname === window.location.pathname || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:');
+            let isBlank = target.target === "_blank";
+            
+            if (isInternal && !isSamePage && !isBlank) {
+                e.preventDefault(); // Stop instant navigation
+                document.body.style.opacity = "0"; // Trigger fade out
+                setTimeout(function() {
+                    window.location.href = target.href; // Navigate after fade completes
+                }, 100);
+            }
+        });
+        
+        // Handle back/forward cache restore
+        window.addEventListener("pageshow", function(e) {
+            if (e.persisted) {
+                fadeIn();
+            }
+        });
+    </script>
+</head>
+
+<body id="page-top" class="index" style="background-color: #222;">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../"><img src="../../img/SVGLogos/Full_Logo.svg" alt="LTRJ Labs Ltd Logo"></a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a href="../../services/">Services</a>
+                    </li>
+                    <li class="active-page">
+                        <a href="../../portfolio/">Portfolio</a>
+                    </li>
+                    <li>
+                        <a href="../../team/">Team</a>
+                    </li>
+                    <li>
+                        <a href="../../contact/">Contact</a>
+                    </li>
+                    
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Project Details Section -->
+    <section id="project-details" style="padding-top: 150px; padding-bottom: 80px;">
+                <div class="container">
+            <div class="row">
+                <div class="col-lg-12" style="position: relative;">
+                    <!-- Centered Titles with inline back arrow -->
+                    <div class="text-center">
+                        <div style="display: inline-block; position: relative;">
+                            <!-- Back Arrow positioned absolute relative to the text block -->
+                            <div style="position: absolute; right: 100%; top: 50%; transform: translateY(-50%); padding-right: 20px; z-index: 10; white-space: nowrap;">
+                                <a href="../../portfolio/" class="portfolio-back-arrow" style="margin-bottom: 0;">
+                                    <i class="fa fa-long-arrow-left"></i>
+                                    <span class="portfolio-back-text">Back to Portfolio</span>
+                                </a>
+                            </div>
+                            <h2 class="section-heading" style="text-transform: none; margin-top: 5px; text-align: left; margin-bottom: 0;">Aqua Sentry Breakout Board</h2>
+                        </div>
+                        <h3 class="section-subheading text-muted" style="margin-top: 10px; margin-bottom: 30px;"><strong>Pink Pigeon Innovations</strong></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <!-- Project Image / Fallback -->
+                    <img src="../../img/AquaSentryCoverPhoto.jpg" alt="Pink Pigeon Breakout Board" class="img-responsive project-detail-img" style="max-height: 65vh; object-fit: contain; margin: 0 auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="project-details-fallback">
+                        <i class="fa fa-plug fa-5x" style="color: #FF6600; margin-bottom: 20px;"></i>
+                        <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 16px; letter-spacing: 1px;">Aqua Sentry Breakout Board</span>
+                        <span style="font-size: 12px; margin-top: 10px; opacity: 0.7;"></span>
+                    </div>
+
+
+
+
+                    <!-- Project Description -->
+                    <div class="project-description text-muted" style="font-size: 16px; line-height: 1.8; margin-top: 40px;">
+                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-bottom: 15px;">Project Overview</h4>
+                        <p style="margin-bottom: 20px;">Our team was engaged to design a custom breakout board to act as a sensor expansion interface. The board retrofits seamlessly into the existing mechanical and electrical constraints, taking 5 inputs from the previous sensor outputs, and routing to 10 outputs. This project doubled the sensor capacity of the original board and added special functionality to maintain power controls that are a must-have for long-term battery life.</p>
+                        
+                        <p style="margin-bottom: 20px;">By providing clear silkscreen indication of the different I/Os, the assembly can be easily completed without digging through schematics.</p>
+                        
+                        <h4 style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #FF6600; margin-top: 30px; margin-bottom: 15px;">Key Focus Areas</h4>
+                        <ul style="margin-bottom: 30px; padding-left: 20px;">
+                            <li><strong>Flexible functionality:</strong> The board provides multiple sensor hookups for 3V3 I2C, 5V I2C and analog signals.</li>
+                            <li><strong>Retrofitting the existing design:</strong> Existing constraints from the original design were analyzed and adhered to, providing a seamless integration of the new module.</li>
+                            <li><strong>Ease of assembly and testing:</strong> Extensive documentation and clear labeling facilitate an efficient assembly and testing process.</li>
+                        </ul>
+
+                        <!-- Project Photo -->
+                        <img src="../../img/AquaSentryPhoto1.jpg" alt="Pink Pigeon Breakout Board" class="img-responsive" style="border-radius: 8px; margin: 30px auto;">
+
+
+                        <!-- Client Testimonial -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-quote" style="font-family: 'Montserrat', sans-serif; font-size: 16px; line-height: 1.8; font-style: italic; font-weight: 400; color: #ccc; text-align: left;">
+                                <p style="margin-bottom: 20px;">"Pink Pigeon contracted Levi and the LTRJ team on a custom sensor expansion breakout board for our AquaSentry smart buoy platform, and I can't recommend them enough!</p>
+                                <p style="margin-bottom: 20px;">A few things stood out. Their communication was excellent — they asked smart, clarifying questions throughout instead of guessing, and worked directly with our hardware lead to refine the design as they went. When our team's vacation schedules got in the way, they handled everything: delivery to our mech team, board assembly, wiring, all without us having to ask. That kind of initiative is rare and valued.</p>
+                                <p style="margin-bottom: 20px;">The engineering was genuinely impressive. They caught things we'd missed and independently designed a clean solution for switching our new 5V I²C sensor rail on and off, despite our main board had already been manufactured without this in mind. As a details person, my favourite thing was their attention to detail on the silkscreen was on another level — every connector labeled with which sensor goes where, every pin marked, directional arrows, their logo, the works. It's the kind of polish that makes a board easy to actually live with, and it's more professional than work I've seen from people well past this stage. It felt like so much more than a prototype!</p>
+                                <p style="margin-bottom: 0;">If you want a custom PCB done right by people who care about the details and communicate well, talk to LTRJ."</p>
+                            </div>
+                            <div class="testimonial-author" style="margin-top: 25px; text-align: left;">Landon Brown</div>
+                            <div class="testimonial-company" style="text-align: left;">CTO @ Pink Pigeon / Founder @ Coding Fox Corp.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-left">
+                    <span class="copyright" style="color: #888;">Copyright &copy; LTRJ Labs 2026</span>
+                </div>
+                <div class="col-md-6 text-right">
+                    <ul class="list-inline quicklinks" style="margin-bottom: 0;">
+                        <li><a href="../../privacy/" style="color: #FF6600; text-decoration: none;">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Native Theme & Navigation Scripts -->
+    <script src="../../js/theme.js"></script>
+    <script src="../../js/agency.js"></script>
+
+    <!-- PCB Layer Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toggleBtns = document.querySelectorAll('.layer-toggle-btn');
+            toggleBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var layerId = btn.getAttribute('data-layer');
+                    var layer = document.getElementById('layer-' + layerId);
+                    if (layer) {
+                        btn.classList.toggle('active');
+                        if (btn.classList.contains('active')) {
+                            layer.style.opacity = (layerId === 'board') ? '1' : '0.9';
+                        } else {
+                            layer.style.opacity = '0';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

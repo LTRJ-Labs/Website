@@ -1,15 +1,27 @@
+<!-- AGENT-INFO
+=========================================================
+LTRJ LABS WEBSITE ARCHITECTURE
+- Architecture: This site uses a flat HTML structure with modular subpages (/services, /portfolio, /team, /contact).
+- Styling: Built on Bootstrap 3.3. Core overrides are in css/agency.css and css/modern-layout.css.
+- JS: Uses jQuery and vanilla JS. Custom logic (dark mode, navbar shrinking, smooth transitions) is in js/theme.js and js/agency.js.
+=========================================================
+-->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: #222;">
 
 <head>
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#222222">
+    <style>html, body { background-color: #222 !important; color: #fff !important; }</style>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="LTRJ Labs specializes in cost-effective electronics engineering services, custom PCB design, schematic capture, and rapid hardware prototyping in Victoria, BC.">
+    <meta name="author" content="LTRJ Labs">
+    <meta name="keywords" content="electronics design, PCB layout, prototyping, firmware, STM32, hardware engineering, Victoria BC">
 
-    <title>LTRJ Labs</title>
+    <title>LTRJ Labs - Cost-Effective Electronics Design & Prototyping</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="img/SVGLogos/Small_Logo.svg">
@@ -22,8 +34,8 @@
     <meta property="og:title" content="LTRJ Labs">
     <meta property="og:url" content="https://ltrjlabs.com">
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Modern CSS Layout -->
+    <link href="css/modern-layout.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="css/agency.css" rel="stylesheet">
@@ -31,9 +43,6 @@
     <!-- Custom Fonts -->
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -42,9 +51,221 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <!-- Custom style for Portfolio Image Fallbacks & Captions -->
+    <style>
+                /* --- Navigation Cards (Industrial Precision) --- */
+        .nav-card {
+            display: block;
+            text-decoration: none;
+            background-color: #111;
+            border: 1px solid #333;
+            border-radius: 2px;
+            padding: 35px 30px;
+            min-height: 260px;
+            position: relative;
+            overflow: hidden;
+            transition: opacity 0.6s ease, transform 0.6s ease, background-color 0.3s ease, border-color 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: #444;
+            transition: background 0.3s ease;
+        }
+        .nav-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .nav-card:hover {
+            border-color: #000;
+            background-color: #181818;
+            text-decoration: none;
+        }
+        /* No orange top bar on hover, keep it subtle */
+        .nav-card:hover::before {
+            background: #555;
+        }
+        .nav-card:hover .nav-card-link {
+            color: #FF6600;
+        }
+        .nav-card:hover .nav-card-link .fa-arrow-right {
+            transform: translateX(4px);
+        }
+        .nav-card-icon {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .nav-card-icon .fa {
+            font-size: 24px;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+        .nav-card:hover .nav-card-icon .fa {
+            color: #ccc;
+        }
+        .nav-card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: #fff;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav-card-desc {
+            font-size: 14px;
+            color: #888;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        .nav-card-link {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+        .nav-card-link .fa-arrow-right {
+            margin-left: 6px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Contact Card - Industrial Precision */
+        .nav-card-contact {
+            padding: 20px 45px;
+            background: #111;
+            border: 1px solid #FF6600;
+            border-radius: 2px;
+            color: #FF6600;
+            text-align: center;
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: background 0.3s ease, color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            gap: 15px;
+        }
+        .nav-card-contact:hover {
+            background: #FF6600;
+            color: #fff;
+            text-decoration: none;
+        }
+        .nav-card-contact i {
+            font-size: 20px;
+        }
+        .nav-card-contact-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Light mode overrides */
+        body.light-mode .nav-card {
+            background-color: #fcfcfc;
+            border-color: #e5e5e5;
+        }
+        body.light-mode .nav-card::before {
+            background: #ccc;
+        }
+        body.light-mode .nav-card:hover {
+            border-color: #000;
+            background-color: #fff;
+        }
+        body.light-mode .nav-card:hover::before {
+            background: #aaa;
+        }
+        body.light-mode .nav-card-title {
+            color: #222;
+        }
+        body.light-mode .nav-card-desc {
+            color: #555;
+        }
+        body.light-mode .nav-card-link {
+            color: #777;
+        }
+        body.light-mode .nav-card-contact {
+            background: #fff;
+            border-color: #FF6600;
+            color: #FF6600;
+        }
+        body.light-mode .nav-card-contact:hover {
+            background: #FF6600;
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-card {
+                min-height: auto;
+            }
+        }
+    </style>
+
+
+    <!-- Smooth Page Transition Script -->
+    <style>
+        body { opacity: 0; transition: opacity 0.1s ease-in-out; }
+    </style>
+    <script>
+        let fadedIn = false;
+        function fadeIn() {
+            if (!fadedIn) {
+                document.body.style.opacity = "1";
+                fadedIn = true;
+            }
+        }
+        
+        // Fade in immediately as soon as the DOM starts rendering to keep it feeling ultra-fast
+        document.addEventListener("DOMContentLoaded", fadeIn);
+        setTimeout(fadeIn, 50); // Instant fallback
+
+        // Intercept link clicks to fade out BEFORE navigating
+        document.addEventListener("click", function(e) {
+            let target = e.target.closest('a');
+            if (!target) return;
+            
+            let href = target.getAttribute('href');
+            if (!href) return;
+            
+            let isInternal = target.host === window.location.host;
+            let isSamePage = target.pathname === window.location.pathname || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:');
+            let isBlank = target.target === "_blank";
+            
+            if (isInternal && !isSamePage && !isBlank) {
+                e.preventDefault(); // Stop instant navigation
+                document.body.style.opacity = "0"; // Trigger fade out
+                setTimeout(function() {
+                    window.location.href = target.href; // Navigate after fade completes
+                }, 100);
+            }
+        });
+        
+        // Handle back/forward cache restore
+        window.addEventListener("pageshow", function(e) {
+            if (e.persisted) {
+                fadeIn();
+            }
+        });
+    </script>
 </head>
 
-<body id="page-top" class="index">
+<body id="page-top" class="index" style="background-color: #222;">
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -52,12 +273,12 @@
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header page-scroll">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
+                    
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand page-scroll" href="#page-top"><img src="img/logos/ltrj-logo.png" alt="LTRJ Labs Ltd Logo"></a>
+                <a class="navbar-brand page-scroll" href="#page-top"><img src="img/SVGLogos/Full_Logo.svg" alt="LTRJ Labs Ltd Logo"></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -78,9 +299,7 @@
                     <li>
                         <a href="contact/">Contact</a>
                     </li>
-                    <li>
-                        <button id="theme-toggle" class="btn btn-link navbar-btn">🌙</button>
-                    </li>
+                    
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -90,6 +309,9 @@
 
     <!-- Header -->
     <header>
+        <video id="header-bg-video" autoplay loop muted playsinline>
+            <source src="img/BannerVideo-2026-06-30.mp4" type="video/mp4">
+        </video>
         <div class="container-fluid">
             <div class="intro-text">
                 <div class="intro-heading">LTRJ LABS Ltd</div>
@@ -99,242 +321,65 @@
         </div>
     </header>
 
-    <!-- Services Section -->
-    <section id="services">
+    <!-- Client Experiences — quotes only, no title/subtitle -->
+    <section id="testimonials" style="padding: 60px 0;">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">WHAT WE OFFER</h2>
-                    <h3 class="section-subheading text-muted">From one-off consultations to multi-month projects</h3>
-                </div>
-            </div>
-            <div class="row text-center">
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-plug fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Electronics Design</h4>
-                    <p class="text-muted">Have an electronics problem? Let us make things easy for you. We will provide quality and professional work for a better price point.</p>
-                </div>
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-laptop fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Consultation</h4>
-                    <p class="text-muted">From small scope, technical questions to design strategy and troubleshooting, we can apply our experience and knowledge in the field for your benefit.</p>
-                </div>
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-briefcase fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Product Development</h4>
-                    <p class="text-muted">Have an idea but haven't found a way to make it a reality? We offer ground up services as well, providing prototypes for new ideas at an affordable pricepoint.</p>
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="testimonial-carousel">
+                        <!-- Slide 1: Landon Brown (Pink Pigeon) -->
+                        <div class="testimonial-slide active">
+                            <div class="testimonial-quote">"The engineering was genuinely impressive. They caught things we'd missed and independently designed a clean solution for switching our new 5V I²C sensor rail on and off, despite our main board had already been manufactured without this in mind. If you want a custom PCB done right by people who care about the details and communicate well, talk to LTRJ."</div>
+                            <div class="testimonial-author" style="margin-top: 25px;">Landon Brown</div>
+                            <div class="testimonial-company">CTO @ Pink Pigeon / Founder @ Coding Fox Corp.</div>
+                            <div class="testimonial-project-link">Project: <a href="portfolio/aquasentry/">Aqua Sentry Breakout Board</a></div>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Portfolio Grid Section -->
-    <section id="portfolio" class="bg-light-gray">
+    <!-- Navigation Cards — scroll-reveal "appear as you scroll" -->
+    <section id="nav-cards" style="padding: 80px 0;">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Portfolio</h2>
-                    <h3 class="section-subheading text-muted">A collection of our past projects. (Coming Soon)</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <p class="large text-muted">We are currently working on exciting new projects. Check back soon!</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    
-    <section id="about">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">About</h2>
-                    <h3 class="section-subheading text-muted">LTRJ Labs (pronounced "Letter J Labs") is a tech startup in Victoria, BC founded by four electrical engineering students with a desire for a platform to let our ideas and skills come to life.</h3>
-                    <h3 class="section-subheading text-muted">We started this company to bring our skills to industry in a confident and ambitious fashion. Our mission is to provide affordable and professional design services for businesses and hobbyists. We are all at the tail end of our Electronics Engineering Technology diploma, with only a capstone semester left. We are hopeful that you will join us on this exciting journey! We have a lot to learn and are open to all opportunities you may have in store for us.</h3>
-                </div>
-            </div>
-            <!-- <div class="row">
-                <div class="col-lg-12">
-                    <ul class="timeline">
-                        <li>
-                            <div class="timeline-image">
-                                <img class="img-circle img-responsive" src="img/about/1.jpg" alt="">
-                            </div>
-                            <div class="timeline-panel">
-                                <div class="timeline-heading">
-                                    <h4>2009-2011</h4>
-                                    <h4 class="subheading">Our Humble Beginnings</h4>
-                                </div>
-                                <div class="timeline-body">
-                                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="timeline-inverted">
-                            <div class="timeline-image">
-                                <img class="img-circle img-responsive" src="img/about/2.jpg" alt="">
-                            </div>
-                            <div class="timeline-panel">
-                                <div class="timeline-heading">
-                                    <h4>March 2011</h4>
-                                    <h4 class="subheading">An Agency is Born</h4>
-                                </div>
-                                <div class="timeline-body">
-                                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="timeline-image">
-                                <img class="img-circle img-responsive" src="img/about/3.jpg" alt="">
-                            </div>
-                            <div class="timeline-panel">
-                                <div class="timeline-heading">
-                                    <h4>December 2012</h4>
-                                    <h4 class="subheading">Transition to Full Service</h4>
-                                </div>
-                                <div class="timeline-body">
-                                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="timeline-inverted">
-                            <div class="timeline-image">
-                                <img class="img-circle img-responsive" src="img/about/4.jpg" alt="">
-                            </div>
-                            <div class="timeline-panel">
-                                <div class="timeline-heading">
-                                    <h4>July 2014</h4>
-                                    <h4 class="subheading">Phase Two Expansion</h4>
-                                </div>
-                                <div class="timeline-body">
-                                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="timeline-inverted">
-                            <div class="timeline-image">
-                                <h4>Be Part
-                                    <br>Of Our
-                                    <br>Story!</h4>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div> -->
-        </div>
-    </section>
-
-    <!-- Team Section -->
-    <section id="team" class="bg-light-gray">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Meet The Team</h2>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <div class="team-member">
-                        <img src="img/team/Levi.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Levi Puritch</h4>
-                        <p class="text-muted">Chief Executive Officer - Designer</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/levi-puritch-a8471a335/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <div class="team-member">
-                        <img src="img/team/Ryan.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Ryan Ko</h4>
-                        <p class="text-muted">Chief Financial Officer - Designer</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/ryan-ko-31a8543a6/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <div class="team-member">
-                        <img src="img/team/Jaxon.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Jaxon Bjornson</h4>
-                        <p class="text-muted">Chief Technology Officer - Designer</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/jaxonbjornson/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <div class="team-member">
-                        <img src="img/team/tyler.jpg" class="img-responsive img-circle" alt="">
-                        <h4>Tyler Bittencourt</h4>
-                        <p class="text-muted">Chief Marketing Officer - Designer</p>
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://www.linkedin.com/in/tyler-bittencourt/"><i class="fa fa-linkedin"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 text-center">
-                    <p class="large text-muted">We are a small group of ambitious electronics enthusiasts and entrepreneurs ready to start our journey in electronics design, and are willing to put in the work to make an impact in this industry. </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Clients Aside
-    <aside class="clients">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3 col-sm-6">
-                    <a href="#">
-                        <img src="img/logos/envato.jpg" class="img-responsive img-centered" alt="">
+            <div class="row" style="display: flex; flex-wrap: wrap;">
+                <!-- Services Card -->
+                <div class="col-md-4 col-sm-6" style="margin-bottom: 30px;">
+                    <a href="services/" class="nav-card" id="nav-card-services">
+                        <h3 class="nav-card-title">What We Provide</h3>
+                        <p class="nav-card-desc" style="flex-grow: 1;">See what LTRJ Labs can do for you and your team, from first prototypes to full production runs.</p>
+                        <span class="nav-card-link" style="margin-top: auto;">View Services <i class="fa fa-arrow-right"></i></span>
                     </a>
                 </div>
-                <div class="col-md-3 col-sm-6">
-                    <a href="#">
-                        <img src="img/logos/designmodo.jpg" class="img-responsive img-centered" alt="">
+                <!-- Portfolio Card -->
+                <div class="col-md-4 col-sm-6" style="margin-bottom: 30px;">
+                    <a href="portfolio/" class="nav-card" id="nav-card-portfolio">
+                        <h3 class="nav-card-title">Our Work</h3>
+                        <p class="nav-card-desc" style="flex-grow: 1;">See real-world results we've delivered, and discover our capabilities.</p>
+                        <span class="nav-card-link" style="margin-top: auto;">View Portfolio <i class="fa fa-arrow-right"></i></span>
                     </a>
                 </div>
-                <div class="col-md-3 col-sm-6">
-                    <a href="#">
-                        <img src="img/logos/themeforest.jpg" class="img-responsive img-centered" alt="">
-                    </a>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <a href="#">
-                        <img src="img/logos/creative-market.jpg" class="img-responsive img-centered" alt="">
+                <!-- Team/About Card -->
+                <div class="col-md-4 col-sm-12" style="margin-bottom: 30px;">
+                    <a href="team/" class="nav-card" id="nav-card-about">
+                        <h3 class="nav-card-title">Who We Are</h3>
+                        <p class="nav-card-desc" style="flex-grow: 1;">Meet the team behind LTRJ Labs: four fast-moving electronics designers, teaming up to turn ideas into reality in Victoria, BC.</p>
+                        <span class="nav-card-link" style="margin-top: auto;">Meet the Team <i class="fa fa-arrow-right"></i></span>
                     </a>
                 </div>
             </div>
-        </div>
-    </aside> -->
-
-    <section id="contact">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Contact Us</h2>
-                    <div style="margin: 25px 0;">
-                        <a href="contact/" class="btn btn-xl">Request a Consultation</a>
-                    </div>
-                    <h3 class="section-subheading">8:00 AM - 5:00 PM, Monday - Friday</h3>
+            <!-- Contact Card — full width, distinct solid button -->
+            <div class="row" style="margin-top: 30px;">
+                <div class="col-md-12" style="display: flex; justify-content: center;">
+                    <a href="contact/" class="nav-card-contact" id="nav-card-contact">
+                        <div class="nav-card-contact-inner">
+                            <h3 class="nav-card-contact-title">Get in Touch</h3>
+                            <i class="fa fa-envelope" style="font-size: 24px; margin-top: 5px;"></i>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -343,8 +388,13 @@
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
-                    <!-- <span class="copyright">Copyright &copy; LTRJ Labs 2026</span>  We dont have copyright yet I dont think... -->
+                <div class="col-md-6 text-left">
+                    <span class="copyright" style="color: #888;">Copyright &copy; LTRJ Labs 2026</span>
+                </div>
+                <div class="col-md-6 text-right">
+                    <ul class="list-inline quicklinks" style="margin-bottom: 0;">
+                        <li><a href="privacy/" style="color: #FF6600; text-decoration: none;">Privacy Policy</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -352,41 +402,112 @@
 
     <!-- Portfolio Modals moved to portfolio.html (if needed) -->
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-    <script src="js/classie.js"></script>
-    <script src="js/cbpanimatedheader.js"></script>
-
-    <!-- Contact Form JavaScript -->
-    <script src="js/jqbootstrapvalidation.js"></script>
-    <script src="js/contact_me.js"></script>
-
-    <!-- Custom Theme JavaScript -->
+    <!-- Native Theme & Navigation Scripts -->
+    <script src="js/theme.js"></script>
     <script src="js/agency.js"></script>
 
-    <!-- Theme Toggle Script -->
+    <!-- Testimonial Carousel Controls & Auto-Rotator Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('theme-toggle');
-            const body = document.body;
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            body.classList.add(currentTheme + '-mode');
-            toggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+            var slides = document.querySelectorAll('.testimonial-slide');
+            var indicators = document.querySelectorAll('.testimonial-indicator');
+            var prevBtn = document.querySelector('.prev-btn');
+            var nextBtn = document.querySelector('.next-btn');
+            var currentIndex = 0;
+            var autoRotateTimer = null;
+            var isTransitioning = false;
 
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
-                body.classList.remove('dark-mode', 'light-mode');
-                body.classList.add(newTheme + '-mode');
-                localStorage.setItem('theme', newTheme);
-                toggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            function showSlide(index) {
+                if (index === currentIndex || isTransitioning || slides.length === 0) return;
+                isTransitioning = true;
+
+                // 1. Fade out current active slide & indicator
+                slides[currentIndex].classList.remove('active');
+                if (indicators[currentIndex]) {
+                    indicators[currentIndex].classList.remove('active');
+                }
+                
+                // 2. Wait for fade-out to complete (500ms)
+                setTimeout(function() {
+                    // 3. Set the new index and fade in
+                    currentIndex = index;
+                    slides[currentIndex].classList.add('active');
+                    if (indicators[currentIndex]) {
+                        indicators[currentIndex].classList.add('active');
+                    }
+                    isTransitioning = false;
+                }, 500);
+            }
+
+            function nextSlide() {
+                var nextIndex = (currentIndex + 1) % slides.length;
+                showSlide(nextIndex);
+            }
+
+            function prevSlide() {
+                var prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+                showSlide(prevIndex);
+            }
+
+            function resetTimer() {
+                if (autoRotateTimer) {
+                    clearInterval(autoRotateTimer);
+                }
+                autoRotateTimer = setInterval(nextSlide, 10000);
+            }
+
+            function stopTimer() {
+                if (autoRotateTimer) {
+                    clearInterval(autoRotateTimer);
+                    autoRotateTimer = null;
+                }
+            }
+
+            // Click Handlers
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function() {
+                    prevSlide();
+                    stopTimer(); // Pause auto-rotation on manual interaction
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    nextSlide();
+                    stopTimer(); // Pause auto-rotation on manual interaction
+                });
+            }
+
+            indicators.forEach(function(indicator) {
+                indicator.addEventListener('click', function() {
+                    var slideIndex = parseInt(indicator.getAttribute('data-slide'));
+                    if (!isNaN(slideIndex)) {
+                        showSlide(slideIndex);
+                        stopTimer(); // Pause auto-rotation on manual interaction
+                    }
+                });
             });
+
+            // Start auto-rotation
+            if (slides.length > 1) {
+                resetTimer();
+            }
+
+            // --- Scroll-Reveal for Navigation Cards ---
+            var navCards = document.querySelectorAll('.nav-card');
+            if ('IntersectionObserver' in window) {
+                var cardObserver = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.15 });
+                navCards.forEach(function(card) { cardObserver.observe(card); });
+            } else {
+                // Fallback: show all immediately
+                navCards.forEach(function(card) { card.classList.add('visible'); });
+            }
         });
     </script>
 

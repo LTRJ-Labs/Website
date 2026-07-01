@@ -1,15 +1,28 @@
+<!-- AGENT-INFO
+=========================================================
+LTRJ LABS WEBSITE ARCHITECTURE
+- Architecture: This site uses a flat HTML structure with modular subpages (/services, /portfolio, /team, /contact).
+- Styling: Built on Bootstrap 3.3. Core overrides are in css/agency.css and css/modern-layout.css.
+- JS: Uses jQuery and vanilla JS. Custom logic (dark mode, navbar shrinking, smooth transitions) is in js/theme.js and js/agency.js.
+=========================================================
+-->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: #222;">
 
 <head>
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#222222">
+    <style>html, body { background-color: #222 !important; color: #fff !important; }</style>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="LTRJ Labs offers affordable, high-quality electronics engineering services, including PCB layout, firmware development, circuit prototyping, and technical consultation.">
+    <meta name="author" content="LTRJ Labs">
 
-    <title>Services - LTRJ Labs</title>
+    <meta name="keywords" content="electronics design, PCB layout, prototyping, firmware, consultation, Victoria BC">
+
+    <title>Engineering Services - LTRJ Labs</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="../img/SVGLogos/Small_Logo.svg">
@@ -22,8 +35,8 @@
     <meta property="og:title" content="Services - LTRJ Labs">
     <meta property="og:url" content="https://ltrjlabs.com/services">
 
-    <!-- Bootstrap Core CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <!-- Modern CSS Layout -->
+    <link href="../css/modern-layout.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="../css/agency.css" rel="stylesheet">
@@ -31,9 +44,6 @@
     <!-- Custom Fonts -->
     <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -42,9 +52,238 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <!-- Scroll-Reveal Service Card Styles -->
+    <style>
+        .service-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            background: #111;
+            border-radius: 2px;
+            padding: 40px 35px;
+            margin-bottom: 50px;
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .service-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #444;
+        }
+
+        .service-card-img-placeholder {
+            flex-shrink: 0;
+            width: 250px;
+            height: 200px;
+            border-radius: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-family: Montserrat, sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px dashed rgba(255,255,255,0.1);
+        }
+
+        .service-card-body {
+            flex: 1;
+        }
+        .service-card-body h3 {
+            font-family: Montserrat, sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+            margin: 0 0 12px 0;
+        }
+        .service-card-body .service-desc {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #aaa;
+            margin-bottom: 18px;
+        }
+        .service-card-body .service-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .service-card-body .service-features li {
+            font-size: 13px;
+            color: #888;
+            padding: 6px 0;
+            border-top: 1px solid #2a2a2a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .service-card-body .service-features li:last-child {
+            border-bottom: none;
+        }
+        .service-card-body .service-features li .fa {
+            color: #FF6600;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Service Box Arrow Link & Sliding Text */
+        .service-arrow-link {
+            color: #FF6600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            background: transparent;
+            padding: 8px 12px;
+            border-radius: 30px;
+            transition: background 0.3s ease;
+            margin-right: -12px; /* offset the padding to align perfectly right */
+        }
+        .service-arrow-link:hover {
+            background: rgba(255, 102, 0, 0.1);
+        }
+        .service-arrow-link i {
+            font-size: 28px;
+            transition: transform 0.3s ease;
+        }
+        .service-arrow-text {
+            font-family: Montserrat, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 0;
+            opacity: 0;
+            transform: translateX(15px);
+            transition: max-width 0.4s ease, opacity 0.3s ease, transform 0.4s ease, margin-right 0.3s ease;
+        }
+        .service-arrow-link:hover .service-arrow-text {
+            max-width: 150px;
+            opacity: 1;
+            transform: translateX(0);
+            margin-right: 12px;
+        }
+        .service-arrow-link:hover i {
+            transform: translateX(3px);
+        }
+
+        /* Number badge on the card */
+        .service-number {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-family: Montserrat, sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: rgba(255,102,0,0.08);
+            line-height: 1;
+            user-select: none;
+        }
+
+        /* Light mode overrides */
+        body.light-mode .service-card {
+            background: #fcfcfc;
+            border-color: #e5e5e5;
+        }
+        body.light-mode .service-card::before {
+            background: #ccc;
+        }
+        body.light-mode .service-card-body h3 {
+            color: #111;
+        }
+        body.light-mode .service-card-body .service-desc {
+            color: #555;
+        }
+        body.light-mode .service-card-body .service-features li {
+            color: #666;
+            border-top-color: #eee;
+        }
+        body.light-mode .service-number {
+            color: rgba(255,102,0,0.06);
+        }
+
+        /* Responsive: stack icon above text on mobile */
+        @media (max-width: 600px) {
+            .service-card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 30px 25px;
+            }
+            .service-card-body .service-features li {
+                justify-content: center;
+            }
+        }
+
+    </style>
+
+
+    <!-- Smooth Page Transition Script -->
+    <style>
+        body { opacity: 0; transition: opacity 0.1s ease-in-out; }
+    </style>
+    <script>
+        let fadedIn = false;
+        function fadeIn() {
+            if (!fadedIn) {
+                document.body.style.opacity = "1";
+                fadedIn = true;
+            }
+        }
+        
+        // Fade in immediately as soon as the DOM starts rendering to keep it feeling ultra-fast
+        document.addEventListener("DOMContentLoaded", fadeIn);
+        setTimeout(fadeIn, 50); // Instant fallback
+
+        // Intercept link clicks to fade out BEFORE navigating
+        document.addEventListener("click", function(e) {
+            let target = e.target.closest('a');
+            if (!target) return;
+            
+            let href = target.getAttribute('href');
+            if (!href) return;
+            
+            let isInternal = target.host === window.location.host;
+            let isSamePage = target.pathname === window.location.pathname || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:');
+            let isBlank = target.target === "_blank";
+            
+            if (isInternal && !isSamePage && !isBlank) {
+                e.preventDefault(); // Stop instant navigation
+                document.body.style.opacity = "0"; // Trigger fade out
+                setTimeout(function() {
+                    window.location.href = target.href; // Navigate after fade completes
+                }, 100);
+            }
+        });
+        
+        // Handle back/forward cache restore
+        window.addEventListener("pageshow", function(e) {
+            if (e.persisted) {
+                fadeIn();
+            }
+        });
+    </script>
 </head>
 
-<body id="page-top" class="index">
+<body id="page-top" class="index" style="background-color: #222;">
+
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -52,12 +291,12 @@
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
+                    
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../"><img src="../img/logos/ltrj-logo.png" alt="LTRJ Labs Ltd Logo"></a>
+                <a class="navbar-brand" href="../"><img src="../img/SVGLogos/Full_Logo.svg" alt="LTRJ Labs Ltd Logo"></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -66,7 +305,7 @@
                     <li class="hidden">
                         <a href="#page-top"></a>
                     </li>
-                    <li>
+                    <li class="active-page">
                         <a href="#services" class="page-scroll">Services</a>
                     </li>
                     <li>
@@ -78,9 +317,7 @@
                     <li>
                         <a href="../contact/">Contact</a>
                     </li>
-                    <li>
-                        <button id="theme-toggle" class="btn btn-link navbar-btn">🌙</button>
-                    </li>
+                    
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -88,18 +325,8 @@
         <!-- /.container-fluid -->
     </nav>
 
-    <!-- Header -->
-    <header>
-        <div class="container-fluid">
-            <div class="intro-text">
-                <div class="intro-heading">LTRJ LABS Ltd</div>
-                <div class="intro-lead-in">Cost-Effective Electronics Design</div>
-            </div>
-        </div>
-    </header>
-
     <!-- Services Section -->
-    <section id="services">
+    <section id="services" style="padding-top: 150px;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -107,93 +334,141 @@
                     <h3 class="section-subheading text-muted">From one-off consultations to multi-month projects</h3>
                 </div>
             </div>
-            <div class="row text-center">
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-plug fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Electronics Design</h4>
-                    <p class="text-muted">Have an electronics problem? Let us make things easy for you. We will provide quality and professional work for a better price point.</p>
-                </div>
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-laptop fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Consultation</h4>
-                    <p class="text-muted">From small scope, technical questions to design strategy and troubleshooting, we can apply our experience and knowledge in the field for your benefit.</p>
-                </div>
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-briefcase fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Product Development</h4>
-                    <p class="text-muted">Have an idea but haven't found a way to make it a reality? We offer ground up services as well, providing prototypes for new ideas at an affordable pricepoint.</p>
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+
+                    <!-- Service 1: Electronics Design -->
+                    <div class="service-card" id="svc-design">
+
+
+                        <img src="../img/ElectronicsDesignServicesPage.jpg" alt="Electronics Design" class="service-card-img-placeholder" style="border: none; background: none; object-fit: cover;">
+                        <div class="service-card-body">
+                            <h3>Electronics Design</h3>
+                            <p class="service-desc">Have an electronics problem? Let us make things easy for you. From schematic capture to production-ready PCB layouts, we deliver quality, professional hardware design at a better price point. </p>
+                            <ul class="service-features">
+                                <li><i class="fa fa-check"></i> Custom schematic and PCB layout design</li>
+                                <li><i class="fa fa-check"></i> Component sourcing and BOM optimization</li>
+                                <li><i class="fa fa-check"></i> Design-for-manufacturing (DFM) review</li>
+                                <li><i class="fa fa-check"></i> Multi-layer and high-density routing</li>
+                            </ul>
+                            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                                <a href="../contact/" class="service-arrow-link">
+                                    <span class="service-arrow-text">Contact Page</span>
+                                    <i class="fa fa-long-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service 2: Consultation -->
+                    <div class="service-card" id="svc-consult">
+
+
+                        <img src="../img/ConsultationServicesPage.jpg" alt="Consultation" class="service-card-img-placeholder" style="border: none; background: none; object-fit: cover;">
+                        <div class="service-card-body">
+                            <h3>Consultation</h3>
+                            <p class="service-desc">From small-scope technical questions to design strategy and troubleshooting, we apply our hands-on experience and engineering knowledge to help you solve real-world hardware challenges.</p>
+                            <ul class="service-features">
+                                <li><i class="fa fa-check"></i> One-on-one technical design reviews</li>
+                                <li><i class="fa fa-check"></i> Debugging and root-cause analysis</li>
+                                <li><i class="fa fa-check"></i> Architecture recommendations</li>
+                                <li><i class="fa fa-check"></i> Flexible hourly or project-based pricing</li>
+                            </ul>
+                            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                                <a href="../contact/" class="service-arrow-link">
+                                    <span class="service-arrow-text">Contact Page</span>
+                                    <i class="fa fa-long-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service 3: Product Development -->
+                    <div class="service-card" id="svc-product">
+
+
+                        <img src="../img/ProductDevelopmentServicesPage.jpg" alt="Product Development" class="service-card-img-placeholder" style="border: none; background: none; object-fit: cover;">
+                        <div class="service-card-body">
+                            <h3>Product Development</h3>
+                            <p class="service-desc">Have an idea but haven't found a way to make it a reality? We offer ground-up development services, turning concepts into working prototypes and production-ready products at an affordable price.</p>
+                            <ul class="service-features">
+                                <li><i class="fa fa-check"></i> Concept-to-prototype development</li>
+                                <li><i class="fa fa-check"></i> Firmware and embedded software</li>
+                                <li><i class="fa fa-check"></i> Enclosure and mechanical integration</li>
+                                <li><i class="fa fa-check"></i> Testing, validation, and iteration</li>
+                            </ul>
+                            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                                <a href="../contact/" class="service-arrow-link">
+                                    <span class="service-arrow-text">Contact Page</span>
+                                    <i class="fa fa-long-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="contact">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Contact Us</h2>
-                    <div style="margin: 25px 0;">
-                        <a href="../contact/" class="btn btn-xl">Request a Consultation</a>
-                    </div>
-                    <h3 class="section-subheading">8:00 AM - 5:00 PM, Monday - Friday</h3>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6 text-left">
+                    <span class="copyright" style="color: #888;">Copyright &copy; LTRJ Labs 2026</span>
+                </div>
+                <div class="col-md-6 text-right">
+                    <ul class="list-inline quicklinks" style="margin-bottom: 0;">
+                        <li><a href="../privacy/" style="color: #FF6600; text-decoration: none;">Privacy Policy</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- jQuery -->
-    <script src="../js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="../js/bootstrap.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-    <script src="../js/classie.js"></script>
-    <script src="../js/cbpanimatedheader.js"></script>
-
-    <!-- Contact Form JavaScript -->
-    <script src="../js/jqbootstrapvalidation.js"></script>
-    <script src="../js/contact_me.js"></script>
-
-    <!-- Custom Theme JavaScript -->
+    <!-- Native Theme & Navigation Scripts -->
+    <script src="../js/theme.js"></script>
     <script src="../js/agency.js"></script>
-
-    <!-- Theme Toggle and Smooth Scroll Script -->
+    <!-- Scroll Fade Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('theme-toggle');
-            const body = document.body;
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            body.classList.add(currentTheme + '-mode');
-            toggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+            var cards = document.querySelectorAll('.service-card');
+            if ('IntersectionObserver' in window) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15 });
+                cards.forEach(function(card) { observer.observe(card); });
 
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
-                body.classList.remove('dark-mode', 'light-mode');
-                body.classList.add(newTheme + '-mode');
-                localStorage.setItem('theme', newTheme);
-                toggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
-            });
+                // Safety net: if a card is skipped past without ever
+                // intersecting — a fast flick, anchor jump, or reload with
+                // scroll restoration — the observer never fires for it and it
+                // would stay blank. Reveal any card already at or above the
+                // viewport bottom, and disconnect once all cards are shown.
+                function revealPassed() {
+                    var remaining = 0;
+                    cards.forEach(function(card) {
+                        if (card.classList.contains('visible')) return;
+                        if (card.getBoundingClientRect().top < window.innerHeight) {
+                            card.classList.add('visible');
+                            observer.unobserve(card);
+                        } else {
+                            remaining++;
+                        }
+                    });
+                    if (remaining === 0) window.removeEventListener('scroll', revealPassed);
+                }
+                window.addEventListener('scroll', revealPassed, { passive: true });
+                window.addEventListener('load', revealPassed);
+                revealPassed();
+            } else {
+                cards.forEach(function(card) { card.classList.add('visible'); });
+            }
         });
     </script>
 
