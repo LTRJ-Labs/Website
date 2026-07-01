@@ -1,7 +1,7 @@
 // Google Analytics 4 (GA4) Integration for LTRJ Labs
 // This script loads Google Analytics asynchronously and tracks core website interactions.
 
-const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // REPLACE WITH YOUR ACTUAL GA4 MEASUREMENT ID
+const GA_MEASUREMENT_ID = 'G-508YGMKJ4D';
 
 (function() {
     // 1. Inject the Google Analytics tag script into <head>
