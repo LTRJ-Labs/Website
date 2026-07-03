@@ -1986,6 +1986,40 @@ body.light-mode .layer-toggle-btn {
 /* ==========================================
    Portfolio Back Arrow (Left side animation)
    ========================================== */
+.portfolio-header-title-container {
+    display: inline-block;
+    position: relative;
+    text-align: left;
+}
+
+.portfolio-back-container {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    padding-right: 20px;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+    .portfolio-header-title-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .portfolio-back-container {
+        position: static;
+        transform: none;
+        padding-right: 0;
+        margin-bottom: 15px;
+    }
+    .portfolio-header-title-container h2 {
+        text-align: center !important;
+    }
+}
+
 .portfolio-back-arrow {
     display: inline-flex;
     align-items: center;
