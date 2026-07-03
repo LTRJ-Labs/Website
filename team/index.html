@@ -161,11 +161,11 @@ LTRJ LABS WEBSITE ARCHITECTURE
         
         // Handle back/forward cache restore
         window.addEventListener("pageshow", function(e) {
-            if (e.persisted) {
-                fadeIn();
-            }
+            fadedIn = false;
+            fadeIn();
         });
     </script>
+
 
     <!-- Google Analytics Integration -->
     <script src="../js/analytics.js"></script>

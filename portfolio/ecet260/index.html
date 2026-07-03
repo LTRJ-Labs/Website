@@ -119,11 +119,11 @@
         
         // Handle back/forward cache restore
         window.addEventListener("pageshow", function(e) {
-            if (e.persisted) {
-                fadeIn();
-            }
+            fadedIn = false;
+            fadeIn();
         });
     </script>
+
 
     <!-- Google Analytics Integration -->
     <script src="../../js/analytics.js"></script>
@@ -178,9 +178,9 @@
                 <div class="col-lg-12" style="position: relative;">
                     <!-- Centered Titles with inline back arrow -->
                     <div class="text-center">
-                        <div style="display: inline-block; position: relative;">
+                        <div class="portfolio-header-title-container">
                             <!-- Back Arrow positioned absolute relative to the text block -->
-                            <div style="position: absolute; right: 100%; top: 50%; transform: translateY(-50%); padding-right: 20px; z-index: 10; white-space: nowrap;">
+                            <div class="portfolio-back-container">
                                 <a href="../../portfolio/" class="portfolio-back-arrow" style="margin-bottom: 0;">
                                     <i class="fa fa-long-arrow-left"></i>
                                     <span class="portfolio-back-text">Back to Portfolio</span>
