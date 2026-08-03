@@ -57,9 +57,6 @@
               margin-top: 20px;
               margin-bottom: 40px;
           }
-          body.light-mode #exploded-view-container {
-              background: transparent;
-          }
         /* Glassmorphic tooltips */
         #exploded-view-tooltip {
             position: fixed;
@@ -77,11 +74,6 @@
             transition: opacity 0.25s ease-out;
             transform: translate(15px, -50%);
         }
-        body.light-mode #exploded-view-tooltip {
-            background: rgba(255, 255, 255, 0.92);
-            border-color: rgba(0, 0, 0, 0.08);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
         #tooltip-title {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
@@ -96,9 +88,6 @@
             color: #ccc;
             line-height: 1.5;
             margin: 0;
-        }
-        body.light-mode #tooltip-desc {
-            color: #4b5563;
         }
         #mobile-buttons-container {
             position: absolute;
@@ -144,11 +133,6 @@
             margin: 30px auto;
             display: block;
         }
-        body.light-mode .project-detail-img {
-            border-color: #fff;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            background: #eaeaea;
-        }
         .project-details-fallback {
             display: flex;
             flex-direction: column;
@@ -165,14 +149,7 @@
             border: 3px solid #222;
             margin: 30px auto;
         }
-        body.light-mode .project-details-fallback {
-            background: #eaeaea;
-            color: #555;
-            border-color: #fff;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
     </style>
-
 
     <!-- Smooth Page Transition Script -->
     <style>
@@ -218,7 +195,6 @@
             fadeIn();
         });
     </script>
-
 
     <!-- Google Analytics Integration -->
     <script src="../../js/analytics.js"></script>
@@ -373,7 +349,6 @@
     // 1. Scene setup
     const EXPLOSION_MODE = 'CIRCULAR'; // Options: 'RADIAL', 'VERTICAL', 'CIRCULAR' // Options: 'RADIAL', 'VERTICAL'
       const scene = new THREE.Scene();
-    let isLightMode = document.body.classList.contains('light-mode');
     scene.background = null; // Removed to allow CSS background to show through
 
     // 2. Camera setup - fixed isometric perspective
@@ -391,31 +366,20 @@
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     // 4. Lighting setup (FreeCAD style 3-point)
-    const ambientLight = new THREE.AmbientLight(0xffffff, isLightMode ? 0.9 : 0.7);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, isLightMode ? 3.0 : 2.5);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.5);
     dirLight1.position.set(10, 20, 15);
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0xffffff, isLightMode ? 1.5 : 1.2);
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 1.2);
     dirLight2.position.set(-15, 5, 10);
     scene.add(dirLight2);
 
-    const dirLight3 = new THREE.DirectionalLight(0xffffff, isLightMode ? 2.0 : 1.5);
+    const dirLight3 = new THREE.DirectionalLight(0xffffff, 1.5);
     dirLight3.position.set(0, 15, -20);
     scene.add(dirLight3);
-
-    // Theme observer
-    const themeObserver = new MutationObserver(() => {
-        const isLight = document.body.classList.contains('light-mode');
-        ambientLight.intensity = isLight ? 0.9 : 0.7;
-        dirLight1.intensity = isLight ? 3.0 : 2.5;
-        dirLight2.intensity = isLight ? 1.5 : 1.2;
-        dirLight3.intensity = isLight ? 2.0 : 1.5;
-        requestRender();
-    });
-    themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
     // 5. Model Loading
     const loader = new GLTFLoader();
@@ -1307,7 +1271,6 @@
 
     // 10. On-Demand Render — now handled by coalesced requestRender() defined above
 </script>
-
 
 </body>
 

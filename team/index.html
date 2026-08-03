@@ -64,11 +64,6 @@ LTRJ LABS WEBSITE ARCHITECTURE
             aspect-ratio: 4/3;
             width: 100%;
         }
-        body.light-mode .story-image-frame {
-            border-color: #fff;
-            background: #eaeaea;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
         .story-image-frame .image-fallback {
             display: none;
             flex-direction: column;
@@ -83,10 +78,6 @@ LTRJ LABS WEBSITE ARCHITECTURE
             color: #aaa;
             text-align: center;
             padding: 20px;
-        }
-        body.light-mode .story-image-frame .image-fallback {
-            background: #eaeaea;
-            color: #555;
         }
         .story-image-frame.main-frame {
             margin-bottom: 20px;
@@ -119,7 +110,6 @@ LTRJ LABS WEBSITE ARCHITECTURE
             }
         }
     </style>
-
 
     <!-- Smooth Page Transition Script -->
     <style>
@@ -165,7 +155,6 @@ LTRJ LABS WEBSITE ARCHITECTURE
             fadeIn();
         });
     </script>
-
 
     <!-- Google Analytics Integration -->
     <script src="../js/analytics.js"></script>
@@ -236,11 +225,11 @@ LTRJ LABS WEBSITE ARCHITECTURE
                     <div class="story-image-gallery">
                         <!-- Main Image Frame -->
                         <div class="story-image-frame main-frame">
-                            <img src="../img/AboutPagePhoto1.jpg" alt="LTRJ Labs Workbench" class="img-responsive" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="../img/about/5.jpg" alt="LTRJ Labs Workbench" class="img-responsive" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="image-fallback">
                                 <i class="fa fa-picture-o fa-3x" style="margin-bottom: 10px; color: #FF6600;"></i>
                                 <span style="font-family: Montserrat; font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">Primary Story Image</span>
-                                <span style="font-size: 9px; margin-top: 5px; opacity: 0.7;">Place image at: img/AboutPagePhoto1.jpg</span>
+                                <span style="font-size: 9px; margin-top: 5px; opacity: 0.7;">Place image at: img/about/5.jpg</span>
                             </div>
                         </div>
                         <!-- Secondary Image Frame (Overlapping/Smaller) -->
@@ -281,24 +270,6 @@ LTRJ LABS WEBSITE ARCHITECTURE
                         </div>
                     </div>
 
-                    <!-- Ryan Ko -->
-                    <div class="team-scroll-card">
-                        <div class="team-card-image">
-                            <img src="../img/team/opt_Ryan2026-06-30.jpg" alt="Ryan Ko" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="team-card-fallback">
-                                <i class="fa fa-user fa-3x" style="color: #FF6600;"></i>
-                            </div>
-                        </div>
-                        <div class="team-card-body">
-                            <h3 class="team-card-name">Ryan Ko</h3>
-                            <h5 class="team-card-role">CFO & Designer</h5>
-                            <p class="team-card-desc">Directs company finances, creates project feasibility analyses, and manages budgets while supporting hardware design with mechanical integration and electronics development.</p>
-                            <ul class="list-inline social-buttons" style="margin-bottom: 0;">
-                                <li><a href="https://www.linkedin.com/in/ryan-ko-31a8543a6/" target="_blank"><i class="fa fa-linkedin"></i></a></li>
-                            </ul>
-                        </div>
-                    </div>
-
                     <!-- Jaxon Bjornson -->
                     <div class="team-scroll-card">
                         <div class="team-card-image">
@@ -317,29 +288,10 @@ LTRJ LABS WEBSITE ARCHITECTURE
                         </div>
                     </div>
 
-                    <!-- Tyler Bittencourt -->
-                    <div class="team-scroll-card">
-                        <div class="team-card-image">
-                            <img src="../img/team/opt_Tyler2026-06-30.jpg" alt="Tyler Bittencourt" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="team-card-fallback">
-                                <i class="fa fa-user fa-3x" style="color: #FF6600;"></i>
-                            </div>
-                        </div>
-                        <div class="team-card-body">
-                            <h3 class="team-card-name">Tyler Bittencourt</h3>
-                            <h5 class="team-card-role">CMO & Designer</h5>
-                            <p class="team-card-desc">Responsible for marketing, client outreach, and market research while supporting hardware development.</p>
-                            <ul class="list-inline social-buttons" style="margin-bottom: 0;">
-                                <li><a href="https://www.linkedin.com/in/tyler-bittencourt/" target="_blank"><i class="fa fa-linkedin"></i></a></li>
-                            </ul>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
     </section>
-
 
     <footer>
         <div class="container">
