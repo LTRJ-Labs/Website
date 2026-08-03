@@ -136,9 +136,6 @@ a:hover, a:focus {
 .text-muted {
     color: #888888;
 }
-body.light-mode .text-muted {
-    color: #666666;
-}
 
 /* Button UI */
 .btn {
@@ -232,9 +229,6 @@ body.light-mode .text-muted {
     flex-direction: column;
     gap: 4px;
 }
-body.light-mode .navbar-toggle {
-    border-color: #ccc;
-}
 @media (min-width: 768px) {
     .navbar-toggle {
         display: none;
@@ -246,9 +240,6 @@ body.light-mode .navbar-toggle {
     height: 2px;
     border-radius: 1px;
     background-color: #fff;
-}
-body.light-mode .navbar-toggle .icon-bar {
-    background-color: #333;
 }
 .navbar-brand {
     float: left;
@@ -328,11 +319,6 @@ body.light-mode .navbar-toggle .icon-bar {
     border-radius: 4px;
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
     transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-}
-body.light-mode .form-control {
-    color: #333;
-    background-color: #fff;
-    border-color: #ccc;
 }
 .form-control:focus {
     border-color: #FF6600;

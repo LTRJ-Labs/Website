@@ -7,25 +7,13 @@ LTRJ LABS JAVASCRIPT
 */
 // Centralized Theme Toggle Logic & Mobile Navbar Toggler - LTRJ Labs
 document.addEventListener('DOMContentLoaded', function() {
-    const toggle = document.getElementById('theme-toggle');
     const body = document.body;
-    
-    // Read cached theme or default to dark mode
-    const currentTheme = localStorage.getItem('theme') || 'dark';
-    body.classList.add(currentTheme + '-mode');
-    
-    if (toggle) {
-        toggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
-            
-            // Update body classes and storage
-            body.classList.remove('dark-mode', 'light-mode');
-            body.classList.add(newTheme + '-mode');
-            localStorage.setItem('theme', newTheme);
-        });
-    }
+
+    // Theme is fixed dark. Clear any legacy 'light' preference left in
+    // localStorage by the old (now removed) theme toggle.
+    localStorage.removeItem('theme');
+    body.classList.remove('light-mode');
+    body.classList.add('dark-mode');
 
     // --- Vanilla JS Mobile Navbar Toggle ---
     var toggles = document.querySelectorAll('.navbar-toggle');

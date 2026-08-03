@@ -40,11 +40,6 @@ body {
     }
 }
 
-body.light-mode {
-    background-color: #fff;
-    color: #000;
-}
-
 .text-muted {
     color: #777;
 }
@@ -317,45 +312,6 @@ fieldset[disabled] .btn-xl.active {
     background-color: transparent !important;
 }
 
-
-
-body.light-mode .navbar-default {
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-}
-
-body.light-mode .navbar-default .nav li a {
-    color: #000 !important;
-}
-
-body.light-mode .navbar-default .nav li a:hover,
-body.light-mode .navbar-default .nav li a:focus {
-    color: #FF6600 !important;
-}
-
-body.light-mode .navbar-default .navbar-brand {
-    color: #000 !important;
-}
-
-body.light-mode #theme-toggle {
-    color: #000 !important;
-    text-decoration: none !important;
-    display: flex !important;
-    align-items: center !important;
-}
-
-body.light-mode #theme-toggle:hover {
-    color: #FF6600 !important;
-}
-
-body.light-mode .navbar-default .navbar-toggle .icon-bar {
-    background-color: #000 !important;
-}
-
-body.light-mode .navbar-default .navbar-toggle {
-    border-color: #000 !important;
-}
-
 @media(min-width:768px) {
     .navbar-default .container {
         width: 100% !important;
@@ -401,14 +357,6 @@ body.light-mode .navbar-default .navbar-toggle {
 
     .navbar-default.navbar-shrink .navbar-brand {
         font-size: 1.5em;
-    }
-
-    body.light-mode .navbar-default {
-        background-color: rgba(255, 255, 255, 0.95);
-    }
-
-    body.light-mode .navbar-default.navbar-shrink {
-        background-color: #fff;
     }
 }
 
@@ -626,10 +574,6 @@ section#services .section-subheading {
 
 body.dark-mode .section-subheading {
     color: #aaa;
-}
-
-body.light-mode .section-subheading {
-    color: #666;
 }
 
 @media(min-width:768px) {
@@ -1037,7 +981,6 @@ section#contact .section-subheading .email-copy.copied {
     }
 }
 
-
 section#contact .form-group {
     margin-bottom: 25px;
 }
@@ -1251,171 +1194,6 @@ img::-moz-selection {
 body {
     webkit-tap-highlight-color: #FF6600;
 }
-/* Light Mode Styles */
-body.light-mode section {
-    background-color: #f7f7f7 !important;
-    color: #000 !important;
-}
-
-body.light-mode .text-muted {
-    color: #666 !important;
-}
-
-body.light-mode h1,
-body.light-mode h2,
-body.light-mode h3,
-body.light-mode h4,
-body.light-mode h5,
-body.light-mode h6 {
-    color: #000 !important;
-}
-
-body.light-mode .section-heading {
-    color: #000 !important;
-}
-
-body.light-mode .service-heading {
-    color: #000 !important;
-}
-
-body.light-mode .section-subheading {
-    color: #666 !important;
-}
-
-body.light-mode p {
-    color: #000 !important;
-}
-
-body.light-mode a {
-    color: #FF6600 !important;
-}
-
-body.light-mode .btn-primary {
-    background-color: #FF6600 !important;
-    border-color: #FF6600 !important;
-    color: #fff !important;
-}
-
-body.light-mode .btn-primary:hover {
-    background-color: #e55a00 !important;
-    border-color: #e55a00 !important;
-}
-
-body.light-mode .btn-xl {
-    background-color: #FF6600 !important;
-    border-color: #FF6600 !important;
-    color: #fff !important;
-}
-
-body.light-mode header {
-    background-color: #fff !important;
-    color: #000 !important;
-}
-
-body.light-mode header .intro-text .intro-lead-in {
-    text-shadow: 3px 3px 12px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.6);
-}
-
-body.light-mode .intro-text .intro-heading {
-    text-shadow: 3px 3px 12px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.6);
-}
-
-body.light-mode .intro-text .intro-lead-in,
-body.light-mode .intro-text .intro-heading {
-    color: #000 !important;
-}
-
-body.light-mode section#contact {
-    background-color: #f7f7f7 !important;
-    background-image: url(../img/map-image.png) !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    color: #000 !important;
-}
-
-body.light-mode section#contact .container {
-    background-color: transparent !important;
-}
-
-body.light-mode section#contact .row {
-    background-color: transparent !important;
-}
-
-body.light-mode section#contact .section-heading,
-body.light-mode section#contact .section-subheading {
-    background-color: transparent !important;
-}
-
-body.light-mode section#contact .section-heading {
-    color: #000 !important;
-}
-
-body.light-mode section#contact .section-subheading a {
-    color: #FF6600 !important;
-}
-
-body.light-mode section#contact .form-control {
-    background-color: #fff !important;
-    color: #000 !important;
-    border-color: #ddd !important;
-}
-
-body.light-mode .portfolio-caption {
-    background-color: #fff !important;
-    color: #000 !important;
-    border-top: 1px solid #eee !important;
-}
-
-body.light-mode .portfolio-caption h4 {
-    color: #000 !important;
-}
-
-body.light-mode .portfolio-caption p {
-    color: #666 !important;
-}
-
-body.light-mode footer {
-    background-color: #f5f5f5 !important;
-    color: #000 !important;
-}
-
-body.light-mode footer span.copyright {
-    color: #000 !important;
-}
-
-body.light-mode .timeline:before {
-    background-color: #ddd !important;
-}
-
-body.light-mode .timeline .timeline-image {
-    background-color: #FF6600 !important;
-    border-color: #fff !important;
-}
-
-body.light-mode .team-member img {
-    border-color: #ddd !important;
-}
-
-body.light-mode .team-member h4 {
-    color: #000 !important;
-}
-
-body.light-mode .team-member p {
-    color: #666 !important;
-}
-
-body.light-mode ul.social-buttons li a {
-    color: #fff !important;
-    background-color: #222 !important;
-}
-
-body.light-mode ul.social-buttons li a:hover,
-body.light-mode ul.social-buttons li a:focus,
-body.light-mode ul.social-buttons li a:active {
-    background-color: #222 !important;
-    color: #FF6600 !important;
-}
 
 /* Theme-adaptive Info Box */
 .theme-info-box {
@@ -1428,13 +1206,6 @@ body.light-mode ul.social-buttons li a:active {
 }
 .theme-info-box strong {
     color: #fff !important;
-}
-body.light-mode .theme-info-box {
-    background-color: #f5f5f5 !important;
-    color: #555 !important;
-}
-body.light-mode .theme-info-box strong {
-    color: #000 !important;
 }
 
 /* Technology Badges */
@@ -1456,11 +1227,6 @@ body.light-mode .theme-info-box strong {
     border: 1px solid #3c3c3c;
     letter-spacing: 0.5px;
     display: inline-block;
-}
-body.light-mode .tech-badge {
-    background-color: #eaeaea;
-    color: #e65c00;
-    border: 1px solid #d3d3d3;
 }
 
 /* Client Testimonials */
@@ -1491,13 +1257,6 @@ body.light-mode .tech-badge {
     opacity: 0.3;
     line-height: 1;
 }
-body.light-mode .testimonial-card {
-    background-color: #fcfcfc;
-    border-color: #e5e5e5;
-}
-body.light-mode .testimonial-card::after {
-    background: #ccc;
-}
 .testimonial-quote {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-style: italic;
@@ -1506,9 +1265,6 @@ body.light-mode .testimonial-card::after {
     color: #ccc;
     margin-bottom: 15px;
 }
-body.light-mode .testimonial-quote {
-    color: #555;
-}
 .testimonial-author {
     font-family: Montserrat, sans-serif;
     font-size: 12px;
@@ -1516,9 +1272,6 @@ body.light-mode .testimonial-quote {
     text-transform: uppercase;
     color: #fff;
     letter-spacing: 1px;
-}
-body.light-mode .testimonial-author {
-    color: #111;
 }
 .testimonial-company {
     font-size: 11px;
@@ -1549,13 +1302,6 @@ body.light-mode .testimonial-author {
     height: 1px;
     background: #444;
 }
-body.light-mode .team-scroll-card {
-    background: #fcfcfc;
-    border-color: #e5e5e5;
-}
-body.light-mode .team-scroll-card::before {
-    background: #ccc;
-}
 .team-scroll-card.visible {
     opacity: 1;
     transform: translateY(0);
@@ -1571,9 +1317,6 @@ body.light-mode .team-scroll-card::before {
     overflow: hidden;
     border: 1px solid #333;
     position: relative;
-}
-body.light-mode .team-card-image {
-    border-color: #e5e5e5;
 }
 .team-card-image img {
     width: 100%;
@@ -1591,9 +1334,6 @@ body.light-mode .team-card-image {
     height: 100%;
     background: #333;
 }
-body.light-mode .team-card-fallback {
-    background: #eaeaea;
-}
 .team-card-body {
     flex: 1;
 }
@@ -1606,9 +1346,6 @@ body.light-mode .team-card-fallback {
     margin: 0 0 8px 0;
     letter-spacing: 0.5px;
 }
-body.light-mode .team-card-name {
-    color: #222;
-}
 .team-card-role {
     font-family: Montserrat, sans-serif;
     font-weight: 700;
@@ -1618,17 +1355,11 @@ body.light-mode .team-card-name {
     letter-spacing: 0.5px;
     margin: 0 0 12px 0;
 }
-body.light-mode .team-card-role {
-    color: #e65c00;
-}
 .team-card-desc {
     font-size: 15px;
     line-height: 1.7;
     color: #aaa;
     margin-bottom: 18px;
-}
-body.light-mode .team-card-desc {
-    color: #555;
 }
 
 @media (max-width: 768px) {
@@ -1668,15 +1399,6 @@ body.light-mode .team-card-desc {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
 }
-body.light-mode .contact-linkedin-icon {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: #333;
-}
-body.light-mode .contact-linkedin-icon:hover {
-    background-color: #e65c00;
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(230, 92, 0, 0.3);
-}
 
 /* Testimonial Carousel Styles */
 .testimonial-carousel {
@@ -1710,13 +1432,6 @@ body.light-mode .contact-linkedin-icon:hover {
     opacity: 0.3;
     line-height: 1;
 }
-body.light-mode .testimonial-carousel {
-    background-color: #fcfcfc;
-    border-color: #e5e5e5;
-}
-body.light-mode .testimonial-carousel::after {
-    background: #ccc;
-}
 .testimonial-slide {
     display: none;
     width: 100%;
@@ -1745,9 +1460,6 @@ body.light-mode .testimonial-carousel::after {
     margin-bottom: 20px;
     text-align: left;
 }
-body.light-mode .testimonial-quote {
-    color: #444;
-}
 .testimonial-author {
     font-family: Montserrat, sans-serif;
     font-size: 14px;
@@ -1756,9 +1468,6 @@ body.light-mode .testimonial-quote {
     color: #FF6600;
     letter-spacing: 1px;
     margin-bottom: 5px;
-}
-body.light-mode .testimonial-author {
-    color: #e65c00;
 }
 .testimonial-project-link {
     font-size: 12px;
@@ -1772,12 +1481,6 @@ body.light-mode .testimonial-author {
 .testimonial-project-link a:hover {
     color: #FF6600;
 }
-body.light-mode .testimonial-project-link a:hover {
-    color: #e65c00;
-}
-
-
-
 
 /* ==========================================
    Testimonial Carousel Manual Controls
@@ -1815,9 +1518,6 @@ body.light-mode .testimonial-project-link a:hover {
     cursor: pointer;
     transition: background-color 0.3s;
 }
-body.light-mode .testimonial-indicator {
-    background-color: #ccc;
-}
 .testimonial-indicator.active {
     background-color: #FF6600;
 }
@@ -1832,11 +1532,6 @@ body.light-mode .testimonial-indicator {
     padding: 25px;
     margin: 30px 0;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-body.light-mode .telemetry-container {
-    background: #fcfcfc;
-    border-color: #ddd;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 .telemetry-grid {
     display: grid;
@@ -1863,10 +1558,6 @@ body.light-mode .telemetry-container {
     font-family: monospace;
     font-size: 14px;
 }
-body.light-mode .telemetry-metric {
-    background: #eee;
-    color: #333;
-}
 .telemetry-metric .value {
     color: #FF6600;
     font-weight: bold;
@@ -1890,11 +1581,6 @@ body.light-mode .telemetry-metric {
     cursor: pointer;
     transition: all 0.2s;
 }
-body.light-mode .telemetry-btn {
-    background: #e5e5e5;
-    border-color: #ccc;
-    color: #333;
-}
 .telemetry-btn:hover {
     background: #FF6600;
     border-color: #FF6600;
@@ -1917,11 +1603,6 @@ body.light-mode .telemetry-btn {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-body.light-mode .pcb-visualizer {
-    background: #fdfdfd;
-    border-color: #ddd;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 .pcb-canvas-container {
     position: relative;
@@ -1969,19 +1650,11 @@ body.light-mode .pcb-visualizer {
     cursor: pointer;
     transition: all 0.2s;
 }
-body.light-mode .layer-toggle-btn {
-    background: #eee;
-    border-color: #ccc;
-    color: #666;
-}
 .layer-toggle-btn.active {
     background: #FF6600;
     border-color: #FF6600;
     color: #fff;
 }
-
-
-
 
 /* ==========================================
    Portfolio Back Arrow (Left side animation)
