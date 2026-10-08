@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LTRJ Labs — Cybercore</title>
+    <meta name="description" content="LTRJ Labs is a hard-tech startup in Victoria, BC building IoT products.">
+    <meta name="theme-color" content="#05060f">
+    <link rel="icon" href="../img/logo/Small_Logo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="../js/concepts.js"></script>
+    <style>
+        /* Concept F — Cybercore: Y2K techno-utopia, chrome, holo foil, data rain, OS windows. */
+        :root {
+            --bg: #05060f; --panel: #0b0e22; --line: #2a3a8a; --ink: #e8f2ff; --ink-2: #8fa6d8;
+            --cyan: #00f0ff; --lime: #b6ff00; --blue: #2b5bff; --magenta: #ff2bd6; --orange: #ff6600; --orange-2: #ff9a3d;
+            --chrome: linear-gradient(180deg, #ffffff 0%, #c9d4e6 22%, #6d7a92 48%, #e9eef7 52%, #9aa7bf 78%, #f5f8ff 100%);
+            --holo: linear-gradient(115deg, #00f0ff, #b6ff00 25%, #ff9a3d 50%, #ff2bd6 75%, #2b5bff);
+            --disp: "Michroma", system-ui, sans-serif; --mono: "Share Tech Mono", ui-monospace, monospace; --pix: "VT323", monospace;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; color: var(--ink); background: var(--bg); font: 16px/1.6 var(--mono); overflow-x: hidden; }
+        body::before { content: ""; position: fixed; inset: 0; z-index: -2; background:
+            radial-gradient(600px 400px at 80% 10%, rgba(43,91,255,.35), transparent 70%),
+            radial-gradient(500px 400px at 10% 70%, rgba(255,43,214,.18), transparent 70%),
+            radial-gradient(500px 300px at 60% 100%, rgba(255,102,0,.18), transparent 70%); }
+        body::after { content: ""; position: fixed; inset: 0; z-index: 100; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px); mix-blend-mode: multiply; }
+        #rain { position: fixed; inset: 0; z-index: -1; opacity: .35; }
+        img { display: block; max-width: 100%; height: auto; }
+        a { color: inherit; }
+        p, h1, h2, h3, ul, ol { margin: 0; }
+        .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+        .chrome-text { background: var(--chrome); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 1px #fff) drop-shadow(0 4px 12px rgba(43,91,255,.6)); }
+        .holo-text { background: var(--holo); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: holo 6s linear infinite; }
+        @keyframes holo { to { background-position: 300% 0; } }
+
+        /* Top ticker bar */
+        .ticker { border-bottom: 1px solid var(--line); background: #02030a; overflow: hidden; white-space: nowrap; font: 18px/30px var(--pix); color: var(--lime); }
+        .ticker span { display: inline-block; padding-left: 100%; animation: tick 30s linear infinite; }
+        @keyframes tick { to { transform: translateX(-100%); } }
+
+        /* OS-style nav */
+        .nav { position: sticky; top: 0; z-index: 60; background: rgba(5,6,15,.82); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+        .nav .wrap { display: flex; align-items: center; gap: 18px; height: 62px; }
+        .nav img { height: 24px; width: auto; filter: drop-shadow(0 0 6px rgba(255,102,0,.8)); }
+        .nav ul { display: flex; gap: 2px; list-style: none; padding: 0; margin-left: auto; }
+        .nav ul a { display: block; padding: 6px 12px; text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-2); border: 1px solid transparent; }
+        .nav ul a:hover { color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,240,255,.5), inset 0 0 12px rgba(0,240,255,.2); }
+        .status { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; text-decoration: none; font-size: 12px; text-transform: uppercase; color: var(--lime); border: 1px solid var(--lime); box-shadow: 0 0 10px rgba(182,255,0,.4); }
+        .status i { width: 8px; height: 8px; background: var(--lime); box-shadow: 0 0 8px var(--lime); animation: blink 1s steps(2) infinite; }
+        @keyframes blink { 50% { opacity: .1; } }
+
+        /* Window chrome */
+        .win { position: relative; background: linear-gradient(180deg, rgba(20,28,70,.85), rgba(8,10,28,.92)); border: 1px solid #5f7bff; box-shadow: 0 0 0 1px #000, 0 0 24px rgba(43,91,255,.45), inset 0 0 30px rgba(0,240,255,.06); }
+        .win-bar { display: flex; align-items: center; gap: 10px; height: 30px; padding: 0 8px 0 12px; background: linear-gradient(90deg, #1a2fb0, #2b5bff 40%, #7a2bff); border-bottom: 1px solid #000; font: 18px var(--pix); color: #fff; text-shadow: 0 0 6px #fff; }
+        .win-bar .ctl { margin-left: auto; display: flex; gap: 4px; }
+        .win-bar .ctl b { width: 16px; height: 14px; background: var(--chrome); border: 1px solid #000; font: 12px/12px var(--pix); color: #000; display: grid; place-items: center; }
+        .win-body { padding: 24px; }
+
+        /* Buttons */
+        .btn { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 16px 26px; text-decoration: none; font: 13px var(--disp); text-transform: uppercase; letter-spacing: .08em; color: #120500; background: linear-gradient(180deg, #ffd3ad, var(--orange-2) 45%, var(--orange) 55%, #c94a00); border: 1px solid #ffe2c9; border-radius: 999px; box-shadow: 0 0 0 2px #000, 0 0 24px rgba(255,102,0,.75), inset 0 2px 0 rgba(255,255,255,.7); transition: filter .2s, transform .2s; }
+        .btn:hover { filter: brightness(1.15) saturate(1.2); transform: translateY(-2px); }
+        .btn.alt { color: #001014; background: linear-gradient(180deg, #d9fdff, #57f6ff 45%, #00c8d6 55%, #007a85); border-color: #d9fdff; box-shadow: 0 0 0 2px #000, 0 0 24px rgba(0,240,255,.6), inset 0 2px 0 rgba(255,255,255,.7); }
+        .btn:focus-visible, .nav a:focus-visible { outline: 2px dashed var(--lime); outline-offset: 5px; }
+
+        /* Hero */
+        .hero { display: grid; grid-template-columns: 1.2fr .8fr; gap: 40px; align-items: center; padding: 72px 0 64px; overflow-x: clip; }
+        .tag { display: inline-flex; gap: 8px; font: 20px var(--pix); color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
+        h1 { margin: 18px 0 0; font: 400 clamp(32px, 5.4vw, 66px)/1.08 var(--disp); text-transform: uppercase; letter-spacing: -.01em; }
+        h1 .glitch { position: relative; display: inline-block; }
+        h1 .glitch::before, h1 .glitch::after { content: attr(data-t); position: absolute; inset: 0; background: none; -webkit-background-clip: initial; color: var(--magenta); clip-path: inset(0 0 60% 0); transform: translate(-3px, 0); opacity: .8; animation: gl 3.2s steps(1) infinite; }
+        h1 .glitch::after { color: var(--cyan); clip-path: inset(55% 0 0 0); transform: translate(3px, 0); animation-delay: -1.1s; }
+        @keyframes gl { 0%, 88%, 100% { transform: translate(0); opacity: 0; } 90% { transform: translate(-4px, 1px); opacity: .9; } 94% { transform: translate(4px, -1px); opacity: .9; } }
+        .lede { margin-top: 24px; max-width: 600px; font-size: 17px; color: var(--ink-2); }
+        .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 34px; }
+        .orb { position: relative; aspect-ratio: 1; display: grid; place-items: center; }
+        .orb .ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(0,240,255,.55); box-shadow: 0 0 24px rgba(0,240,255,.35), inset 0 0 24px rgba(0,240,255,.25); animation: spin 18s linear infinite; }
+        .orb .ring:nth-child(2) { inset: 9%; border-color: rgba(255,43,214,.5); transform: rotateX(70deg); animation-duration: 10s; border-style: dashed; }
+        .orb .ring:nth-child(3) { inset: 18%; border-color: rgba(182,255,0,.6); animation-direction: reverse; animation-duration: 14s; border-style: dotted; border-width: 3px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .orb .core { position: relative; width: 56%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; border: 2px solid #fff; box-shadow: 0 0 0 4px #000, 0 0 50px rgba(255,102,0,.8), 0 0 120px rgba(43,91,255,.6); }
+        .orb .core img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.4) contrast(1.1) hue-rotate(-8deg); }
+        .orb .core::after { content: ""; position: absolute; inset: 0; background: var(--holo); mix-blend-mode: color; opacity: .35; }
+        .readout { margin-top: 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+        .readout div { background: #070a1c; padding: 10px 14px; }
+        .readout dt { font: 16px var(--pix); color: var(--magenta); }
+        .readout dd { margin: 0; color: var(--ink); font-size: 14px; }
+
+        /* Sections */
+        section.s { padding: 64px 0; }
+        .s-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px; border-bottom: 1px dashed var(--line); padding-bottom: 14px; flex-wrap: wrap; }
+        .s-head .idx { font: 22px var(--pix); color: var(--lime); text-shadow: 0 0 8px var(--lime); }
+        h2 { font: 400 clamp(28px, 4.4vw, 48px)/1.05 var(--disp); text-transform: uppercase; }
+        .s-head .sub { margin-left: auto; font-size: 12px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .14em; }
+
+        .flag .win-body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 28px; }
+        .flag figure { margin: 0; position: relative; border: 1px solid var(--cyan); box-shadow: 0 0 18px rgba(0,240,255,.35); }
+        .flag figure img { width: 100%; height: 100%; object-fit: cover; }
+        .flag figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 4px 10px; background: rgba(0,0,0,.7); font: 16px var(--pix); color: var(--cyan); }
+        .flag-lead { font: 400 20px/1.4 var(--disp); }
+        .flag p + p { margin-top: 14px; color: var(--ink-2); }
+        .specs { margin-top: 20px; list-style: none; padding: 0; border: 1px solid var(--line); }
+        .specs li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 12px; font-size: 14px; border-bottom: 1px solid var(--line); }
+        .specs li:last-child { border-bottom: 0; }
+        .specs span { color: var(--magenta); }
+        .flag .btn { margin-top: 24px; }
+
+        .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+        .principle .win-body { padding: 20px; }
+        .principle .icon { font: 40px/1 var(--pix); margin-bottom: 14px; }
+        .principle h3 { font: 400 15px/1.35 var(--disp); text-transform: uppercase; margin-bottom: 10px; color: #fff; }
+        .principle p { font-size: 14.5px; color: var(--ink-2); }
+        .principle:hover { border-color: var(--orange); box-shadow: 0 0 0 1px #000, 0 0 30px rgba(255,102,0,.55); }
+        .principle:hover .win-bar { background: linear-gradient(90deg, #c94a00, var(--orange) 40%, var(--magenta)); }
+
+        .term { font-size: 15px; }
+        .term .win-body { padding: 18px 22px; background: #02040c; }
+        .term ol { list-style: none; padding: 0; }
+        .term li { display: grid; grid-template-columns: 120px 120px 1fr; gap: 12px; padding: 7px 0; border-bottom: 1px dotted rgba(42,58,138,.6); }
+        .term .st { font-family: var(--pix); font-size: 18px; line-height: 1.2; }
+        .term .done .st { color: var(--lime); }
+        .term .active .st { color: var(--orange); text-shadow: 0 0 8px var(--orange); animation: blink 1.2s steps(2) infinite; }
+        .term .next .st { color: var(--ink-2); }
+        .term time { color: var(--cyan); }
+        .term .prompt { margin-top: 12px; color: var(--lime); }
+        .term .prompt::after { content: "█"; animation: blink 1s steps(2) infinite; }
+        .tl { display: grid; grid-template-columns: 1.4fr .6fr; gap: 20px; align-items: start; }
+        .tl .win img { width: 100%; filter: saturate(1.3) contrast(1.05); }
+
+        table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        th { text-align: left; font: 18px var(--pix); color: var(--magenta); font-weight: 400; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+        td { padding: 14px 12px; border-bottom: 1px solid var(--line); }
+        td.n { font-family: var(--disp); font-size: 15px; color: #fff; }
+        td.a { color: var(--orange-2); }
+        .note { margin-top: 16px; color: var(--ink-2); }
+        .note::before { content: "> "; color: var(--lime); }
+
+        .contacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .contacts .win { text-decoration: none; display: block; transition: transform .2s; }
+        .contacts a.win:hover { transform: translateY(-4px); box-shadow: 0 0 0 1px #000, 0 0 30px rgba(0,240,255,.6); }
+        .contacts small { display: block; font: 18px var(--pix); color: var(--lime); margin-bottom: 6px; }
+        .contacts strong { font: 400 15px/1.4 var(--disp); overflow-wrap: anywhere; }
+
+        footer { margin-top: 32px; border-top: 1px solid var(--line); padding: 28px 0 110px; }
+        footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-2); }
+        footer img { height: 22px; width: auto; }
+        .badges { display: flex; gap: 6px; }
+        .badges span { font: 14px/1 var(--pix); padding: 4px 6px; border: 1px solid; }
+
+        @media (max-width: 980px) { .hero, .flag .win-body, .tl { grid-template-columns: 1fr; } .orb { max-width: 380px; width: 100%; margin: 0 auto; } .grid4 { grid-template-columns: 1fr 1fr; } .contacts { grid-template-columns: 1fr; } }
+        @media (max-width: 720px) { .nav ul { display: none; } .status { margin-left: auto; } .grid4 { grid-template-columns: 1fr; } .term li { grid-template-columns: 1fr; gap: 0; } .readout { grid-template-columns: 1fr; } th:nth-child(3), td:nth-child(3) { display: none; } }
+        @media (max-width: 440px) { .wrap { padding: 0 16px; } .btn { width: 100%; justify-content: center; } .win-body { padding: 16px; } .status b { display: none; } }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } #rain { display: none; } }
+    </style>
+</head>
+<body>
+    <canvas id="rain" aria-hidden="true"></canvas>
+    <div class="ticker" aria-hidden="true"><span>★ WELCOME TO LTRJ LABS ★ NODE ONLINE ★ MOTHNODE R3 // PRE-COMPLIANCE ★ ISED / FCC @ CAMOSUN ★ 48.4°N 123.4°W ★ SOLAR // LORA // BLE // LTE-M ★ ALWAYS ONLINE ★</span></div>
+    <header class="nav">
+        <div class="wrap">
+            <a href="#top" aria-label="LTRJ Labs home"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="66" height="24"></a>
+            <ul><li><a href="#flagship">Flagship</a></li><li><a href="#principles">Principles</a></li><li><a href="#timeline">Timeline</a></li><li><a href="#events">Events</a></li><li><a href="#contact">Contact</a></li></ul>
+            <a class="status" href="https://mothnode.com" target="_blank" rel="noopener"><i></i><b>MothNode R3 in testing</b></a>
+        </div>
+    </header>
+
+    <main id="top" class="wrap">
+        <section class="hero">
+            <div>
+                <span class="tag">&gt;&gt; LTRJ_LABS.EXE // R&amp;D LAB // VICTORIA, BC</span>
+                <h1><span class="chrome-text">A hard-tech startup building</span> <span class="glitch holo-text" data-t="IoT products.">IoT products.</span></h1>
+                <p class="lede">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p>
+                <div class="actions">
+                    <a class="btn" href="https://mothnode.com" target="_blank" rel="noopener">[ Explore Flagship System: MothNode ↗ ]</a>
+                    <a class="btn alt" href="#timeline">Read the lab notebook</a>
+                </div>
+                <dl class="readout">
+                    <div><dt>FOCUS</dt><dd>Off-grid telemetry</dd></div>
+                    <div><dt>STAGE</dt><dd>Rev 3 · pre-compliance</dd></div>
+                    <div><dt>BASE</dt><dd>48.4° N, 123.4° W</dd></div>
+                </dl>
+            </div>
+            <div class="orb" aria-hidden="true"><span class="ring"></span><span class="ring"></span><span class="ring"></span><div class="core"><img src="../img/photo/mothnode-pcba-bench.jpg" alt="" width="2000" height="1126"></div></div>
+        </section>
+
+        <section id="flagship" class="s">
+            <div class="s-head"><span class="idx">[01]</span><h2 class="chrome-text">MothNode</h2><span class="sub">Flagship system</span></div>
+            <article class="win flag">
+                <div class="win-bar">mothnode_r3.sys — First deployed system<span class="ctl"><b>_</b><b>□</b><b>×</b></span></div>
+                <div class="win-body">
+                    <figure><img src="../img/photo/mothnode-enclosure.jpg" alt="MothNode Rev 3 circuit board seated in its enclosure on the bench" loading="lazy" width="2000" height="1126"><figcaption>&gt; MothNode R3 · PCBA in enclosure · bench test</figcaption></figure>
+                    <div>
+                        <p class="flag-lead">Born out of volunteer firefighting at Willis Point, BC to solve critical off-grid water supply monitoring.</p>
+                        <p>Zero-maintenance, solar-powered, multi-network telemetry (Cellular, LoRa, Bluetooth). Runs year-round in extreme Canadian weather.</p>
+                        <ul class="specs"><li><span>MCU</span>ESP32-S3</li><li><span>CELLULAR</span>BG95 LTE-M / NB-IoT</li><li><span>MESH</span>LoRa + Bluetooth</li><li><span>POWER</span>Solar harvesting</li><li><span>HOUSING</span>Polycarbonate · IP66</li></ul>
+                        <a class="btn" href="https://mothnode.com" target="_blank" rel="noopener">Launch MothNode Platform →</a>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section id="principles" class="s">
+            <div class="s-head"><span class="idx">[02]</span><h2 class="chrome-text">Principles</h2><span class="sub">How we build</span></div>
+            <div class="grid4">
+                <article class="win principle"><div class="win-bar">velocity.dll<span class="ctl"><b>×</b></span></div><div class="win-body"><div class="icon holo-text">&gt;&gt;&gt;</div><h3>High-Velocity Iteration</h3><p>Fast-moving execution from breadboard rev 1 to custom fab and compliance testing in months, not years.</p></div></article>
+                <article class="win principle"><div class="win-bar">scale.dll<span class="ctl"><b>×</b></span></div><div class="win-body"><div class="icon holo-text">◇◆◇</div><h3>Bespoke Feel, Global Scale</h3><p>Hardware designed with deep domain empathy that feels purpose-built for the operator, built on a robust architecture that deploys everywhere.</p></div></article>
+                <article class="win principle"><div class="win-bar">resilience.dll<span class="ctl"><b>×</b></span></div><div class="win-body"><div class="icon holo-text">☼24/7</div><h3>Resilient &amp; Local-First</h3><p>Solar-harvesting, fault-tolerant systems designed to run 24/7—even when the cloud goes dark.</p></div></article>
+                <article class="win principle"><div class="win-bar">focus.dll<span class="ctl"><b>×</b></span></div><div class="win-body"><div class="icon holo-text">[100%]</div><h3>Proprietary Focus</h3><p>No agency work, no billable consulting hours. 100% of our cycles go into building systems we own and believe should exist.</p></div></article>
+            </div>
+        </section>
+
+        <section id="timeline" class="s">
+            <div class="s-head"><span class="idx">[03]</span><h2 class="chrome-text">The lab notebook</h2><span class="sub">Milestones</span></div>
+            <div class="tl">
+                <div class="win term"><div class="win-bar">C:\LTRJ\changelog.log<span class="ctl"><b>_</b><b>×</b></span></div><div class="win-body">
+                    <ol>
+                        <li class="done"><span class="st">[  OK  ]</span><time>May 2026</time><span>Problem identified at Willis Point Fire Dept; Rev 1 breadboard bench tests.</span></li>
+                        <li class="done"><span class="st">[  OK  ]</span><time>July 2026</time><span>Rev 2 deployed in the field on active rural water cisterns.</span></li>
+                        <li class="done"><span class="st">[  OK  ]</span><time>Sept 2026</time><span>Rev 3 custom PCBA (ESP32-S3, BG95 cellular, LoRa), custom polycarbonate IP66 tooling.</span></li>
+                        <li class="active"><span class="st">[ RUN. ]</span><time>Fall 2026</time><span>Pre-compliance and regulatory testing (ISED / FCC) at Camosun College.</span></li>
+                        <li class="next"><span class="st">[ WAIT ]</span><time>Winter 2026</time><span>Commercial release &amp; volume manufacturing.</span></li>
+                    </ol>
+                    <p class="prompt">C:\LTRJ&gt; </p>
+                </div></div>
+                <figure class="win" style="margin:0"><div class="win-bar">bench.jpg<span class="ctl"><b>×</b></span></div><img src="../img/photo/bench-wide.jpg" alt="The LTRJ Labs bench in Victoria, BC" loading="lazy" width="2000" height="1345"></figure>
+            </div>
+        </section>
+
+        <section id="events" class="s">
+            <div class="s-head"><span class="idx">[04]</span><h2 class="chrome-text">Events</h2><span class="sub">Field appearances</span></div>
+            <div class="win"><div class="win-bar">schedule.db<span class="ctl"><b>×</b></span></div><div class="win-body">
+                <table><thead><tr><th>DATE</th><th>EVENT</th><th>LOCATION</th><th>AGENDA</th></tr></thead>
+                    <tbody><tr><td>Dec 18, 2026</td><td class="n">Camosun Capstone Symposium</td><td>Victoria, BC</td><td class="a">Final R3 Demo &amp; Presentation</td></tr></tbody></table>
+                <p class="note">Heads down on bench testing in Victoria, BC. Ping us to connect or talk hardware.</p>
+            </div></div>
+        </section>
+
+        <section id="contact" class="s">
+            <div class="s-head"><span class="idx">[05]</span><h2 class="chrome-text">Direct signal</h2><span class="sub">Get in touch</span></div>
+            <div class="contacts">
+                <a class="win" href="mailto:hello@ltrjlabs.com"><div class="win-bar">mail.exe<span class="ctl"><b>×</b></span></div><div class="win-body"><small>General / Coffee</small><strong>hello@ltrjlabs.com</strong></div></a>
+                <a class="win" href="mailto:puritch@ltrjlabs.com"><div class="win-bar">invest.exe<span class="ctl"><b>×</b></span></div><div class="win-body"><small>Investors &amp; Hardware Inquiries</small><strong>puritch@ltrjlabs.com</strong></div></a>
+                <div class="win"><div class="win-bar">gps.exe<span class="ctl"><b>×</b></span></div><div class="win-body"><small>Location</small><strong>Victoria, British Columbia</strong></div></div>
+            </div>
+        </section>
+    </main>
+
+    <footer><div class="wrap"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22"><span>© 2026 LTRJ Labs Ltd.</span><span class="badges" aria-hidden="true"><span style="color:var(--lime)">IoT</span><span style="color:var(--cyan)">LoRa</span><span style="color:var(--magenta)">BLE</span><span style="color:var(--orange)">LTE-M</span></span><a href="https://mothnode.com" target="_blank" rel="noopener">mothnode.com ↗</a></div></footer>
+
+    <script>
+        (function () {
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            var c = document.getElementById('rain'), x = c.getContext('2d'), cols, drops, fs = 16, chars = '01ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ<>/LTRJ';
+            function size() { c.width = innerWidth; c.height = innerHeight; cols = Math.ceil(c.width / fs); drops = Array.from({ length: cols }, function () { return Math.random() * -60; }); }
+            size(); addEventListener('resize', size);
+            setInterval(function () {
+                x.fillStyle = 'rgba(5,6,15,0.12)'; x.fillRect(0, 0, c.width, c.height); x.font = fs + 'px monospace';
+                for (var i = 0; i < cols; i++) {
+                    x.fillStyle = i % 9 === 0 ? '#ff6600' : (i % 3 ? '#2b5bff' : '#00f0ff');
+                    x.fillText(chars[Math.random() * chars.length | 0], i * fs, drops[i] * fs);
+                    if (drops[i] * fs > c.height && Math.random() > 0.975) drops[i] = 0; drops[i]++;
+                }
+            }, 60);
+        })();
+    </script>
+</body>
+</html>

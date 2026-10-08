@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LTRJ Labs — Swiss</title>
+    <meta name="description" content="LTRJ Labs is a hard-tech startup in Victoria, BC building IoT products.">
+    <meta name="theme-color" content="#f4f3ef">
+    <link rel="icon" href="../img/logo/Small_Logo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="../js/concepts.js"></script>
+    <style>
+        /* Concept N — Swiss / International Typographic Style. 12-col grid, flush-left, one signal colour. Press G for the grid. */
+        :root {
+            --paper: #f4f3ef; --ink: #0a0a0a; --ink-2: #555; --rule: #0a0a0a; --orange: #ff5a00;
+            --sans: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
+            --cols: 12; --gut: 20px; --m: 40px;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.45 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        img { display: block; max-width: 100%; height: auto; }
+        a { color: inherit; }
+        p, h1, h2, h3, ul, ol, dl, dd { margin: 0; padding: 0; }
+        ul, ol { list-style: none; }
+
+        .g { display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--gut); padding: 0 var(--m); max-width: 1440px; margin: 0 auto; }
+        .gridlines { position: fixed; inset: 0; z-index: 999; pointer-events: none; display: none; }
+        .gridlines.on { display: grid; }
+        .gridlines span { background: rgba(255,90,0,.08); border-inline: 1px solid rgba(255,90,0,.25); }
+        .small { font-size: 12px; line-height: 1.4; font-weight: 500; letter-spacing: .01em; }
+        .caps { text-transform: uppercase; letter-spacing: .04em; }
+
+        /* Header: a strip of facts */
+        .top { border-bottom: 2px solid var(--rule); position: sticky; top: 0; z-index: 50; background: var(--paper); }
+        .top .g { align-items: center; height: 58px; }
+        .top .logo { grid-column: 1 / 3; } .top .logo img { height: 22px; width: auto; }
+        .top nav { grid-column: 4 / 10; display: flex; gap: 24px; }
+        .top nav a { text-decoration: none; font-weight: 500; font-size: 14px; }
+        .top nav a:hover { color: var(--orange); }
+        .top .status { grid-column: 10 / 13; justify-self: end; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 700; font-size: 13px; }
+        .top .status i { width: 10px; height: 10px; background: var(--orange); animation: b 1.4s steps(2) infinite; }
+        @keyframes b { 50% { opacity: 0; } }
+        a:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+        /* Hero poster */
+        .poster { position: relative; padding: 56px 0 0; overflow: hidden; }
+        .poster .meta { grid-column: 1 / 4; display: grid; gap: 16px; align-content: start; padding-top: 12px; }
+        .poster .meta dt { color: var(--ink-2); }
+        .poster .meta dd { font-weight: 700; font-size: 15px; }
+        .poster h1 { grid-column: 4 / 13; font: 900 clamp(52px, 9.6vw, 168px)/.86 var(--sans); letter-spacing: -.055em; }
+        .poster h1 .o { color: var(--orange); }
+        .poster .circle { position: absolute; right: -8vw; top: 80px; width: 38vw; aspect-ratio: 1; border-radius: 50%; background: var(--orange); mix-blend-mode: multiply; z-index: -0; opacity: .95; }
+        .poster h1, .poster .meta { position: relative; z-index: 1; }
+        .poster .lede { grid-column: 4 / 10; margin-top: 48px; font-size: 22px; line-height: 1.35; font-weight: 500; }
+        .poster .ctas { grid-column: 4 / 13; display: flex; gap: 0; margin-top: 40px; border-top: 2px solid var(--rule); }
+        .cta { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex: 1; padding: 22px 0; text-decoration: none; font-weight: 700; font-size: 18px; border-bottom: 2px solid var(--rule); transition: background .2s, color .2s, padding .2s; }
+        .cta:hover { background: var(--ink); color: var(--paper); padding-inline: 16px; }
+        .cta.primary { background: var(--orange); color: var(--ink); padding-inline: 16px; }
+        .cta.primary:hover { background: var(--ink); color: var(--orange); }
+        .cta + .cta { border-left: 2px solid var(--rule); padding-left: 16px; }
+        .poster .photo { grid-column: 1 / 13; margin-top: 64px; position: relative; }
+        .poster .photo img { width: 100%; aspect-ratio: 21 / 8; object-fit: cover; filter: grayscale(1) contrast(1.15); }
+        .poster .photo::after { content: ""; position: absolute; inset: 0; background: var(--orange); mix-blend-mode: multiply; opacity: .0; transition: opacity .4s; }
+        .poster .photo:hover::after { opacity: .7; }
+        .poster .photo figcaption { margin-top: 8px; }
+
+        /* Sections — numbered, headline in col 1-3, body in 4-12 */
+        .sec { border-top: 2px solid var(--rule); padding: 28px 0 96px; }
+        .sec .g { row-gap: 32px; }
+        .sec .idx { grid-column: 1 / 2; font: 900 48px/1 var(--sans); letter-spacing: -.04em; color: var(--orange); }
+        .sec .lbl { grid-column: 2 / 4; padding-top: 6px; }
+        .sec h2 { grid-column: 4 / 13; font: 900 clamp(40px, 6.4vw, 104px)/.9 var(--sans); letter-spacing: -.05em; }
+
+        .flag-img { grid-column: 4 / 9; }
+        .flag-img img { filter: grayscale(1) contrast(1.1); transition: filter .5s; }
+        .flag-img:hover img { filter: none; }
+        .flag-img figcaption { margin-top: 8px; }
+        .flag-txt { grid-column: 9 / 13; display: flex; flex-direction: column; gap: 18px; }
+        .flag-txt .lead { font-size: 24px; line-height: 1.2; font-weight: 700; letter-spacing: -.01em; }
+        .flag-txt p:not(.lead) { color: var(--ink-2); }
+        .flag-txt .cta { flex: none; border-top: 2px solid var(--rule); margin-top: auto; }
+        .spec { grid-column: 4 / 13; display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--rule); }
+        .spec div { padding: 12px 12px 0 0; }
+        .spec dt { color: var(--ink-2); }
+        .spec dd { margin-top: 4px; font-weight: 700; }
+
+        .pr { grid-column: 4 / 13; display: grid; grid-template-columns: repeat(4, 1fr); column-gap: var(--gut); }
+        .pr li { border-top: 6px solid var(--ink); padding-top: 16px; }
+        .pr li:first-child { border-top-color: var(--orange); }
+        .pr .n { font: 900 15px var(--sans); }
+        .pr h3 { margin: 40px 0 14px; font: 700 22px/1.1 var(--sans); letter-spacing: -.02em; }
+        .pr p { font-size: 15.5px; color: var(--ink-2); }
+
+        .tl { grid-column: 4 / 13; }
+        .tl li { display: grid; grid-template-columns: repeat(9, 1fr); column-gap: var(--gut); padding: 16px 0; border-top: 1px solid var(--rule); align-items: baseline; }
+        .tl li:last-child { border-bottom: 1px solid var(--rule); }
+        .tl time { grid-column: 1 / 3; font-weight: 700; }
+        .tl p { grid-column: 3 / 9; font-size: 19px; line-height: 1.3; }
+        .tl .st { grid-column: 9 / 10; justify-self: end; }
+        .tl .active { background: var(--orange); margin: 0 calc(-1 * var(--gut) / 2); padding-inline: calc(var(--gut) / 2); }
+        .tl .active p { font-weight: 700; }
+        .tl .next { color: var(--ink-2); }
+        .tl-bar { grid-column: 4 / 13; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; height: 10px; }
+        .tl-bar span { background: var(--ink); } .tl-bar span:nth-child(4) { background: var(--orange); } .tl-bar span:nth-child(5) { background: transparent; border: 1px solid var(--ink); }
+
+        .ev { grid-column: 4 / 13; display: grid; grid-template-columns: repeat(9, 1fr); column-gap: var(--gut); border-top: 2px solid var(--rule); border-bottom: 2px solid var(--rule); padding: 20px 0; align-items: end; }
+        .ev .d { grid-column: 1 / 3; font: 900 clamp(48px, 6vw, 92px)/.85 var(--sans); letter-spacing: -.05em; }
+        .ev .d small { display: block; font-size: 13px; letter-spacing: 0; font-weight: 700; margin-bottom: 8px; }
+        .ev h3 { grid-column: 3 / 7; font: 700 26px/1.1 var(--sans); letter-spacing: -.02em; }
+        .ev .loc { grid-column: 7 / 8; }
+        .ev .ag { grid-column: 8 / 10; color: var(--orange); font-weight: 700; }
+        .ev-note { grid-column: 4 / 10; font-size: 19px; font-weight: 500; }
+
+        .ct { grid-column: 4 / 13; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: var(--gut); }
+        .ct > * { display: block; border-top: 2px solid var(--rule); padding: 14px 0 0; text-decoration: none; }
+        .ct strong { display: block; margin-top: 28px; font: 700 clamp(20px, 2.2vw, 30px)/1.1 var(--sans); letter-spacing: -.025em; overflow-wrap: anywhere; }
+        .ct a:hover strong { color: var(--orange); }
+
+        footer { background: var(--ink); color: var(--paper); padding: 28px 0 110px; }
+        footer .g { align-items: end; row-gap: 20px; }
+        footer .big { grid-column: 1 / 9; font: 900 clamp(40px, 10vw, 160px)/.8 var(--sans); letter-spacing: -.06em; color: var(--orange); }
+        footer .info { grid-column: 10 / 13; display: grid; gap: 6px; }
+        footer img { height: 20px; width: auto; margin-bottom: 10px; }
+
+        @media (max-width: 1000px) {
+            :root { --m: 24px; --cols: 6; }
+            .top nav { display: none; } .top .logo { grid-column: 1 / 3; } .top .status { grid-column: 3 / 7; }
+            .poster .meta { grid-column: 1 / 7; grid-template-columns: repeat(3, 1fr); order: 2; margin-top: 32px; } .poster h1, .poster .lede, .poster .ctas, .poster .photo { grid-column: 1 / 7; }
+            .sec .idx { grid-column: 1 / 2; } .sec .lbl { grid-column: 2 / 7; } .sec h2, .flag-img, .flag-txt, .spec, .pr, .tl, .tl-bar, .ev, .ev-note, .ct { grid-column: 1 / 7; }
+            .pr { grid-template-columns: 1fr 1fr; row-gap: 32px; } .spec { grid-template-columns: repeat(3, 1fr); }
+            footer .big, footer .info { grid-column: 1 / 7; }
+        }
+        @media (max-width: 640px) {
+            :root { --m: 16px; --gut: 12px; }
+            .poster .meta { grid-template-columns: 1fr; } .poster .ctas { flex-direction: column; } .cta + .cta { border-left: 0; padding-left: 16px; }
+            .pr, .ct { grid-template-columns: 1fr; row-gap: 24px; } .spec { grid-template-columns: 1fr 1fr; }
+            .tl li { grid-template-columns: 1fr auto; } .tl time { grid-column: 1; } .tl .st { grid-column: 2; grid-row: 1; } .tl p { grid-column: 1 / -1; margin-top: 4px; }
+            .ev { grid-template-columns: 1fr; row-gap: 10px; } .ev > * { grid-column: 1 !important; }
+            .poster .circle { width: 70vw; right: -30vw; top: 40px; } .poster .lede { font-size: 19px; } .top .status b { font-size: 12px; }
+        }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+    </style>
+</head>
+<body>
+    <div class="gridlines g" id="gl" aria-hidden="true"></div>
+
+    <header class="top">
+        <div class="g">
+            <a class="logo" href="#top" aria-label="LTRJ Labs home"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22"></a>
+            <nav aria-label="Sections"><a href="#flagship">Flagship</a><a href="#principles">Principles</a><a href="#timeline">Timeline</a><a href="#events">Events</a><a href="#contact">Contact</a></nav>
+            <a class="status" href="https://mothnode.com" target="_blank" rel="noopener"><i></i><b>MothNode R3 in testing</b></a>
+        </div>
+    </header>
+
+    <main id="top">
+        <section class="poster">
+            <span class="circle" aria-hidden="true"></span>
+            <div class="g">
+                <dl class="meta small">
+                    <div><dt class="caps">Company</dt><dd>LTRJ Labs Ltd.</dd></div>
+                    <div><dt class="caps">Type</dt><dd>R&amp;D lab</dd></div>
+                    <div><dt class="caps">Focus</dt><dd>Off-grid telemetry</dd></div>
+                    <div><dt class="caps">Stage</dt><dd>Rev 3 · pre-compliance</dd></div>
+                    <div><dt class="caps">Base</dt><dd>48.4° N, 123.4° W</dd></div>
+                </dl>
+                <h1>A hard-tech startup building <span class="o">IoT products.</span></h1>
+                <p class="lede">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p>
+                <div class="ctas">
+                    <a class="cta primary" href="https://mothnode.com" target="_blank" rel="noopener">[ Explore Flagship System: MothNode ↗ ]</a>
+                    <a class="cta" href="#timeline">Read the lab notebook <span aria-hidden="true">↓</span></a>
+                </div>
+                <figure class="photo" style="margin:64px 0 0"><img src="../img/photo/bench-wide.jpg" alt="The LTRJ Labs bench in Victoria, BC" width="2000" height="1345"><figcaption class="small">Fig. 1 — The bench, Victoria, British Columbia, 2026.</figcaption></figure>
+            </div>
+        </section>
+
+        <section id="flagship" class="sec">
+            <div class="g">
+                <span class="idx">1</span><span class="lbl small caps">Flagship system<br>First deployed system</span>
+                <h2>MothNode</h2>
+                <figure class="flag-img" style="margin:0"><img src="../img/photo/mothnode-enclosure.jpg" alt="MothNode Rev 3 circuit board seated in its enclosure on the bench" loading="lazy" width="2000" height="1126"><figcaption class="small">Fig. 2 — MothNode R3, PCBA in enclosure, bench test.</figcaption></figure>
+                <div class="flag-txt">
+                    <p class="lead">Born out of volunteer firefighting at Willis Point, BC to solve critical off-grid water supply monitoring.</p>
+                    <p>Zero-maintenance, solar-powered, multi-network telemetry (Cellular, LoRa, Bluetooth). Runs year-round in extreme Canadian weather.</p>
+                    <a class="cta" href="https://mothnode.com" target="_blank" rel="noopener">Launch MothNode Platform <span aria-hidden="true">→</span></a>
+                </div>
+                <dl class="spec small"><div><dt class="caps">MCU</dt><dd>ESP32-S3</dd></div><div><dt class="caps">Cellular</dt><dd>BG95 LTE-M / NB-IoT</dd></div><div><dt class="caps">Mesh</dt><dd>LoRa + Bluetooth</dd></div><div><dt class="caps">Power</dt><dd>Solar harvesting</dd></div><div><dt class="caps">Housing</dt><dd>Polycarbonate · IP66</dd></div></dl>
+            </div>
+        </section>
+
+        <section id="principles" class="sec">
+            <div class="g">
+                <span class="idx">2</span><span class="lbl small caps">How we build</span>
+                <h2>Principles</h2>
+                <ol class="pr">
+                    <li><span class="n">1.</span><h3>High-Velocity Iteration</h3><p>Fast-moving execution from breadboard rev 1 to custom fab and compliance testing in months, not years.</p></li>
+                    <li><span class="n">2.</span><h3>Bespoke Feel, Global Scale</h3><p>Hardware designed with deep domain empathy that feels purpose-built for the operator, built on a robust architecture that deploys everywhere.</p></li>
+                    <li><span class="n">3.</span><h3>Resilient &amp; Local-First</h3><p>Solar-harvesting, fault-tolerant systems designed to run 24/7—even when the cloud goes dark.</p></li>
+                    <li><span class="n">4.</span><h3>Proprietary Focus</h3><p>No agency work, no billable consulting hours. 100% of our cycles go into building systems we own and believe should exist.</p></li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="timeline" class="sec">
+            <div class="g">
+                <span class="idx">3</span><span class="lbl small caps">The lab notebook<br>Milestones</span>
+                <h2>Timeline</h2>
+                <div class="tl-bar" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+                <ol class="tl">
+                    <li><time class="small caps">May 2026</time><p>Problem identified at Willis Point Fire Dept; Rev 1 breadboard bench tests.</p><span class="st small caps">Done</span></li>
+                    <li><time class="small caps">July 2026</time><p>Rev 2 deployed in the field on active rural water cisterns.</p><span class="st small caps">Done</span></li>
+                    <li><time class="small caps">Sept 2026</time><p>Rev 3 custom PCBA (ESP32-S3, BG95 cellular, LoRa), custom polycarbonate IP66 tooling.</p><span class="st small caps">Done</span></li>
+                    <li class="active"><time class="small caps">Fall 2026</time><p>Pre-compliance and regulatory testing (ISED / FCC) at Camosun College.</p><span class="st small caps">Now</span></li>
+                    <li class="next"><time class="small caps">Winter 2026</time><p>Commercial release &amp; volume manufacturing.</p><span class="st small caps">Next</span></li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="events" class="sec">
+            <div class="g">
+                <span class="idx">4</span><span class="lbl small caps">Field appearances</span>
+                <h2>Events</h2>
+                <div class="ev"><p class="d"><small>December 2026</small>18</p><h3>Camosun Capstone Symposium</h3><span class="loc small">Victoria, BC</span><span class="ag small">Final R3 Demo &amp; Presentation</span></div>
+                <p class="ev-note">Heads down on bench testing in Victoria, BC. Ping us to connect or talk hardware.</p>
+            </div>
+        </section>
+
+        <section id="contact" class="sec">
+            <div class="g">
+                <span class="idx">5</span><span class="lbl small caps">Direct signal</span>
+                <h2>Get in touch</h2>
+                <div class="ct">
+                    <a href="mailto:hello@ltrjlabs.com"><span class="small caps">General / Coffee</span><strong>hello@ltrjlabs.com</strong></a>
+                    <a href="mailto:puritch@ltrjlabs.com"><span class="small caps">Investors &amp; Hardware Inquiries</span><strong>puritch@ltrjlabs.com</strong></a>
+                    <div><span class="small caps">Location</span><strong>Victoria, British Columbia</strong></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="g">
+            <p class="big">LTRJ</p>
+            <div class="info small"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22"><span>© 2026 LTRJ Labs Ltd.</span><a href="https://mothnode.com" target="_blank" rel="noopener">mothnode.com ↗</a><span style="opacity:.5">Press G to toggle the grid.</span></div>
+        </div>
+    </footer>
+
+    <script>
+        (function () {
+            var gl = document.getElementById('gl');
+            function build() { var n = getComputedStyle(document.documentElement).getPropertyValue('--cols').trim() | 0; gl.innerHTML = new Array(n + 1).join('<span></span>'); }
+            build(); addEventListener('resize', build);
+            addEventListener('keydown', function (e) { if ((e.key === 'g' || e.key === 'G') && !e.metaKey && !e.ctrlKey && !/input|textarea/i.test(e.target.tagName)) gl.classList.toggle('on'); });
+        })();
+    </script>
+</body>
+</html>

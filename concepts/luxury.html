@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LTRJ Labs — Maison</title>
+    <meta name="description" content="LTRJ Labs is a hard-tech startup in Victoria, BC building IoT products.">
+    <meta name="theme-color" content="#0b0a09">
+    <link rel="icon" href="../img/logo/Small_Logo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&family=Cormorant+SC:wght@400;500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+    <script src="../js/concepts.js"></script>
+    <style>
+        /* Concept P — Luxury Typography: Didone at couture scale, hairlines, ivory on lacquer black, copper-orange foil. */
+        :root {
+            --black: #0b0a09; --black-2: #141210; --ivory: #f2ebdf; --ivory-2: #b9b0a2; --ivory-3: #6f685e; --hair: rgba(242,235,223,.16);
+            --copper: #e0763a; --orange: #ff6600;
+            --foil: linear-gradient(100deg, #8a3a10 0%, #e0763a 22%, #ffc9a0 40%, #ff7a1a 55%, #a8461a 75%, #f0a070 100%);
+            --didone: "Bodoni Moda", "Didot", serif; --sc: "Cormorant SC", serif; --sans: "Jost", system-ui, sans-serif;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; background: var(--black); color: var(--ivory); font: 300 17px/1.75 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        img { display: block; max-width: 100%; height: auto; }
+        a { color: inherit; text-decoration: none; }
+        p, h1, h2, h3, ul, ol, dl, dd { margin: 0; padding: 0; }
+        ul, ol { list-style: none; }
+        .wrap { max-width: 1240px; margin: 0 auto; padding: 0 40px; }
+        .sc { font: 500 13px/1.4 var(--sc); letter-spacing: .32em; text-transform: lowercase; color: var(--ivory-2); }
+        .foil { background: var(--foil); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: sheen 9s ease-in-out infinite; }
+        @keyframes sheen { 50% { background-position: 100% 0; } }
+        a:focus-visible { outline: 1px solid var(--copper); outline-offset: 6px; }
+
+        header { position: fixed; top: 0; left: 0; right: 0; z-index: 30; transition: background .5s, border-color .5s; border-bottom: 1px solid transparent; }
+        header.solid { background: rgba(11,10,9,.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-color: var(--hair); }
+        header .wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 84px; }
+        header nav { display: flex; gap: 30px; }
+        header nav a { font: 400 12px var(--sans); letter-spacing: .26em; text-transform: uppercase; color: var(--ivory-2); transition: color .3s; }
+        header nav a:hover { color: var(--ivory); }
+        header .mark img { height: 26px; width: auto; }
+        header .status { justify-self: end; display: inline-flex; gap: 12px; align-items: center; font: 400 11px var(--sans); letter-spacing: .26em; text-transform: uppercase; color: var(--ivory-2); }
+        header .status i { width: 5px; height: 5px; transform: rotate(45deg); background: var(--copper); }
+
+        .hero { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-content: end; padding: 140px 0 64px; overflow: hidden; }
+        .hero .bg { position: absolute; inset: 0; z-index: -1; }
+        .hero .bg img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) brightness(.32) contrast(1.2); transform: scale(1.06); animation: slow 24s ease-out forwards; }
+        .hero .bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,10,9,.6), rgba(11,10,9,.2) 40%, var(--black)); }
+        @keyframes slow { to { transform: scale(1); } }
+        .hero .top-sc { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding-bottom: 28px; border-bottom: 1px solid var(--hair); margin-bottom: 36px; }
+        h1 { font: 400 clamp(52px, 9.2vw, 152px)/.92 var(--didone); font-optical-sizing: auto; letter-spacing: -.035em; }
+        h1 em { font-style: italic; font-weight: 400; display: block; padding-left: 1.4em; }
+        .hero .row { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; margin-top: 48px; align-items: end; }
+        .lede { font: 400 italic clamp(19px, 1.6vw, 23px)/1.55 var(--didone); color: var(--ivory-2); max-width: 520px; }
+        .lede::first-letter { font: 500 3.2em/.8 var(--didone); float: left; padding: .06em .08em 0 0; font-style: normal; color: var(--copper); }
+        .cta-wrap { display: grid; gap: 22px; justify-items: start; }
+        .btn { display: inline-flex; align-items: center; gap: 22px; padding: 22px 30px; border: 1px solid var(--copper); font: 400 12px var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--ivory); position: relative; overflow: hidden; transition: color .6s; isolation: isolate; }
+        .btn::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--foil); transform: translateY(101%); transition: transform .6s cubic-bezier(.7,0,.2,1); }
+        .btn:hover { color: var(--black); }
+        .btn:hover::before { transform: none; }
+        .btn .ln { width: 36px; height: 1px; background: currentColor; transition: width .6s; }
+        .btn:hover .ln { width: 56px; }
+        .text-link { font: 400 12px var(--sans); letter-spacing: .26em; text-transform: uppercase; color: var(--ivory-2); border-bottom: 1px solid var(--hair); padding-bottom: 6px; }
+        .text-link:hover { color: var(--ivory); border-color: var(--copper); }
+
+        section.s { padding: 160px 0; border-top: 1px solid var(--hair); }
+        .chapter { display: grid; grid-template-columns: 200px 1fr; gap: 40px; margin-bottom: 80px; align-items: baseline; }
+        .chapter .num { font: italic 400 22px var(--didone); color: var(--copper); }
+        h2 { font: 400 clamp(48px, 7.6vw, 124px)/.9 var(--didone); letter-spacing: -.035em; }
+        h2 em { font-style: italic; }
+
+        .flag { display: grid; grid-template-columns: 7fr 5fr; gap: 80px; align-items: center; }
+        .flag figure { margin: 0; position: relative; }
+        .flag figure img { filter: grayscale(.85) contrast(1.1) brightness(.9); transition: filter 1.4s; }
+        .flag figure:hover img { filter: grayscale(0) contrast(1.05); }
+        .flag figure::before { content: ""; position: absolute; inset: -18px 18px 18px -18px; border: 1px solid var(--copper); z-index: -1; opacity: .6; }
+        .flag figcaption { margin-top: 18px; }
+        .flag-lead { font: 400 clamp(26px, 2.6vw, 36px)/1.2 var(--didone); letter-spacing: -.01em; }
+        .flag-lead em { color: var(--copper); }
+        .flag p.sub { margin-top: 26px; color: var(--ivory-2); }
+        .specs { margin: 40px 0; }
+        .specs div { display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--hair); }
+        .specs dt { font: 500 13px var(--sc); letter-spacing: .26em; text-transform: lowercase; color: var(--ivory-3); }
+        .specs dd { font: italic 400 18px var(--didone); }
+
+        .pr { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--hair); }
+        .pr li { padding: 56px 48px 64px 0; border-bottom: 1px solid var(--hair); display: grid; grid-template-columns: 90px 1fr; gap: 20px; }
+        .pr li:nth-child(odd) { border-right: 1px solid var(--hair); }
+        .pr li:nth-child(even) { padding-left: 48px; }
+        .pr .rn { font: italic 400 54px/1 var(--didone); }
+        .pr h3 { font: 400 clamp(26px, 2.4vw, 34px)/1.1 var(--didone); letter-spacing: -.01em; }
+        .pr p { margin-top: 18px; color: var(--ivory-2); font-size: 16px; }
+
+        .tl li { display: grid; grid-template-columns: 220px 1fr 80px; gap: 40px; padding: 34px 0; border-top: 1px solid var(--hair); align-items: baseline; transition: padding .5s; }
+        .tl li:last-child { border-bottom: 1px solid var(--hair); }
+        .tl li:hover { padding-left: 16px; }
+        .tl time { font: italic 400 26px var(--didone); color: var(--ivory-2); }
+        .tl p { font: 400 clamp(20px, 1.8vw, 26px)/1.35 var(--didone); }
+        .tl .st { justify-self: end; }
+        .tl .active time { color: var(--copper); }
+        .tl .active p { font-style: italic; }
+        .tl .next p, .tl .next time { color: var(--ivory-3); }
+        .tl-photo { margin: 80px 0 0; display: grid; grid-template-columns: 5fr 7fr; gap: 80px; align-items: end; }
+        .tl-photo img { filter: grayscale(1) contrast(1.1); }
+        .tl-photo blockquote { margin: 0; font: italic 400 clamp(28px, 3vw, 44px)/1.15 var(--didone); }
+        .tl-photo blockquote cite { display: block; margin-top: 24px; font-style: normal; }
+
+        .invite { max-width: 860px; margin: 0 auto; text-align: center; padding: 72px 48px; border: 1px solid var(--copper); position: relative; }
+        .invite::before { content: ""; position: absolute; inset: 8px; border: 1px solid var(--hair); pointer-events: none; }
+        .invite .date { font: italic 400 clamp(64px, 9vw, 128px)/1 var(--didone); }
+        .invite h3 { margin-top: 26px; font: 400 clamp(28px, 3.2vw, 44px)/1.1 var(--didone); }
+        .invite .ag { margin-top: 14px; font: italic 400 21px var(--didone); color: var(--copper); }
+        .invite .sc { display: block; margin-top: 28px; }
+        .note { max-width: 560px; margin: 56px auto 0; text-align: center; font: italic 400 21px/1.5 var(--didone); color: var(--ivory-2); }
+
+        .ct { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--hair); }
+        .ct > * { padding: 48px 32px 56px 0; border-bottom: 1px solid var(--hair); display: block; }
+        .ct > * + * { border-left: 1px solid var(--hair); padding-left: 32px; }
+        .ct strong { display: block; margin-top: 22px; font: 400 clamp(22px, 2vw, 30px)/1.2 var(--didone); overflow-wrap: anywhere; transition: color .4s; }
+        .ct a:hover strong { color: var(--copper); font-style: italic; }
+
+        footer { padding: 120px 0 120px; text-align: center; border-top: 1px solid var(--hair); }
+        footer .huge { font: italic 400 clamp(64px, 16vw, 260px)/.85 var(--didone); letter-spacing: -.05em; }
+        footer .row { margin-top: 56px; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+        footer img { height: 22px; width: auto; }
+
+        .rv { opacity: 0; transform: translateY(30px); transition: opacity 1.6s cubic-bezier(.2,.7,.2,1), transform 1.6s cubic-bezier(.2,.7,.2,1); }
+        .rv.in { opacity: 1; transform: none; }
+
+        @media (max-width: 1000px) { .hero .row, .flag, .tl-photo { grid-template-columns: 1fr; gap: 48px; } .chapter { grid-template-columns: 1fr; gap: 10px; } .pr { grid-template-columns: 1fr; } .pr li, .pr li:nth-child(even) { padding: 40px 0; border-right: 0; } .ct { grid-template-columns: 1fr; } .ct > *, .ct > * + * { padding: 32px 0; border-left: 0; } .tl li { grid-template-columns: 160px 1fr; } .tl .st { display: none; } header nav { display: none; } header .wrap { grid-template-columns: auto 1fr; } header .mark { order: -1; } }
+        @media (max-width: 640px) { .wrap { padding: 0 20px; } .tl li { grid-template-columns: 1fr; gap: 6px; } section.s { padding: 110px 0; } .invite { padding: 48px 22px; } .btn { width: 100%; justify-content: space-between; letter-spacing: .18em; padding: 20px; } h1 em { padding-left: .6em; } }
+        @media (max-width: 400px) { .wrap { padding: 0 16px; } header .status span { display: none; } }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } .rv { opacity: 1; transform: none; } }
+    </style>
+</head>
+<body>
+    <header id="hdr">
+        <div class="wrap">
+            <nav aria-label="Sections"><a href="#flagship">Flagship</a><a href="#principles">Principles</a><a href="#timeline">Timeline</a><a href="#events">Events</a><a href="#contact">Contact</a></nav>
+            <a class="mark" href="#top" aria-label="LTRJ Labs home"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="71" height="26"></a>
+            <a class="status" href="https://mothnode.com" target="_blank" rel="noopener"><i></i><span>MothNode R3 in testing</span></a>
+        </div>
+    </header>
+
+    <main id="top">
+        <section class="hero">
+            <div class="bg" aria-hidden="true"><img src="../img/photo/bench-wide.jpg" alt="" width="2000" height="1345"></div>
+            <div class="wrap">
+                <div class="top-sc sc"><span>ltrj labs ltd.</span><span>r&amp;d laboratory</span><span>victoria, british columbia</span><span>mmxxvi</span></div>
+                <h1>A hard-tech startup building <em class="foil">IoT products.</em></h1>
+                <div class="row">
+                    <p class="lede">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p>
+                    <div class="cta-wrap">
+                        <a class="btn" href="https://mothnode.com" target="_blank" rel="noopener">Explore Flagship System: MothNode <span class="ln"></span>↗</a>
+                        <a class="text-link" href="#timeline">Read the lab notebook</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="flagship" class="s">
+            <div class="wrap">
+                <div class="chapter rv"><span class="num">Chapitre I — flagship system</span><h2>Moth<em class="foil">Node</em></h2></div>
+                <div class="flag">
+                    <figure class="rv"><img src="../img/photo/mothnode-enclosure.jpg" alt="MothNode Rev 3 circuit board seated in its enclosure on the bench" loading="lazy" width="2000" height="1126"><figcaption class="sc">mothnode r3 · first deployed system</figcaption></figure>
+                    <div class="rv">
+                        <p class="flag-lead">Born out of volunteer firefighting at <em>Willis Point, BC</em> to solve critical off-grid water supply monitoring.</p>
+                        <p class="sub">Zero-maintenance, solar-powered, multi-network telemetry (Cellular, LoRa, Bluetooth). Runs year-round in extreme Canadian weather.</p>
+                        <dl class="specs"><div><dt>mcu</dt><dd>ESP32-S3</dd></div><div><dt>cellular</dt><dd>BG95 LTE-M / NB-IoT</dd></div><div><dt>mesh</dt><dd>LoRa &amp; Bluetooth</dd></div><div><dt>power</dt><dd>Solar harvesting</dd></div><div><dt>housing</dt><dd>Polycarbonate, IP66</dd></div></dl>
+                        <a class="btn" href="https://mothnode.com" target="_blank" rel="noopener">Launch MothNode Platform <span class="ln"></span>→</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="principles" class="s">
+            <div class="wrap">
+                <div class="chapter rv"><span class="num">Chapitre II — how we build</span><h2>The <em class="foil">principles</em></h2></div>
+                <ol class="pr">
+                    <li class="rv"><span class="rn foil">i.</span><div><h3>High-Velocity Iteration</h3><p>Fast-moving execution from breadboard rev 1 to custom fab and compliance testing in months, not years.</p></div></li>
+                    <li class="rv"><span class="rn foil">ii.</span><div><h3>Bespoke Feel, Global Scale</h3><p>Hardware designed with deep domain empathy that feels purpose-built for the operator, built on a robust architecture that deploys everywhere.</p></div></li>
+                    <li class="rv"><span class="rn foil">iii.</span><div><h3>Resilient &amp; Local-First</h3><p>Solar-harvesting, fault-tolerant systems designed to run 24/7—even when the cloud goes dark.</p></div></li>
+                    <li class="rv"><span class="rn foil">iv.</span><div><h3>Proprietary Focus</h3><p>No agency work, no billable consulting hours. 100% of our cycles go into building systems we own and believe should exist.</p></div></li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="timeline" class="s">
+            <div class="wrap">
+                <div class="chapter rv"><span class="num">Chapitre III — the lab notebook</span><h2>A <em class="foil">chronology</em></h2></div>
+                <ol class="tl">
+                    <li class="rv"><time>May 2026</time><p>Problem identified at Willis Point Fire Dept; Rev 1 breadboard bench tests.</p><span class="st sc">done</span></li>
+                    <li class="rv"><time>July 2026</time><p>Rev 2 deployed in the field on active rural water cisterns.</p><span class="st sc">done</span></li>
+                    <li class="rv"><time>Sept 2026</time><p>Rev 3 custom PCBA (ESP32-S3, BG95 cellular, LoRa), custom polycarbonate IP66 tooling.</p><span class="st sc">done</span></li>
+                    <li class="rv active"><time>Fall 2026</time><p>Pre-compliance and regulatory testing (ISED / FCC) at Camosun College.</p><span class="st sc" style="color:var(--copper)">now</span></li>
+                    <li class="rv next"><time>Winter 2026</time><p>Commercial release &amp; volume manufacturing.</p><span class="st sc">next</span></li>
+                </ol>
+                <div class="tl-photo">
+                    <img class="rv" src="../img/photo/mothnode-pcba-bench.jpg" alt="Bare MothNode Rev 3 board on a bench mat with tweezers" loading="lazy" width="2000" height="1126">
+                    <blockquote class="rv">Months, not years.<cite class="sc">— high-velocity iteration</cite></blockquote>
+                </div>
+            </div>
+        </section>
+
+        <section id="events" class="s">
+            <div class="wrap">
+                <div class="chapter rv"><span class="num">Chapitre IV — field appearances</span><h2>The <em class="foil">invitation</em></h2></div>
+                <div class="invite rv">
+                    <span class="sc">you are cordially invited</span>
+                    <p class="date foil">18 · XII · 26</p>
+                    <h3>Camosun Capstone Symposium</h3>
+                    <p class="ag">Final R3 Demo &amp; Presentation</p>
+                    <span class="sc">Victoria, BC · Dec 18, 2026</span>
+                </div>
+                <p class="note rv">Heads down on bench testing in Victoria, BC. Ping us to connect or talk hardware.</p>
+            </div>
+        </section>
+
+        <section id="contact" class="s">
+            <div class="wrap">
+                <div class="chapter rv"><span class="num">Chapitre V — direct signal</span><h2>Get in <em class="foil">touch</em></h2></div>
+                <div class="ct">
+                    <a class="rv" href="mailto:hello@ltrjlabs.com"><span class="sc">general / coffee</span><strong>hello@ltrjlabs.com</strong></a>
+                    <a class="rv" href="mailto:puritch@ltrjlabs.com"><span class="sc">investors &amp; hardware inquiries</span><strong>puritch@ltrjlabs.com</strong></a>
+                    <div class="rv"><span class="sc">location</span><strong>Victoria, British Columbia</strong></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="wrap">
+            <p class="huge foil" aria-hidden="true">LTRJ</p>
+            <div class="row sc"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22"><span>© 2026 LTRJ Labs Ltd.</span><a href="https://mothnode.com" target="_blank" rel="noopener">mothnode.com ↗</a></div>
+        </div>
+    </footer>
+
+    <script>
+        (function () {
+            var h = document.getElementById('hdr');
+            function s() { h.classList.toggle('solid', scrollY > 40); } s(); addEventListener('scroll', s, { passive: true });
+            var els = document.querySelectorAll('.rv');
+            if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+            var io = new IntersectionObserver(function (en) { en.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -10% 0px' });
+            els.forEach(function (e, i) { e.style.transitionDelay = (i % 3) * 140 + 'ms'; io.observe(e); });
+        })();
+    </script>
+</body>
+</html>

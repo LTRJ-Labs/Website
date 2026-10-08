@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LTRJ Labs — Minimal</title>
+    <meta name="description" content="LTRJ Labs is a hard-tech startup in Victoria, BC building IoT products.">
+    <meta name="theme-color" content="#fbfbfa">
+    <link rel="icon" href="../img/logo/Small_Logo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="../js/concepts.js"></script>
+    <style>
+        /* Concept O — Minimalism: one column, one weight, one colour used once per screen. Silence is the layout. */
+        :root { --bg: #fbfbfa; --ink: #141414; --ink-2: #6f6f6f; --ink-3: #a9a9a9; --line: #e8e8e6; --orange: #ff6600; --sans: "Inter", system-ui, sans-serif; }
+        @media (prefers-color-scheme: dark) { :root { --bg: #0b0b0c; --ink: #ededed; --ink-2: #9a9a9a; --ink-3: #5c5c5c; --line: #1f1f21; } }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; background: var(--bg); color: var(--ink); font: 300 17px/1.7 var(--sans); -webkit-font-smoothing: antialiased; }
+        img { display: block; max-width: 100%; height: auto; }
+        a { color: inherit; text-decoration: none; }
+        p, h1, h2, h3, ul, ol, dl, dd { margin: 0; padding: 0; }
+        ul, ol { list-style: none; }
+        .col { max-width: 640px; margin: 0 auto; padding: 0 24px; }
+        .wide { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+        .k { font-size: 12px; font-weight: 400; color: var(--ink-3); letter-spacing: .02em; }
+        a:focus-visible { outline: 1px solid var(--orange); outline-offset: 6px; }
+
+        header { position: fixed; top: 0; left: 0; right: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        header .wide { display: flex; align-items: center; gap: 28px; height: 72px; }
+        header img { height: 18px; width: auto; }
+        header nav { margin-left: auto; display: flex; gap: 28px; font-size: 13px; color: var(--ink-2); }
+        header nav a { transition: color .3s; }
+        header nav a:hover, header nav a.on { color: var(--ink); }
+        .status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
+        .status i { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+
+        .hero { min-height: 100vh; min-height: 100svh; display: grid; align-content: center; padding: 120px 0 80px; }
+        h1 { font: 300 clamp(34px, 5.4vw, 58px)/1.12 var(--sans); letter-spacing: -.035em; }
+        h1 span { color: var(--ink-3); }
+        .lede { margin-top: 36px; color: var(--ink-2); max-width: 520px; }
+        .cta { display: inline-flex; align-items: center; gap: 14px; margin-top: 48px; font-weight: 400; font-size: 16px; color: var(--ink); }
+        .cta .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--orange); transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+        .cta .lbl { position: relative; }
+        .cta .lbl::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: currentColor; transform: scaleX(.0); transform-origin: left; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+        .cta:hover .lbl::after { transform: scaleX(1); }
+        .cta:hover .dot { transform: scale(1.6); }
+        .scroll { margin-top: 96px; width: 1px; height: 56px; background: linear-gradient(var(--ink-3), transparent); animation: drop 2.4s ease-in-out infinite; transform-origin: top; }
+        @keyframes drop { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+
+        section.s { padding: 140px 0; }
+        .s-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 56px; }
+        h2 { font: 400 15px/1 var(--sans); letter-spacing: -.005em; }
+
+        .figure { margin: 0 0 56px; }
+        .figure img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; filter: grayscale(1); transition: filter 1.2s ease; }
+        .figure:hover img { filter: grayscale(0); }
+        .figure figcaption { margin-top: 14px; }
+        .lead { font: 300 26px/1.4 var(--sans); letter-spacing: -.02em; }
+        .body { margin-top: 28px; color: var(--ink-2); }
+        .specs { margin-top: 56px; border-top: 1px solid var(--line); }
+        .specs div { display: flex; justify-content: space-between; gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+        .specs dt { color: var(--ink-3); }
+
+        .pr li { display: grid; grid-template-columns: 48px 1fr; gap: 0; padding: 32px 0; border-top: 1px solid var(--line); }
+        .pr li:last-child { border-bottom: 1px solid var(--line); }
+        .pr h3 { font: 400 19px/1.3 var(--sans); letter-spacing: -.01em; }
+        .pr p { margin-top: 10px; color: var(--ink-2); font-size: 16px; }
+
+        .tl li { display: grid; grid-template-columns: 128px 1fr 16px; gap: 0; padding: 22px 0; border-top: 1px solid var(--line); align-items: baseline; }
+        .tl li:last-child { border-bottom: 1px solid var(--line); }
+        .tl time { font-size: 13px; color: var(--ink-3); }
+        .tl p { font-size: 16px; }
+        .tl .next p { color: var(--ink-3); }
+        .tl i { justify-self: end; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--ink-3); transform: translateY(-2px); }
+        .tl .done i { background: var(--ink-3); }
+        .tl .active i { background: var(--orange); border-color: var(--orange); box-shadow: 0 0 0 5px color-mix(in srgb, var(--orange) 15%, transparent); }
+
+        .ev { display: grid; grid-template-columns: 128px 1fr; padding: 22px 0; border-block: 1px solid var(--line); }
+        .ev time { font-size: 13px; color: var(--ink-3); padding-top: 3px; }
+        .ev h3 { font: 400 19px/1.3 var(--sans); }
+        .ev p { margin-top: 6px; color: var(--ink-2); font-size: 15px; }
+        .note { margin-top: 40px; color: var(--ink-2); }
+
+        .ct a, .ct div { display: flex; justify-content: space-between; gap: 24px; padding: 22px 0; border-top: 1px solid var(--line); align-items: baseline; flex-wrap: wrap; }
+        .ct > :last-child { border-bottom: 1px solid var(--line); }
+        .ct strong { font-weight: 400; font-size: 19px; letter-spacing: -.01em; transition: color .3s; overflow-wrap: anywhere; }
+        .ct a:hover strong { color: var(--orange); }
+
+        footer { padding: 120px 0 120px; }
+        footer .col { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+
+        .fade { opacity: 0; transition: opacity 1.6s ease; }
+        .fade.in { opacity: 1; }
+
+        @media (max-width: 720px) { header nav { display: none; } .status { margin-left: auto; } section.s { padding: 96px 0; } .tl li, .ev { grid-template-columns: 96px 1fr 16px; } .ev { grid-template-columns: 96px 1fr; } }
+        @media (max-width: 400px) { .col, .wide { padding: 0 16px; } .status span { display: none; } .tl li { grid-template-columns: 1fr 16px; } .tl time { grid-column: 1 / -1; } .ev { grid-template-columns: 1fr; } .pr li { grid-template-columns: 32px 1fr; } }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } .fade { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="wide">
+            <a href="#top" aria-label="LTRJ Labs home"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="49" height="18"></a>
+            <nav aria-label="Sections"><a href="#flagship">Flagship</a><a href="#principles">Principles</a><a href="#timeline">Timeline</a><a href="#events">Events</a><a href="#contact">Contact</a></nav>
+            <a class="status" href="https://mothnode.com" target="_blank" rel="noopener"><i></i><span>MothNode R3 in testing</span></a>
+        </div>
+    </header>
+
+    <main id="top">
+        <section class="hero">
+            <div class="col">
+                <p class="k">LTRJ Labs — Victoria, BC</p>
+                <h1 style="margin-top:28px">A hard-tech startup building <span>IoT products.</span></h1>
+                <p class="lede">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p>
+                <a class="cta" href="https://mothnode.com" target="_blank" rel="noopener"><span class="dot"></span><span class="lbl">Explore Flagship System: MothNode</span> ↗</a>
+                <div class="scroll" aria-hidden="true"></div>
+            </div>
+        </section>
+
+        <section id="flagship" class="s">
+            <div class="wide fade"><figure class="figure"><img src="../img/photo/mothnode-enclosure.jpg" alt="MothNode Rev 3 circuit board seated in its enclosure on the bench" loading="lazy" width="2000" height="1126"><figcaption class="k">MothNode R3, bench test.</figcaption></figure></div>
+            <div class="col fade">
+                <div class="s-head"><h2>MothNode</h2><span class="k">01</span></div>
+                <p class="lead">Born out of volunteer firefighting at Willis Point, BC to solve critical off-grid water supply monitoring.</p>
+                <p class="body">Zero-maintenance, solar-powered, multi-network telemetry (Cellular, LoRa, Bluetooth). Runs year-round in extreme Canadian weather.</p>
+                <dl class="specs"><div><dt>MCU</dt><dd>ESP32-S3</dd></div><div><dt>Cellular</dt><dd>BG95</dd></div><div><dt>Mesh</dt><dd>LoRa, Bluetooth</dd></div><div><dt>Power</dt><dd>Solar</dd></div><div><dt>Housing</dt><dd>Polycarbonate, IP66</dd></div></dl>
+                <a class="cta" href="https://mothnode.com" target="_blank" rel="noopener"><span class="dot"></span><span class="lbl">Launch MothNode Platform</span> →</a>
+            </div>
+        </section>
+
+        <section id="principles" class="s">
+            <div class="col fade">
+                <div class="s-head"><h2>Principles</h2><span class="k">02</span></div>
+                <ol class="pr">
+                    <li><span class="k">1</span><div><h3>High-Velocity Iteration</h3><p>Fast-moving execution from breadboard rev 1 to custom fab and compliance testing in months, not years.</p></div></li>
+                    <li><span class="k">2</span><div><h3>Bespoke Feel, Global Scale</h3><p>Hardware designed with deep domain empathy that feels purpose-built for the operator, built on a robust architecture that deploys everywhere.</p></div></li>
+                    <li><span class="k">3</span><div><h3>Resilient &amp; Local-First</h3><p>Solar-harvesting, fault-tolerant systems designed to run 24/7—even when the cloud goes dark.</p></div></li>
+                    <li><span class="k">4</span><div><h3>Proprietary Focus</h3><p>No agency work, no billable consulting hours. 100% of our cycles go into building systems we own and believe should exist.</p></div></li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="timeline" class="s">
+            <div class="col fade">
+                <div class="s-head"><h2>Lab notebook</h2><span class="k">03</span></div>
+                <ol class="tl">
+                    <li class="done"><time>May 2026</time><p>Problem identified at Willis Point Fire Dept; Rev 1 breadboard bench tests.</p><i></i></li>
+                    <li class="done"><time>July 2026</time><p>Rev 2 deployed in the field on active rural water cisterns.</p><i></i></li>
+                    <li class="done"><time>Sept 2026</time><p>Rev 3 custom PCBA (ESP32-S3, BG95 cellular, LoRa), custom polycarbonate IP66 tooling.</p><i></i></li>
+                    <li class="active"><time>Fall 2026</time><p>Pre-compliance and regulatory testing (ISED / FCC) at Camosun College.</p><i></i></li>
+                    <li class="next"><time>Winter 2026</time><p>Commercial release &amp; volume manufacturing.</p><i></i></li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="events" class="s">
+            <div class="col fade">
+                <div class="s-head"><h2>Events</h2><span class="k">04</span></div>
+                <div class="ev"><time>Dec 18, 2026</time><div><h3>Camosun Capstone Symposium</h3><p>Victoria, BC — Final R3 Demo &amp; Presentation</p></div></div>
+                <p class="note">Heads down on bench testing in Victoria, BC. Ping us to connect or talk hardware.</p>
+            </div>
+        </section>
+
+        <section id="contact" class="s">
+            <div class="col fade">
+                <div class="s-head"><h2>Contact</h2><span class="k">05</span></div>
+                <div class="ct">
+                    <a href="mailto:hello@ltrjlabs.com"><span class="k">General / Coffee</span><strong>hello@ltrjlabs.com</strong></a>
+                    <a href="mailto:puritch@ltrjlabs.com"><span class="k">Investors &amp; Hardware Inquiries</span><strong>puritch@ltrjlabs.com</strong></a>
+                    <div><span class="k">Location</span><strong>Victoria, British Columbia</strong></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer><div class="col k"><span>© 2026 LTRJ Labs Ltd.</span><a href="https://mothnode.com" target="_blank" rel="noopener">mothnode.com ↗</a></div></footer>
+
+    <script>
+        (function () {
+            var els = document.querySelectorAll('.fade'), links = document.querySelectorAll('header nav a');
+            if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+            var io = new IntersectionObserver(function (en) { en.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -10% 0px' });
+            els.forEach(function (e) { io.observe(e); });
+            var spy = new IntersectionObserver(function (en) { en.forEach(function (e) { if (e.isIntersecting) links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); }); }); }, { rootMargin: '-45% 0px -50% 0px' });
+            document.querySelectorAll('section[id]').forEach(function (s) { spy.observe(s); });
+        })();
+    </script>
+</body>
+</html>

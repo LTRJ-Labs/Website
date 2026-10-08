@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LTRJ Labs — Soft UI</title>
+    <meta name="description" content="LTRJ Labs is a hard-tech startup in Victoria, BC building IoT products.">
+    <meta name="theme-color" content="#e4e8ee">
+    <link rel="icon" href="../img/logo/Small_Logo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="../js/concepts.js"></script>
+    <style>
+        /* Concept L — Neumorphism: one material, extruded and pressed. Light/dark via the physical switch. */
+        :root {
+            --bg: #e4e8ee; --hi: #ffffff; --lo: #b8bec9; --ink: #2d3340; --ink-2: #6b7385; --ink-3: #9aa1b1;
+            --orange: #ff6600; --orange-2: #ff7a1a; --glow: rgba(255,102,0,.35);
+            --d: 9px; --blur: 18px;
+            --sans: "Manrope", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
+        }
+        :root.dark { --bg: #1e2026; --hi: #2a2d35; --lo: #121317; --ink: #eceef3; --ink-2: #a3a9b8; --ink-3: #6e7486; --glow: rgba(255,102,0,.5); }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; background: var(--bg); color: var(--ink); font: 500 16.5px/1.6 var(--sans); overflow-x: hidden; transition: background .5s, color .5s; }
+        img { display: block; max-width: 100%; height: auto; }
+        a { color: inherit; }
+        p, h1, h2, h3, ul, ol { margin: 0; }
+        .mono { font-family: var(--mono); }
+        .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+        .out { background: var(--bg); border-radius: var(--r, 28px); box-shadow: var(--d) var(--d) var(--blur) var(--lo), calc(-1 * var(--d)) calc(-1 * var(--d)) var(--blur) var(--hi); transition: box-shadow .35s, background .5s, transform .35s; }
+        .in { background: var(--bg); border-radius: var(--r, 28px); box-shadow: inset var(--d) var(--d) var(--blur) var(--lo), inset calc(-1 * var(--d)) calc(-1 * var(--d)) var(--blur) var(--hi); transition: box-shadow .35s, background .5s; }
+        .sm { --d: 5px; --blur: 10px; }
+        .lg { --d: 14px; --blur: 30px; }
+
+        .nav { position: sticky; top: 14px; z-index: 50; margin-top: 14px; }
+        .nav-in { display: flex; align-items: center; gap: 14px; padding: 10px 12px 10px 22px; --r: 999px; }
+        .nav img { height: 24px; width: auto; }
+        .nav ul { display: flex; gap: 6px; list-style: none; padding: 0; margin-left: auto; }
+        .nav ul a { display: block; padding: 9px 16px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 14px; color: var(--ink-2); transition: box-shadow .3s, color .3s; }
+        .nav ul a:hover { color: var(--orange); box-shadow: inset 4px 4px 8px var(--lo), inset -4px -4px 8px var(--hi); }
+        .status { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px; --r: 999px; text-decoration: none; font: 500 12px var(--mono); color: var(--ink-2); }
+        .led { width: 10px; height: 10px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 8px var(--orange), 0 0 16px var(--glow); animation: breathe 2.6s ease-in-out infinite; }
+        @keyframes breathe { 50% { opacity: .45; box-shadow: 0 0 2px var(--orange); } }
+        .switch { position: relative; width: 64px; height: 34px; border: 0; padding: 0; cursor: pointer; --r: 999px; flex: none; }
+        .switch::after { content: ""; position: absolute; top: 5px; left: 5px; width: 24px; height: 24px; border-radius: 50%; background: var(--bg); box-shadow: 3px 3px 6px var(--lo), -3px -3px 6px var(--hi); transition: transform .35s cubic-bezier(.4,1.4,.6,1), background .3s; }
+        :root.dark .switch::after { transform: translateX(30px); background: var(--orange); box-shadow: 0 0 12px var(--glow); }
+        .switch:focus-visible, a:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
+
+        .btn { display: inline-flex; align-items: center; gap: 12px; padding: 18px 28px; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: 15.5px; color: var(--orange); background: var(--bg); box-shadow: 8px 8px 16px var(--lo), -8px -8px 16px var(--hi); transition: box-shadow .25s, color .25s, transform .25s; }
+        .btn:hover { box-shadow: 4px 4px 8px var(--lo), -4px -4px 8px var(--hi); }
+        .btn:active { box-shadow: inset 6px 6px 12px var(--lo), inset -6px -6px 12px var(--hi); transform: scale(.99); }
+        .btn.primary { color: #fff; background: linear-gradient(145deg, var(--orange-2), #e85c00); box-shadow: 8px 8px 16px var(--lo), -8px -8px 16px var(--hi), inset 2px 2px 4px rgba(255,255,255,.35), inset -2px -2px 4px rgba(0,0,0,.15); }
+        .btn.primary:active { box-shadow: inset 5px 5px 10px rgba(0,0,0,.3), inset -4px -4px 8px rgba(255,255,255,.2); }
+        .btn .ic { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 2px 2px 4px rgba(0,0,0,.18), inset -2px -2px 4px rgba(255,255,255,.3); }
+
+        .hero { padding: 90px 0 70px; display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: center; }
+        .eyebrow { display: inline-block; padding: 8px 16px; --r: 999px; font: 500 12px var(--mono); color: var(--ink-2); }
+        h1 { margin-top: 24px; font: 800 clamp(42px, 6.4vw, 80px)/1.02 var(--sans); letter-spacing: -.035em; text-shadow: 3px 3px 6px var(--lo), -3px -3px 6px var(--hi); }
+        h1 span { color: var(--orange); }
+        .lede { margin-top: 24px; max-width: 560px; font-size: 18.5px; color: var(--ink-2); }
+        .actions { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 38px; }
+        .dial-wrap { display: grid; place-items: center; overflow-x: clip; padding: 30px 0; margin: -30px 0; }
+        .dial { position: relative; width: min(100%, 400px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; --d: 18px; --blur: 40px; --r: 50%; }
+        .dial .well { width: 78%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; --r: 50%; --d: 10px; --blur: 22px; }
+        .dial .knob { width: 70%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; position: relative; --r: 50%; }
+        .dial .knob img { width: 100%; height: 100%; object-fit: cover; opacity: .9; }
+        .dial .knob::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 6px 6px 16px rgba(0,0,0,.35), inset -6px -6px 16px rgba(255,255,255,.25); }
+        .dial svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(135deg); }
+        .dial .arc { fill: none; stroke: var(--orange); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 0 1000; filter: drop-shadow(0 0 6px var(--glow)); animation: sweep 2.2s .4s cubic-bezier(.3,.9,.3,1) forwards; }
+        @keyframes sweep { to { stroke-dasharray: 600 1000; } }
+        .dial .tag { position: absolute; bottom: 9%; font: 500 11px var(--mono); color: var(--ink-3); letter-spacing: .1em; }
+        .meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+        .meta div { padding: 14px 16px; --r: 18px; }
+        .meta dt { font: 500 10.5px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+        .meta dd { margin: 0; font-weight: 700; font-size: 14.5px; }
+
+        section.s { padding: 80px 0; }
+        .s-head { display: flex; align-items: center; gap: 18px; margin-bottom: 36px; }
+        .s-head .n { width: 58px; height: 58px; display: grid; place-items: center; --r: 18px; font: 500 14px var(--mono); color: var(--orange); flex: none; }
+        .s-head small { display: block; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+        h2 { font: 800 clamp(32px, 4.6vw, 52px)/1.05 var(--sans); letter-spacing: -.03em; }
+
+        .flag { display: grid; grid-template-columns: 1.1fr 1fr; gap: 36px; padding: 28px; --r: 36px; }
+        .flag figure { margin: 0; padding: 12px; --r: 26px; }
+        .flag figure img { border-radius: 18px; width: 100%; height: 100%; object-fit: cover; }
+        .flag-body { display: flex; flex-direction: column; gap: 16px; padding: 8px 4px; }
+        .flag .pill { align-self: flex-start; padding: 7px 14px; --r: 999px; font: 500 12px var(--mono); color: var(--orange); }
+        .flag-lead { font: 700 22px/1.35 var(--sans); }
+        .flag-body > p:not(.flag-lead) { color: var(--ink-2); }
+        .specs { list-style: none; padding: 14px 18px; --r: 20px; }
+        .specs li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 14.5px; font-weight: 700; }
+        .specs li + li { border-top: 1px solid color-mix(in srgb, var(--lo) 50%, transparent); }
+        .specs span { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); align-self: center; }
+        .flag .btn { align-self: flex-start; }
+
+        .principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; }
+        .principle { padding: 30px 24px; }
+        .principle:hover { box-shadow: inset 7px 7px 14px var(--lo), inset -7px -7px 14px var(--hi); }
+        .principle:hover .ico { color: var(--orange); }
+        .principle .ico { width: 60px; height: 60px; display: grid; place-items: center; --r: 50%; margin-bottom: 22px; color: var(--ink-2); transition: color .3s; }
+        .principle .ico svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .principle h3 { font: 800 18.5px/1.25 var(--sans); margin-bottom: 10px; }
+        .principle p { font-size: 15px; color: var(--ink-2); }
+
+        .tl { display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px; align-items: start; }
+        .track { padding: 26px; --r: 30px; list-style: none; margin: 0; }
+        .track li { display: grid; grid-template-columns: 46px 1fr; gap: 16px; padding: 14px 0; }
+        .track .k { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font: 500 13px var(--mono); }
+        .track .done .k { color: var(--orange); box-shadow: inset 4px 4px 8px var(--lo), inset -4px -4px 8px var(--hi); }
+        .track .active .k { background: var(--orange); color: #fff; box-shadow: 5px 5px 10px var(--lo), -5px -5px 10px var(--hi), 0 0 18px var(--glow); }
+        .track .next .k { color: var(--ink-3); box-shadow: 4px 4px 8px var(--lo), -4px -4px 8px var(--hi); }
+        .track time { font: 500 11.5px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+        .track p { font-weight: 600; }
+        .track .next p { color: var(--ink-3); }
+        .progress { margin: 6px 0 4px; height: 14px; padding: 3px; --r: 999px; }
+        .progress i { display: block; height: 100%; width: 75%; border-radius: 999px; background: linear-gradient(90deg, var(--orange-2), var(--orange)); box-shadow: 0 0 10px var(--glow); }
+        .tl figure { margin: 0; padding: 14px; --r: 30px; position: sticky; top: 110px; }
+        .tl figure img { border-radius: 20px; }
+        .tl figcaption { padding: 12px 6px 2px; font: 500 12px var(--mono); color: var(--ink-3); }
+
+        .event { display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center; padding: 26px; --r: 32px; }
+        .event .date { width: 100px; padding: 14px 0; text-align: center; --r: 24px; }
+        .event .date small { display: block; font: 500 11px var(--mono); color: var(--orange); text-transform: uppercase; }
+        .event .date b { font: 800 40px/1 var(--sans); }
+        .event .date span { display: block; font: 500 11px var(--mono); color: var(--ink-3); }
+        .event h3 { font: 800 clamp(20px, 2.4vw, 26px)/1.2 var(--sans); }
+        .event p { color: var(--ink-2); }
+        .event .where { padding: 10px 16px; --r: 999px; font: 500 12px var(--mono); }
+        .note { margin-top: 22px; padding: 18px 24px; --r: 22px; color: var(--ink-2); }
+
+        .contacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+        .contacts > * { display: block; padding: 28px; text-decoration: none; }
+        .contacts a:hover { box-shadow: inset 7px 7px 14px var(--lo), inset -7px -7px 14px var(--hi); }
+        .contacts a:hover strong { color: var(--orange); }
+        .contacts small { display: block; font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); margin-bottom: 10px; }
+        .contacts strong { font: 800 19px/1.3 var(--sans); overflow-wrap: anywhere; transition: color .3s; }
+
+        footer { padding: 40px 0 110px; }
+        footer .bar { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; padding: 18px 26px; --r: 22px; font: 500 13px var(--mono); color: var(--ink-3); }
+        footer img { height: 22px; width: auto; }
+
+        @media (max-width: 980px) { .hero, .flag, .tl { grid-template-columns: 1fr; } .principles { grid-template-columns: 1fr 1fr; } .contacts { grid-template-columns: 1fr; } .tl figure { position: static; } .dial { width: min(100%, 340px); } }
+        @media (max-width: 720px) { .nav ul { display: none; } .status { margin-left: auto; } .principles { grid-template-columns: 1fr; } .meta { grid-template-columns: 1fr; } .event { grid-template-columns: auto 1fr; } .event .where { grid-column: 1 / -1; justify-self: start; } .hero { padding-top: 56px; } }
+        @media (max-width: 440px) { .wrap { padding: 0 16px; } .btn { width: 100%; justify-content: center; } .status b { display: none; } .flag { padding: 16px; } .nav-in { padding-left: 16px; } }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } .dial .arc { stroke-dasharray: 600 1000; } }
+    </style>
+    <script>try { if (localStorage.getItem('ltrj-neu') === 'dark') document.documentElement.classList.add('dark'); } catch (e) {}</script>
+</head>
+<body>
+    <div class="wrap">
+        <header class="nav">
+            <div class="nav-in out">
+                <a href="#top" aria-label="LTRJ Labs home"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="66" height="24"></a>
+                <ul><li><a href="#flagship">Flagship</a></li><li><a href="#principles">Principles</a></li><li><a href="#timeline">Timeline</a></li><li><a href="#events">Events</a></li><li><a href="#contact">Contact</a></li></ul>
+                <a class="status in sm" href="https://mothnode.com" target="_blank" rel="noopener"><span class="led"></span><b>MothNode R3 in testing</b></a>
+                <button class="switch in sm" id="mode" type="button" aria-label="Toggle dark mode" aria-pressed="false"></button>
+            </div>
+        </header>
+    </div>
+
+    <main id="top" class="wrap">
+        <section class="hero">
+            <div>
+                <span class="eyebrow in sm">LTRJ Labs Ltd. · R&amp;D lab · Victoria, BC</span>
+                <h1>A hard-tech startup building <span>IoT products.</span></h1>
+                <p class="lede">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p>
+                <div class="actions">
+                    <a class="btn primary" href="https://mothnode.com" target="_blank" rel="noopener">[ Explore Flagship System: MothNode ↗ ]</a>
+                    <a class="btn" href="#timeline">Read the lab notebook</a>
+                </div>
+                <dl class="meta">
+                    <div class="in sm"><dt>Focus</dt><dd>Off-grid telemetry</dd></div>
+                    <div class="in sm"><dt>Stage</dt><dd>Rev 3 · pre-compliance</dd></div>
+                    <div class="in sm"><dt>Base</dt><dd>48.4° N, 123.4° W</dd></div>
+                </dl>
+            </div>
+            <div class="dial-wrap" aria-hidden="true">
+                <div class="dial out lg">
+                    <svg viewBox="0 0 200 200"><circle class="arc" cx="100" cy="100" r="92" pathLength="800"/></svg>
+                    <div class="well in"><div class="knob out sm"><img src="../img/photo/mothnode-pcba-bench.jpg" alt="" width="2000" height="1126"></div></div>
+                    <span class="tag">SIGNAL · R3</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="flagship" class="s">
+            <div class="s-head"><span class="n out sm">01</span><div><small>Flagship system</small><h2>MothNode</h2></div></div>
+            <article class="flag out">
+                <figure class="in"><img src="../img/photo/mothnode-enclosure.jpg" alt="MothNode Rev 3 circuit board seated in its enclosure on the bench" loading="lazy" width="2000" height="1126"></figure>
+                <div class="flag-body">
+                    <span class="pill out sm">First deployed system</span>
+                    <p class="flag-lead">Born out of volunteer firefighting at Willis Point, BC to solve critical off-grid water supply monitoring.</p>
+                    <p>Zero-maintenance, solar-powered, multi-network telemetry (Cellular, LoRa, Bluetooth). Runs year-round in extreme Canadian weather.</p>
+                    <ul class="specs in sm"><li><span>MCU</span>ESP32-S3</li><li><span>Cellular</span>BG95 LTE-M / NB-IoT</li><li><span>Mesh</span>LoRa + Bluetooth</li><li><span>Power</span>Solar harvesting</li><li><span>Housing</span>Polycarbonate · IP66</li></ul>
+                    <a class="btn primary" href="https://mothnode.com" target="_blank" rel="noopener">Launch MothNode Platform <span class="ic">→</span></a>
+                </div>
+            </article>
+        </section>
+
+        <section id="principles" class="s">
+            <div class="s-head"><span class="n out sm">02</span><div><small>How we build</small><h2>Principles</h2></div></div>
+            <div class="principles">
+                <article class="principle out"><div class="ico out sm"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg></div><h3>High-Velocity Iteration</h3><p>Fast-moving execution from breadboard rev 1 to custom fab and compliance testing in months, not years.</p></article>
+                <article class="principle out"><div class="ico out sm"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div><h3>Bespoke Feel, Global Scale</h3><p>Hardware designed with deep domain empathy that feels purpose-built for the operator, built on a robust architecture that deploys everywhere.</p></article>
+                <article class="principle out"><div class="ico out sm"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div><h3>Resilient &amp; Local-First</h3><p>Solar-harvesting, fault-tolerant systems designed to run 24/7—even when the cloud goes dark.</p></article>
+                <article class="principle out"><div class="ico out sm"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><h3>Proprietary Focus</h3><p>No agency work, no billable consulting hours. 100% of our cycles go into building systems we own and believe should exist.</p></article>
+            </div>
+        </section>
+
+        <section id="timeline" class="s">
+            <div class="s-head"><span class="n out sm">03</span><div><small>The lab notebook</small><h2>Milestones</h2></div></div>
+            <div class="tl">
+                <div>
+                    <div class="progress in sm" role="img" aria-label="Roughly 75% of the roadmap complete"><i></i></div>
+                    <ol class="track out" style="margin-top:26px">
+                        <li class="done"><span class="k">✓</span><div><time>May 2026</time><p>Problem identified at Willis Point Fire Dept; Rev 1 breadboard bench tests.</p></div></li>
+                        <li class="done"><span class="k">✓</span><div><time>July 2026</time><p>Rev 2 deployed in the field on active rural water cisterns.</p></div></li>
+                        <li class="done"><span class="k">✓</span><div><time>Sept 2026</time><p>Rev 3 custom PCBA (ESP32-S3, BG95 cellular, LoRa), custom polycarbonate IP66 tooling.</p></div></li>
+                        <li class="active"><span class="k">●</span><div><time>Fall 2026 · now</time><p>Pre-compliance and regulatory testing (ISED / FCC) at Camosun College.</p></div></li>
+                        <li class="next"><span class="k">○</span><div><time>Winter 2026</time><p>Commercial release &amp; volume manufacturing.</p></div></li>
+                    </ol>
+                </div>
+                <figure class="out"><img src="../img/photo/bench-wide.jpg" alt="The LTRJ Labs bench in Victoria, BC" loading="lazy" width="2000" height="1345"><figcaption>Rev 3 bring-up · Victoria, BC</figcaption></figure>
+            </div>
+        </section>
+
+        <section id="events" class="s">
+            <div class="s-head"><span class="n out sm">04</span><div><small>Field appearances</small><h2>Events</h2></div></div>
+            <article class="event out">
+                <div class="date in sm"><small>Dec</small><b>18</b><span>2026</span></div>
+                <div><h3>Camosun Capstone Symposium</h3><p>Final R3 Demo &amp; Presentation</p></div>
+                <span class="where out sm">Victoria, BC</span>
+            </article>
+            <p class="note in sm">Heads down on bench testing in Victoria, BC. Ping us to connect or talk hardware.</p>
+        </section>
+
+        <section id="contact" class="s">
+            <div class="s-head"><span class="n out sm">05</span><div><small>Direct signal</small><h2>Get in touch</h2></div></div>
+            <div class="contacts">
+                <a class="out" href="mailto:hello@ltrjlabs.com"><small>General / Coffee</small><strong>hello@ltrjlabs.com</strong></a>
+                <a class="out" href="mailto:puritch@ltrjlabs.com"><small>Investors &amp; Hardware Inquiries</small><strong>puritch@ltrjlabs.com</strong></a>
+                <div class="in"><small>Location</small><strong>Victoria, British Columbia</strong></div>
+            </div>
+        </section>
+    </main>
+
+    <footer><div class="wrap"><div class="bar out sm"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22"><span>© 2026 LTRJ Labs Ltd.</span><a href="https://mothnode.com" target="_blank" rel="noopener">mothnode.com ↗</a></div></div></footer>
+
+    <script>
+        (function () {
+            var root = document.documentElement, btn = document.getElementById('mode');
+            function sync() { var d = root.classList.contains('dark'); btn.setAttribute('aria-pressed', d); document.querySelector('meta[name=theme-color]').content = d ? '#1e2026' : '#e4e8ee'; }
+            sync();
+            btn.addEventListener('click', function () { root.classList.toggle('dark'); sync(); try { localStorage.setItem('ltrj-neu', root.classList.contains('dark') ? 'dark' : 'light'); } catch (e) {} });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LTRJ Labs — Pixel</title>
+    <meta name="description" content="LTRJ Labs is a hard-tech startup in Victoria, BC building IoT products.">
+    <meta name="theme-color" content="#1a1c2c">
+    <link rel="icon" href="../img/logo/Small_Logo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script src="../js/concepts.js"></script>
+    <style>
+        /* Concept I — Pixel Art: 16-bit RPG UI, Sweetie-16 palette, orange as the hero sprite. */
+        :root {
+            --k: #1a1c2c; --p: #5d275d; --r: #b13e53; --o: #ef7d57; --y: #ffcd75; --lg: #a7f070; --g: #38b764; --t: #257179;
+            --nv: #29366f; --b: #3b5dc9; --lb: #41a6f6; --c: #73eff7; --w: #f4f4f4; --l: #94b0c2; --m: #566c86; --d: #333c57;
+            --orange: #ff6600; --px: 4px;
+            --pix: "Press Start 2P", monospace; --body: "Pixelify Sans", monospace;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; background: var(--k); color: var(--w); font: 400 19px/1.5 var(--body); overflow-x: hidden; image-rendering: pixelated; }
+        img { display: block; max-width: 100%; height: auto; image-rendering: pixelated; }
+        a { color: inherit; }
+        p, h1, h2, h3, ul, ol { margin: 0; }
+        .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+        /* Pixel border: stepped corners via box-shadow */
+        .px { position: relative; background: var(--bg, var(--nv)); margin: var(--px);
+            box-shadow: 0 calc(-1 * var(--px)) 0 0 var(--bd, var(--w)), 0 var(--px) 0 0 var(--bd, var(--w)), calc(-1 * var(--px)) 0 0 0 var(--bd, var(--w)), var(--px) 0 0 0 var(--bd, var(--w)), 0 calc(2 * var(--px)) 0 0 rgba(0,0,0,.45), var(--px) var(--px) 0 0 rgba(0,0,0,.45); }
+        .dialog { --bg: var(--nv); --bd: var(--w); padding: 20px 22px; }
+        .dialog::before { content: ""; position: absolute; inset: 4px; border: 4px solid var(--b); pointer-events: none; }
+
+        /* Sky with pixel stars + parallax mountains */
+        .sky { position: relative; overflow: hidden; background: linear-gradient(180deg, #1a1c2c 0 20%, #29366f 20% 40%, #3b5dc9 40% 58%, #5d275d 58% 72%, #b13e53 72% 82%, #ef7d57 82% 92%, #ffcd75 92%); }
+        .stars { position: absolute; inset: 0; background-image: radial-gradient(#f4f4f4 1.5px, transparent 2px), radial-gradient(#73eff7 1.5px, transparent 2px); background-size: 120px 90px, 170px 130px; background-position: 10px 20px, 60px 50px; opacity: .8; -webkit-mask: linear-gradient(#000 40%, transparent 60%); mask: linear-gradient(#000 40%, transparent 60%); animation: twinkle 2s steps(2) infinite; }
+        @keyframes twinkle { 50% { opacity: .4; } }
+        .mtn { position: absolute; left: 0; right: 0; bottom: 0; height: 160px; background: var(--d);
+            clip-path: polygon(0 100%, 0 60%, 8% 60%, 8% 40%, 14% 40%, 14% 20%, 20% 20%, 20% 45%, 28% 45%, 28% 30%, 36% 30%, 36% 10%, 42% 10%, 42% 35%, 52% 35%, 52% 50%, 60% 50%, 60% 25%, 68% 25%, 68% 5%, 74% 5%, 74% 30%, 82% 30%, 82% 50%, 90% 50%, 90% 35%, 100% 35%, 100% 100%); }
+        .mtn.front { height: 90px; background: var(--g); clip-path: polygon(0 100%, 0 40%, 6% 40%, 6% 20%, 12% 20%, 12% 50%, 22% 50%, 22% 30%, 30% 30%, 30% 60%, 44% 60%, 44% 25%, 52% 25%, 52% 45%, 64% 45%, 64% 15%, 72% 15%, 72% 55%, 84% 55%, 84% 30%, 94% 30%, 94% 50%, 100% 50%, 100% 100%); }
+        .ground { position: absolute; left: 0; right: 0; bottom: 0; height: 32px; background: repeating-linear-gradient(90deg, #257179 0 16px, #38b764 16px 32px); border-top: 4px solid var(--lg); }
+
+        /* Nav as a HUD */
+        .hud { position: sticky; top: 0; z-index: 60; background: var(--k); border-bottom: 4px solid var(--w); }
+        .hud .wrap { display: flex; align-items: center; gap: 16px; height: 64px; }
+        .hud img { height: 22px; width: auto; }
+        .hud ul { display: flex; gap: 6px; list-style: none; padding: 0; margin-left: auto; }
+        .hud ul a { display: block; padding: 8px 10px; text-decoration: none; font: 10px var(--pix); color: var(--l); }
+        .hud ul a:hover, .hud ul a:focus-visible { color: var(--y); outline: none; }
+        .hud ul a:hover::before, .hud ul a:focus-visible::before { content: "▶"; margin-right: 4px; color: var(--orange); }
+        .status { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font: 9px var(--pix); color: var(--lg); padding: 8px 10px; --bg: var(--k); --bd: var(--lg); }
+        .status i { width: 8px; height: 8px; background: var(--lg); animation: twinkle 1s steps(2) infinite; }
+
+        /* Hero */
+        .hero { position: relative; padding: 64px 0 220px; }
+        .hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: 1.2fr .8fr; gap: 40px; align-items: center; }
+        .level { font: 10px var(--pix); color: var(--y); }
+        h1 { margin-top: 20px; font: 400 clamp(22px, 3.6vw, 42px)/1.35 var(--pix); text-shadow: 4px 4px 0 var(--k); }
+        h1 span { color: var(--orange); }
+        .hero .dialog { margin-top: 28px; }
+        .hero .dialog p { font-size: 20px; }
+        .typed::after { content: "▼"; display: inline-block; margin-left: 8px; color: var(--y); font-size: 14px; animation: bounce .6s steps(2) infinite; }
+        @keyframes bounce { 50% { transform: translateY(4px); } }
+        .actions { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 30px; }
+        .btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 18px; text-decoration: none; font: 11px/1.4 var(--pix); color: var(--k); --bg: var(--orange); --bd: var(--k); transition: transform .08s steps(1); }
+        .btn::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: rgba(255,255,255,.45); }
+        .btn:hover { transform: translateY(-4px); }
+        .btn:active { transform: translateY(4px); }
+        .btn.alt { --bg: var(--lb); }
+        .btn:focus-visible { outline: 4px dashed var(--y); outline-offset: 8px; }
+        .sprite { position: relative; justify-self: center; width: min(100%, 360px); --bg: var(--k); --bd: var(--y); padding: 8px; animation: float 1.2s steps(2) infinite; }
+        .sprite img { filter: contrast(1.15) saturate(1.3); }
+        .sprite .lbl { position: absolute; left: 50%; top: -34px; transform: translateX(-50%); white-space: nowrap; font: 9px var(--pix); color: var(--y); }
+        @keyframes float { 50% { transform: translateY(-6px); } }
+        .moth { position: absolute; z-index: 3; width: 48px; height: 48px; left: -60px; top: 30%; animation: fly 16s steps(64) infinite; }
+        @keyframes fly { 0% { transform: translate(0, 0); } 25% { transform: translate(30vw, -40px); } 50% { transform: translate(60vw, 20px); } 75% { transform: translate(90vw, -30px); } 100% { transform: translate(115vw, 0); } }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 28px; }
+        .stats div { --bg: var(--k); --bd: var(--m); padding: 10px 12px; }
+        .stats dt { font: 8px var(--pix); color: var(--c); margin-bottom: 6px; }
+        .stats dd { margin: 0; font-size: 16px; }
+
+        section.s { padding: 72px 0; }
+        .s-head { display: flex; align-items: center; gap: 16px; margin-bottom: 36px; flex-wrap: wrap; }
+        .s-head .stage { font: 10px var(--pix); color: var(--k); padding: 8px 10px; --bg: var(--y); --bd: var(--k); }
+        h2 { font: 400 clamp(18px, 2.8vw, 30px)/1.3 var(--pix); color: var(--w); text-shadow: 4px 4px 0 var(--p); }
+
+        .flag { display: grid; grid-template-columns: 1.05fr 1fr; gap: 32px; --bg: var(--d); padding: 24px; }
+        .flag figure { margin: 0; --bg: var(--k); --bd: var(--l); padding: 6px; }
+        .flag figure img { width: 100%; }
+        .flag figcaption { margin-top: 8px; font: 8px var(--pix); color: var(--l); }
+        .flag .name { font: 12px var(--pix); color: var(--orange); }
+        .flag-lead { margin: 14px 0; font-size: 22px; color: var(--y); }
+        .flag p:not(.flag-lead) { color: var(--l); }
+        .bars { list-style: none; padding: 0; margin-top: 20px; display: grid; gap: 10px; }
+        .bars li { display: grid; grid-template-columns: 70px 1fr; gap: 12px; align-items: center; font-size: 16px; }
+        .bars b { font: 8px var(--pix); color: var(--c); font-weight: 400; }
+        .bars span { display: block; padding: 4px 8px; background: var(--k); border: 4px solid var(--m); position: relative; }
+        .bars span::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: var(--v); background: var(--bar, var(--g)); opacity: .45; }
+        .bars span em { position: relative; font-style: normal; }
+        .flag .btn { margin-top: 26px; }
+
+        .inventory { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .item { --bg: var(--nv); padding: 20px 18px 22px; transition: transform .1s steps(1); }
+        .item:hover { transform: translateY(-6px); --bd: var(--orange); }
+        .item .icon { width: 64px; height: 64px; margin-bottom: 16px; --bg: var(--k); --bd: var(--m); display: grid; place-items: center; }
+        .item .icon svg { width: 40px; height: 40px; shape-rendering: crispEdges; }
+        .item .rarity { font: 8px var(--pix); color: var(--y); }
+        .item h3 { margin: 8px 0 10px; font: 11px/1.5 var(--pix); color: var(--w); }
+        .item p { font-size: 17px; color: var(--l); }
+
+        .quests { list-style: none; padding: 0; display: grid; gap: 16px; }
+        .quest { display: grid; grid-template-columns: 40px 140px 1fr; gap: 16px; align-items: center; padding: 16px 18px; --bg: var(--nv); }
+        .quest .chk { width: 32px; height: 32px; --bg: var(--k); --bd: var(--m); display: grid; place-items: center; font: 12px var(--pix); }
+        .quest.done .chk { color: var(--lg); } .quest.done .chk::after { content: "✓"; }
+        .quest.active { --bg: var(--p); --bd: var(--orange); }
+        .quest.active .chk { --bd: var(--orange); } .quest.active .chk::after { content: "!"; color: var(--orange); animation: twinkle .6s steps(2) infinite; }
+        .quest.next { --bg: var(--d); --bd: var(--m); color: var(--l); } .quest.next .chk::after { content: "?"; color: var(--m); }
+        .quest time { font: 9px var(--pix); color: var(--y); }
+        .quest .xp { font: 8px var(--pix); color: var(--c); display: block; margin-top: 6px; }
+        .xpbar { margin-top: 24px; --bg: var(--k); padding: 10px 14px; display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; font: 9px var(--pix); }
+        .xpbar .track { height: 16px; background: var(--d); border: 4px solid var(--m); position: relative; }
+        .xpbar .track i { position: absolute; inset: 0; width: 75%; background: repeating-linear-gradient(90deg, var(--orange) 0 12px, var(--o) 12px 16px); animation: fill 2s steps(10) both; }
+        @keyframes fill { from { width: 0; } }
+
+        .event { display: grid; grid-template-columns: 150px 1fr; gap: 24px; align-items: center; padding: 22px; }
+        .event .cal { --bg: var(--r); --bd: var(--w); text-align: center; padding: 14px 8px; font-family: var(--pix); }
+        .event .cal small { display: block; font-size: 9px; color: var(--y); }
+        .event .cal b { display: block; font-size: 30px; line-height: 1.5; font-weight: 400; }
+        .event .cal span { font-size: 8px; }
+        .event h3 { font: 13px/1.6 var(--pix); color: var(--orange); }
+        .event .meta { margin-top: 8px; color: var(--c); }
+        .event .agenda { margin-top: 4px; color: var(--y); }
+        .note { margin-top: 24px; }
+        .note .speaker { position: absolute; top: -18px; left: 16px; padding: 4px 8px; font: 8px var(--pix); background: var(--orange); color: var(--k); }
+
+        .contacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .contacts > * { display: block; padding: 22px 18px; text-decoration: none; --bg: var(--nv); }
+        .contacts a:hover { --bd: var(--orange); --bg: var(--p); }
+        .contacts small { display: block; font: 8px/1.6 var(--pix); color: var(--y); margin-bottom: 10px; }
+        .contacts strong { font: 600 20px var(--body); overflow-wrap: anywhere; }
+
+        footer { border-top: 4px solid var(--w); margin-top: 32px; padding: 24px 0 110px; }
+        footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; font: 9px var(--pix); color: var(--l); }
+        footer img { height: 20px; width: auto; }
+        footer .press { color: var(--y); animation: twinkle 1s steps(2) infinite; }
+
+        @media (max-width: 980px) { .hero-grid, .flag { grid-template-columns: 1fr; } .inventory { grid-template-columns: 1fr 1fr; } .contacts { grid-template-columns: 1fr; } }
+        @media (max-width: 720px) { .hud ul { display: none; } .status { margin-left: auto; } .inventory { grid-template-columns: 1fr; } .quest { grid-template-columns: 36px 1fr; } .quest p { grid-column: 1 / -1; } .event { grid-template-columns: 1fr; } .stats { grid-template-columns: 1fr; } .event .cal { max-width: 160px; } }
+        @media (max-width: 440px) { .wrap { padding: 0 16px; } .btn { width: calc(100% - 8px); justify-content: center; } .status b { display: none; } .flag { padding: 14px; } .xpbar { grid-template-columns: 1fr; } }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } .moth { display: none; } }
+    </style>
+</head>
+<body>
+    <header class="hud">
+        <div class="wrap">
+            <a href="#top" aria-label="LTRJ Labs home"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22"></a>
+            <ul><li><a href="#flagship">Flagship</a></li><li><a href="#principles">Principles</a></li><li><a href="#timeline">Timeline</a></li><li><a href="#events">Events</a></li><li><a href="#contact">Contact</a></li></ul>
+            <a class="status px" href="https://mothnode.com" target="_blank" rel="noopener"><i></i><b>MothNode R3 in testing</b></a>
+        </div>
+    </header>
+
+    <main id="top">
+        <section class="hero sky">
+            <div class="stars" aria-hidden="true"></div>
+            <svg class="moth" viewBox="0 0 12 12" aria-hidden="true" shape-rendering="crispEdges"><g fill="#ff6600"><rect x="1" y="3" width="4" height="4"/><rect x="7" y="3" width="4" height="4"/><rect x="2" y="7" width="3" height="2"/><rect x="7" y="7" width="3" height="2"/></g><rect x="5" y="2" width="2" height="7" fill="#f4f4f4"/><rect x="4" y="1" width="1" height="1" fill="#ffcd75"/><rect x="7" y="1" width="1" height="1" fill="#ffcd75"/></svg>
+            <div class="wrap hero-grid">
+                <div>
+                    <span class="level">WORLD 1-1 · LTRJ LABS LTD. · VICTORIA, BC</span>
+                    <h1>A hard-tech startup building <span>IoT products.</span></h1>
+                    <div class="dialog px"><p class="typed" id="typed">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p></div>
+                    <div class="actions">
+                        <a class="btn px" href="https://mothnode.com" target="_blank" rel="noopener">[ Explore Flagship System: MothNode ↗ ]</a>
+                        <a class="btn px alt" href="#timeline">Read the lab notebook</a>
+                    </div>
+                    <dl class="stats">
+                        <div class="px"><dt>FOCUS</dt><dd>Off-grid telemetry</dd></div>
+                        <div class="px"><dt>STAGE</dt><dd>Rev 3 · pre-compliance</dd></div>
+                        <div class="px"><dt>BASE</dt><dd>48.4° N, 123.4° W</dd></div>
+                    </dl>
+                </div>
+                <div class="sprite px" aria-hidden="true"><span class="lbl">★ PLAYER 1 ★</span><img id="pximg" src="../img/photo/mothnode-pcba-bench.jpg" alt="" width="2000" height="1126"></div>
+            </div>
+            <div class="mtn" aria-hidden="true"></div><div class="mtn front" aria-hidden="true"></div><div class="ground" aria-hidden="true"></div>
+        </section>
+
+        <div class="wrap">
+            <section id="flagship" class="s">
+                <div class="s-head"><span class="stage px">STAGE 01</span><h2>MothNode</h2></div>
+                <article class="flag px">
+                    <figure class="px"><canvas id="pxcanvas" width="160" height="90" style="width:100%;image-rendering:pixelated;display:block" aria-hidden="true"></canvas><img src="../img/photo/mothnode-enclosure.jpg" alt="MothNode Rev 3 circuit board seated in its enclosure on the bench" loading="lazy" width="2000" height="1126" id="flagimg" style="display:none"><figcaption>MothNode R3 · bench test</figcaption></figure>
+                    <div>
+                        <span class="name">★ First deployed system</span>
+                        <p class="flag-lead">Born out of volunteer firefighting at Willis Point, BC to solve critical off-grid water supply monitoring.</p>
+                        <p>Zero-maintenance, solar-powered, multi-network telemetry (Cellular, LoRa, Bluetooth). Runs year-round in extreme Canadian weather.</p>
+                        <ul class="bars">
+                            <li><b>MCU</b><span style="--v:90%"><em>ESP32-S3</em></span></li>
+                            <li><b>CELL</b><span style="--v:80%;--bar:var(--lb)"><em>BG95 LTE-M / NB-IoT</em></span></li>
+                            <li><b>MESH</b><span style="--v:70%;--bar:var(--c)"><em>LoRa + Bluetooth</em></span></li>
+                            <li><b>POWER</b><span style="--v:100%;--bar:var(--y)"><em>Solar harvesting</em></span></li>
+                            <li><b>ARMOR</b><span style="--v:95%;--bar:var(--orange)"><em>Polycarbonate · IP66</em></span></li>
+                        </ul>
+                        <a class="btn px" href="https://mothnode.com" target="_blank" rel="noopener">Launch MothNode Platform →</a>
+                    </div>
+                </article>
+            </section>
+
+            <section id="principles" class="s">
+                <div class="s-head"><span class="stage px">STAGE 02</span><h2>Principles</h2></div>
+                <div class="inventory">
+                    <article class="item px"><div class="icon px" aria-hidden="true"><svg viewBox="0 0 10 10"><path fill="#ffcd75" d="M5 0h3v1H7v2h2v1H8v1H7v1H6v1H5v1H4v2H3V7H1V6h1V5h1V4h1V3h1z"/></svg></div><span class="rarity">★★★ LEGENDARY</span><h3>High-Velocity Iteration</h3><p>Fast-moving execution from breadboard rev 1 to custom fab and compliance testing in months, not years.</p></article>
+                    <article class="item px"><div class="icon px" aria-hidden="true"><svg viewBox="0 0 10 10"><path fill="#41a6f6" d="M3 0h4v1h2v2h1v4H9v2H7v1H3V9H1V7H0V3h1V1h2z"/><path fill="#38b764" d="M3 2h2v2h1v2H4V5H2V3h1zM6 6h2v2H6z"/></svg></div><span class="rarity">★★★ LEGENDARY</span><h3>Bespoke Feel, Global Scale</h3><p>Hardware designed with deep domain empathy that feels purpose-built for the operator, built on a robust architecture that deploys everywhere.</p></article>
+                    <article class="item px"><div class="icon px" aria-hidden="true"><svg viewBox="0 0 10 10"><path fill="#ff6600" d="M4 2h2v1h1v1h1v2H7v1H6v1H4V7H3V6H2V4h1V3h1z"/><path fill="#ffcd75" d="M4 0h2v1H4zM0 4h1v2H0zM9 4h1v2H9zM4 9h2v1H4zM1 1h1v1H1zM8 1h1v1H8zM1 8h1v1H1zM8 8h1v1H8z"/></svg></div><span class="rarity">★★★ LEGENDARY</span><h3>Resilient &amp; Local-First</h3><p>Solar-harvesting, fault-tolerant systems designed to run 24/7—even when the cloud goes dark.</p></article>
+                    <article class="item px"><div class="icon px" aria-hidden="true"><svg viewBox="0 0 10 10"><path fill="#94b0c2" d="M3 0h4v1h1v3H7V1H3v3H2V1h1z"/><path fill="#ffcd75" d="M1 4h8v6H1z"/><path fill="#1a1c2c" d="M4 6h2v2H4z"/></svg></div><span class="rarity">★★★ LEGENDARY</span><h3>Proprietary Focus</h3><p>No agency work, no billable consulting hours. 100% of our cycles go into building systems we own and believe should exist.</p></article>
+                </div>
+            </section>
+
+            <section id="timeline" class="s">
+                <div class="s-head"><span class="stage px">STAGE 03</span><h2>Quest log</h2></div>
+                <ol class="quests">
+                    <li class="quest px done"><span class="chk px"></span><time>MAY 2026</time><p>Problem identified at Willis Point Fire Dept; Rev 1 breadboard bench tests.<span class="xp">+100 XP · CLEARED</span></p></li>
+                    <li class="quest px done"><span class="chk px"></span><time>JULY 2026</time><p>Rev 2 deployed in the field on active rural water cisterns.<span class="xp">+250 XP · CLEARED</span></p></li>
+                    <li class="quest px done"><span class="chk px"></span><time>SEPT 2026</time><p>Rev 3 custom PCBA (ESP32-S3, BG95 cellular, LoRa), custom polycarbonate IP66 tooling.<span class="xp">+500 XP · CLEARED</span></p></li>
+                    <li class="quest px active"><span class="chk px"></span><time>FALL 2026</time><p>Pre-compliance and regulatory testing (ISED / FCC) at Camosun College.<span class="xp" style="color:var(--orange)">▶ ACTIVE QUEST</span></p></li>
+                    <li class="quest px next"><span class="chk px"></span><time>WINTER 2026</time><p>Commercial release &amp; volume manufacturing.<span class="xp" style="color:var(--m)">LOCKED</span></p></li>
+                </ol>
+                <div class="xpbar px"><span style="color:var(--y)">LV.3</span><div class="track"><i></i></div><span>NEXT: LV.4</span></div>
+            </section>
+
+            <section id="events" class="s">
+                <div class="s-head"><span class="stage px">STAGE 04</span><h2>Events</h2></div>
+                <article class="event dialog px">
+                    <div class="cal px"><small>DEC</small><b>18</b><span>2026</span></div>
+                    <div><h3>Camosun Capstone Symposium</h3><p class="meta">▶ Victoria, BC</p><p class="agenda">Final R3 Demo &amp; Presentation</p></div>
+                </article>
+                <div class="dialog px note"><span class="speaker">LTRJ</span><p>Heads down on bench testing in Victoria, BC. Ping us to connect or talk hardware.</p></div>
+            </section>
+
+            <section id="contact" class="s">
+                <div class="s-head"><span class="stage px">STAGE 05</span><h2>Get in touch</h2></div>
+                <div class="contacts">
+                    <a class="px" href="mailto:hello@ltrjlabs.com"><small>General / Coffee</small><strong>hello@ltrjlabs.com</strong></a>
+                    <a class="px" href="mailto:puritch@ltrjlabs.com"><small>Investors &amp; Hardware Inquiries</small><strong>puritch@ltrjlabs.com</strong></a>
+                    <div class="px"><small>Location</small><strong>Victoria, British Columbia</strong></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer><div class="wrap"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22"><span>© 2026 LTRJ LABS LTD.</span><span class="press" aria-hidden="true">PRESS START</span><a href="https://mothnode.com" target="_blank" rel="noopener">mothnode.com ↗</a></div></footer>
+
+    <script>
+        (function () {
+            // Downsample photos to chunky pixels
+            function pixelate(src, canvas) {
+                var x = canvas.getContext('2d'), im = new Image();
+                im.onload = function () { x.imageSmoothingEnabled = false; x.drawImage(im, 0, 0, canvas.width, canvas.height); };
+                im.src = src;
+            }
+            pixelate(document.getElementById('flagimg').getAttribute('src'), document.getElementById('pxcanvas'));
+            var heroImg = document.getElementById('pximg'), hc = document.createElement('canvas');
+            hc.width = 128; hc.height = 72; hc.style.cssText = 'width:100%;display:block;image-rendering:pixelated';
+            heroImg.replaceWith(hc); pixelate(heroImg.getAttribute('src'), hc);
+
+            // Typewriter dialog
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            var p = document.getElementById('typed'), full = p.textContent, i = 0;
+            p.style.minHeight = p.offsetHeight + 'px'; p.textContent = '';
+            (function step() { p.textContent = full.slice(0, i += 2); if (i < full.length) setTimeout(step, 18); })();
+        })();
+    </script>
+</body>
+</html>

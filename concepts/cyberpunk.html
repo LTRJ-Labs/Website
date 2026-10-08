@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LTRJ Labs — Cyberpunk</title>
+    <meta name="description" content="LTRJ Labs is a hard-tech startup in Victoria, BC building IoT products.">
+    <meta name="theme-color" content="#07070a">
+    <link rel="icon" href="../img/logo/Small_Logo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Chakra+Petch:wght@400;600;700&family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
+    <script src="../js/concepts.js"></script>
+    <style>
+        /* Concept S — Cyberpunk: corp-megacity HUD. Hazard yellow + safety orange on black, red alerts, cut corners, glitch. */
+        :root {
+            --black: #07070a; --panel: #0e0e13; --steel: #1b1b22; --line: #2c2c36; --ink: #e9e9ee; --ink-2: #8d8d9a;
+            --yellow: #fcee0a; --orange: #ff6600; --red: #ff003c; --cyan: #00f0ff;
+            --cut: 18px;
+            --disp: "Rajdhani", system-ui, sans-serif; --mono: "Chakra Petch", ui-monospace, monospace; --jp: "Noto Sans JP", sans-serif;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; background: var(--black); color: var(--ink); font: 400 16px/1.6 var(--mono); overflow-x: hidden; }
+        body::before { content: ""; position: fixed; inset: 0; z-index: -1; background:
+            linear-gradient(transparent 95%, rgba(252,238,10,.03) 95%) 0 0 / 100% 6px,
+            radial-gradient(700px 400px at 90% 0%, rgba(255,0,60,.16), transparent 70%),
+            radial-gradient(800px 500px at 0% 60%, rgba(255,102,0,.12), transparent 70%),
+            radial-gradient(600px 400px at 70% 100%, rgba(0,240,255,.08), transparent 70%); }
+        img { display: block; max-width: 100%; height: auto; }
+        a { color: inherit; }
+        p, h1, h2, h3, ul, ol { margin: 0; }
+        ul, ol { list-style: none; padding: 0; }
+        .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .cut { clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut))); }
+        .cut-tl { clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); }
+        .tape { height: 22px; background: repeating-linear-gradient(-45deg, var(--yellow) 0 14px, var(--black) 14px 28px); }
+        .jp { font-family: var(--jp); }
+        .lbl { font: 600 11px var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-2); }
+
+        .nav { position: sticky; top: 0; z-index: 60; background: rgba(7,7,10,.92); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+        .nav .wrap { display: flex; align-items: center; gap: 22px; height: 64px; }
+        .nav .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav .logo img { height: 24px; width: auto; }
+        .nav .logo span { font: 700 11px var(--jp); color: var(--yellow); }
+        .nav ul { display: flex; gap: 4px; margin-left: auto; }
+        .nav ul a { position: relative; display: block; padding: 8px 14px; text-decoration: none; font: 700 14px var(--disp); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
+        .nav ul a::before { content: "//"; color: var(--orange); margin-right: 6px; opacity: 0; transition: opacity .2s; }
+        .nav ul a:hover { color: var(--yellow); }
+        .nav ul a:hover::before { opacity: 1; }
+        .status { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px 8px 12px; background: var(--yellow); color: var(--black); text-decoration: none; font: 700 12px var(--disp); letter-spacing: .14em; text-transform: uppercase; --cut: 10px; }
+        .status i { width: 8px; height: 8px; background: var(--red); animation: blink .9s steps(2) infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .btn { position: relative; display: inline-flex; align-items: center; gap: 12px; padding: 17px 30px; text-decoration: none; font: 700 16px var(--disp); letter-spacing: .14em; text-transform: uppercase; background: var(--orange); color: var(--black); --cut: 14px; transition: background .15s, transform .15s; }
+        .btn:hover { background: var(--yellow); transform: translateX(3px); }
+        .btn:hover::after { content: ""; position: absolute; inset: 0; background: inherit; mix-blend-mode: difference; animation: glitch .3s steps(3) 1; }
+        @keyframes glitch { 0% { clip-path: inset(10% 0 70% 0); transform: translate(-4px); } 50% { clip-path: inset(60% 0 10% 0); transform: translate(4px); } 100% { clip-path: inset(0 0 100% 0); } }
+        .btn.outline { background: transparent; color: var(--cyan); box-shadow: inset 0 0 0 1.5px var(--cyan); clip-path: none; }
+        .btn.outline:hover { background: rgba(0,240,255,.12); }
+        a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
+
+        /* Hero */
+        .hero { position: relative; padding: 64px 0 80px; overflow: hidden; }
+        .hero .kanji { position: absolute; right: -2%; top: 10px; font: 900 clamp(120px, 22vw, 320px)/.9 var(--jp); color: transparent; -webkit-text-stroke: 1px rgba(252,238,10,.15); writing-mode: vertical-rl; pointer-events: none; user-select: none; }
+        .hero-grid { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: center; }
+        .boot { font: 600 12px var(--mono); color: var(--cyan); letter-spacing: .1em; }
+        .boot b { color: var(--yellow); font-weight: 600; }
+        h1 { margin-top: 18px; font: 700 clamp(46px, 7.4vw, 104px)/.88 var(--disp); text-transform: uppercase; letter-spacing: -.01em; }
+        h1 .hl { position: relative; display: inline-block; color: var(--black); background: var(--yellow); padding: 0 .12em; margin-top: .06em; }
+        h1 .hl::before, h1 .hl::after { content: attr(data-t); position: absolute; inset: 0; padding: 0 .12em; background: var(--yellow); }
+        h1 .hl::before { color: var(--red); clip-path: inset(0 0 66% 0); animation: g1 4s steps(1) infinite; }
+        h1 .hl::after { color: #00b5c0; clip-path: inset(70% 0 0 0); animation: g2 4s steps(1) infinite; }
+        @keyframes g1 { 0%, 92%, 100% { transform: none; opacity: 0; } 93% { transform: translate(-6px, 0); opacity: 1; } 96% { transform: translate(5px, 0); opacity: 1; } }
+        @keyframes g2 { 0%, 93%, 100% { transform: none; opacity: 0; } 94% { transform: translate(6px, 0); opacity: 1; } 97% { transform: translate(-4px, 0); opacity: 1; } }
+        .lede { margin-top: 28px; max-width: 600px; padding-left: 16px; border-left: 3px solid var(--orange); color: var(--ink); font-size: 16.5px; }
+        .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
+        .scan { position: relative; --cut: 26px; background: var(--steel); padding: 3px; }
+        .scan-in { position: relative; --cut: 24px; overflow: hidden; background: var(--black); }
+        .scan img { filter: grayscale(.4) contrast(1.2) sepia(.3) hue-rotate(-20deg) saturate(1.8); opacity: .9; }
+        .scan-in::after { content: ""; position: absolute; left: 0; right: 0; height: 30%; background: linear-gradient(180deg, transparent, rgba(252,238,10,.28), transparent); animation: sweep 3.2s linear infinite; }
+        @keyframes sweep { from { top: -30%; } to { top: 100%; } }
+        .brk { position: absolute; width: 22px; height: 22px; border: 2px solid var(--yellow); z-index: 2; }
+        .brk.tl { left: 12px; top: 12px; border-right: 0; border-bottom: 0; } .brk.br { right: 12px; bottom: 12px; border-left: 0; border-top: 0; }
+        .scan .tag { position: absolute; z-index: 2; left: 16px; bottom: 14px; padding: 4px 8px; background: var(--red); color: #fff; font: 700 11px var(--mono); letter-spacing: .14em; }
+        .scan .id { position: absolute; z-index: 2; right: 16px; top: 14px; font: 600 11px var(--mono); color: var(--yellow); text-align: right; }
+        .readouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 18px; }
+        .readouts div { background: var(--panel); padding: 12px 14px; border-top: 2px solid var(--orange); }
+        .readouts dt { font: 600 10px var(--mono); letter-spacing: .2em; color: var(--ink-2); }
+        .readouts dd { margin: 4px 0 0; font: 700 16px var(--disp); letter-spacing: .04em; text-transform: uppercase; }
+
+        section.s { padding: 90px 0; position: relative; }
+        .s-head { display: grid; grid-template-columns: auto 1fr auto; align-items: end; gap: 18px; margin-bottom: 36px; }
+        .s-head .num { font: 700 64px/.8 var(--disp); color: var(--orange); }
+        h2 { font: 700 clamp(36px, 5.2vw, 70px)/.9 var(--disp); text-transform: uppercase; }
+        .s-head .jp { font-size: 14px; color: var(--yellow); letter-spacing: .3em; }
+        .s-head::after { content: ""; grid-column: 1 / -1; height: 2px; background: linear-gradient(90deg, var(--orange) 0 120px, var(--line) 120px); }
+
+        .flag { display: grid; grid-template-columns: 1.1fr 1fr; gap: 3px; background: var(--line); --cut: 28px; }
+        .flag > * { background: var(--panel); }
+        .flag figure { margin: 0; position: relative; }
+        .flag figure img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.1) saturate(1.1); }
+        .flag figure .tag { position: absolute; left: 0; top: 18px; padding: 6px 14px; background: var(--yellow); color: var(--black); font: 700 12px var(--disp); letter-spacing: .14em; text-transform: uppercase; }
+        .flag-body { padding: 34px; display: flex; flex-direction: column; gap: 16px; }
+        .flag-lead { font: 700 26px/1.15 var(--disp); text-transform: uppercase; letter-spacing: .01em; }
+        .flag-lead span { color: var(--yellow); }
+        .flag-body > p:not(.flag-lead) { color: var(--ink-2); }
+        .specs { border: 1px solid var(--line); }
+        .specs li { display: grid; grid-template-columns: 110px 1fr auto; gap: 12px; padding: 9px 14px; border-bottom: 1px solid var(--line); font-size: 14px; align-items: center; }
+        .specs li:last-child { border-bottom: 0; }
+        .specs span { font: 600 10.5px var(--mono); letter-spacing: .18em; color: var(--orange); }
+        .specs em { font-style: normal; font-size: 10px; color: #22e07a; letter-spacing: .14em; }
+        .flag .btn { align-self: flex-start; margin-top: 6px; }
+
+        .pr { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .pr li { position: relative; padding: 26px 22px 28px; background: var(--panel); border-left: 3px solid var(--c, var(--orange)); --cut: 16px; transition: transform .2s, background .2s; }
+        .pr li:hover { transform: translateY(-4px); background: var(--steel); }
+        .pr .code { font: 600 11px var(--mono); letter-spacing: .2em; color: var(--c, var(--orange)); }
+        .pr h3 { margin: 30px 0 10px; font: 700 23px/1.05 var(--disp); text-transform: uppercase; }
+        .pr p { font-size: 14.5px; color: var(--ink-2); }
+        .pr .bar { margin-top: 18px; height: 4px; background: var(--line); }
+        .pr .bar i { display: block; height: 100%; width: var(--v); background: var(--c, var(--orange)); }
+
+        .tl { display: grid; grid-template-columns: 1.3fr .7fr; gap: 20px; }
+        .log { background: var(--panel); --cut: 22px; padding: 8px 0; }
+        .log li { display: grid; grid-template-columns: 34px 120px 1fr 90px; gap: 14px; align-items: center; padding: 16px 22px; border-bottom: 1px solid var(--line); }
+        .log li:last-child { border-bottom: 0; }
+        .log .ix { font: 700 13px var(--disp); color: var(--ink-2); }
+        .log time { font: 700 15px var(--disp); letter-spacing: .1em; text-transform: uppercase; color: var(--cyan); }
+        .log p { font-size: 14.5px; }
+        .log .st { justify-self: end; padding: 3px 10px; font: 700 11px var(--disp); letter-spacing: .14em; }
+        .log .done .st { color: #22e07a; box-shadow: inset 0 0 0 1px #22e07a; }
+        .log .active { background: linear-gradient(90deg, rgba(255,102,0,.18), transparent); border-left: 3px solid var(--orange); }
+        .log .active time { color: var(--yellow); }
+        .log .active .st { background: var(--orange); color: var(--black); animation: blink 1.2s steps(2) infinite; }
+        .log .next { color: var(--ink-2); } .log .next .st { color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); }
+        .tl-side { display: grid; gap: 20px; align-content: start; }
+        .tl-side figure { margin: 0; --cut: 22px; position: relative; }
+        .tl-side figure img { filter: grayscale(.3) contrast(1.15) sepia(.35) hue-rotate(-15deg); }
+        .tl-side figure figcaption { position: absolute; left: 0; bottom: 0; right: 0; padding: 8px 14px; background: rgba(7,7,10,.8); font: 600 11px var(--mono); letter-spacing: .14em; color: var(--yellow); }
+        .alert { padding: 18px 20px; background: var(--red); color: #fff; --cut: 14px; }
+        .alert b { display: block; font: 700 20px var(--disp); letter-spacing: .08em; text-transform: uppercase; }
+        .alert span { font-size: 13px; }
+
+        .ev { display: grid; grid-template-columns: 200px 1fr auto; gap: 0; background: var(--panel); --cut: 26px; }
+        .ev .date { background: var(--yellow); color: var(--black); padding: 24px; display: grid; align-content: center; }
+        .ev .date b { font: 700 76px/.85 var(--disp); }
+        .ev .date span { font: 700 13px var(--disp); letter-spacing: .2em; }
+        .ev .info { padding: 26px 30px; }
+        .ev h3 { font: 700 clamp(24px, 3vw, 36px)/1 var(--disp); text-transform: uppercase; }
+        .ev .ag { margin-top: 10px; color: var(--orange); font-weight: 600; }
+        .ev .where { padding: 26px 30px; align-self: center; font: 700 14px var(--disp); letter-spacing: .14em; text-transform: uppercase; color: var(--cyan); }
+        .note { margin-top: 18px; color: var(--ink-2); }
+        .note::before { content: "> "; color: var(--yellow); }
+
+        .ct { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .ct > * { position: relative; display: block; padding: 26px 24px; text-decoration: none; background: var(--panel); --cut: 18px; border-top: 3px solid var(--line); transition: border-color .2s, background .2s; }
+        .ct a:hover { border-color: var(--yellow); background: var(--steel); }
+        .ct strong { display: block; margin-top: 12px; font: 700 22px/1.15 var(--disp); letter-spacing: .02em; overflow-wrap: anywhere; }
+        .ct a:hover strong { color: var(--yellow); }
+
+        footer { margin-top: 40px; }
+        footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; padding-top: 22px; padding-bottom: 110px; font: 600 12px var(--mono); letter-spacing: .12em; color: var(--ink-2); }
+        footer img { height: 22px; width: auto; }
+
+        .boot-in { opacity: 0; transform: translateX(-16px); transition: opacity .5s steps(4), transform .5s steps(4); }
+        .boot-in.in { opacity: 1; transform: none; }
+
+        @media (max-width: 1000px) { .hero-grid, .flag, .tl { grid-template-columns: 1fr; } .pr { grid-template-columns: 1fr 1fr; } .ct { grid-template-columns: 1fr; } .ev { grid-template-columns: 160px 1fr; } .ev .where { grid-column: 2; padding-top: 0; } .scan { max-width: 520px; } }
+        @media (max-width: 720px) { .nav ul { display: none; } .status { margin-left: auto; } .pr { grid-template-columns: 1fr; } .log li { grid-template-columns: 1fr auto; gap: 4px 12px; } .log .ix { display: none; } .log p { grid-column: 1 / -1; } .log .st { grid-column: 2; grid-row: 1; } .readouts { grid-template-columns: 1fr; } .ev { grid-template-columns: 1fr; } .ev .where { grid-column: 1; } .s-head { grid-template-columns: auto 1fr; } .s-head .jp { display: none; } .nav .logo span { display: none; } }
+        @media (max-width: 440px) { .wrap { padding: 0 16px; } .btn { width: 100%; justify-content: center; } .status b { display: none; } .flag-body { padding: 22px; } .specs li { grid-template-columns: 1fr auto; } .specs span { grid-column: 1 / -1; } }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } .boot-in { opacity: 1; transform: none; } }
+    </style>
+</head>
+<body>
+    <header class="nav">
+        <div class="wrap">
+            <a class="logo" href="#top" aria-label="LTRJ Labs home"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="66" height="24"><span aria-hidden="true">研究所</span></a>
+            <ul><li><a href="#flagship">Flagship</a></li><li><a href="#principles">Principles</a></li><li><a href="#timeline">Timeline</a></li><li><a href="#events">Events</a></li><li><a href="#contact">Contact</a></li></ul>
+            <a class="status cut" href="https://mothnode.com" target="_blank" rel="noopener"><i></i><b>MothNode R3 in testing</b></a>
+        </div>
+    </header>
+    <div class="tape" aria-hidden="true"></div>
+
+    <main id="top">
+        <section class="hero">
+            <span class="kanji" aria-hidden="true">常時接続</span>
+            <div class="wrap hero-grid">
+                <div>
+                    <p class="boot">&gt; LTRJ_LABS::R&amp;D_LAB <b>// VICTORIA, BC</b> // SYS.ONLINE</p>
+                    <h1>A hard-tech startup building <span class="hl" data-t="IoT products.">IoT products.</span></h1>
+                    <p class="lede">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p>
+                    <div class="actions">
+                        <a class="btn cut" href="https://mothnode.com" target="_blank" rel="noopener">[ Explore Flagship System: MothNode ↗ ]</a>
+                        <a class="btn outline" href="#timeline">Read the lab notebook</a>
+                    </div>
+                </div>
+                <div>
+                    <div class="scan cut"><div class="scan-in cut"><span class="brk tl"></span><span class="brk br"></span><img src="../img/photo/mothnode-pcba-bench.jpg" alt="Bare MothNode Rev 3 board on a bench mat" width="2000" height="1126"><span class="tag">TARGET: MOTHNODE R3</span><span class="id">ID 0x4D4F5448<br>SIG ▮▮▮▮▯</span></div></div>
+                    <dl class="readouts"><div><dt>FOCUS</dt><dd>Off-grid telemetry</dd></div><div><dt>STAGE</dt><dd>Rev 3 · pre-compliance</dd></div><div><dt>BASE</dt><dd>48.4° N, 123.4° W</dd></div></dl>
+                </div>
+            </div>
+        </section>
+
+        <section id="flagship" class="s">
+            <div class="wrap">
+                <div class="s-head boot-in"><span class="num">01</span><h2>MothNode</h2><span class="jp" aria-hidden="true">主力システム</span></div>
+                <article class="flag cut boot-in">
+                    <figure><img src="../img/photo/mothnode-enclosure.jpg" alt="MothNode Rev 3 circuit board seated in its enclosure on the bench" loading="lazy" width="2000" height="1126"><span class="tag">First deployed system</span></figure>
+                    <div class="flag-body">
+                        <p class="flag-lead">Born out of volunteer firefighting at <span>Willis Point, BC</span> to solve critical off-grid water supply monitoring.</p>
+                        <p>Zero-maintenance, solar-powered, multi-network telemetry (Cellular, LoRa, Bluetooth). Runs year-round in extreme Canadian weather.</p>
+                        <ul class="specs"><li><span>MCU</span>ESP32-S3<em>OK</em></li><li><span>CELLULAR</span>BG95 LTE-M / NB-IoT<em>OK</em></li><li><span>MESH</span>LoRa + Bluetooth<em>OK</em></li><li><span>POWER</span>Solar harvesting<em>OK</em></li><li><span>HOUSING</span>Polycarbonate · IP66<em>OK</em></li></ul>
+                        <a class="btn cut" href="https://mothnode.com" target="_blank" rel="noopener">Launch MothNode Platform →</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <div class="tape" aria-hidden="true"></div>
+        <section id="principles" class="s">
+            <div class="wrap">
+                <div class="s-head boot-in"><span class="num">02</span><h2>How we build</h2><span class="jp" aria-hidden="true">原則</span></div>
+                <ol class="pr">
+                    <li class="cut boot-in" style="--c:var(--orange);--v:96%"><span class="code">PROTOCOL_01</span><h3>High-Velocity Iteration</h3><p>Fast-moving execution from breadboard rev 1 to custom fab and compliance testing in months, not years.</p><div class="bar"><i></i></div></li>
+                    <li class="cut boot-in" style="--c:var(--yellow);--v:88%"><span class="code">PROTOCOL_02</span><h3>Bespoke Feel, Global Scale</h3><p>Hardware designed with deep domain empathy that feels purpose-built for the operator, built on a robust architecture that deploys everywhere.</p><div class="bar"><i></i></div></li>
+                    <li class="cut boot-in" style="--c:var(--cyan);--v:100%"><span class="code">PROTOCOL_03</span><h3>Resilient &amp; Local-First</h3><p>Solar-harvesting, fault-tolerant systems designed to run 24/7—even when the cloud goes dark.</p><div class="bar"><i></i></div></li>
+                    <li class="cut boot-in" style="--c:var(--red);--v:100%"><span class="code">PROTOCOL_04</span><h3>Proprietary Focus</h3><p>No agency work, no billable consulting hours. 100% of our cycles go into building systems we own and believe should exist.</p><div class="bar"><i></i></div></li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="timeline" class="s">
+            <div class="wrap">
+                <div class="s-head boot-in"><span class="num">03</span><h2>The lab notebook</h2><span class="jp" aria-hidden="true">記録</span></div>
+                <div class="tl">
+                    <ol class="log cut boot-in">
+                        <li class="done"><span class="ix">01</span><time>May 2026</time><p>Problem identified at Willis Point Fire Dept; Rev 1 breadboard bench tests.</p><span class="st">DONE</span></li>
+                        <li class="done"><span class="ix">02</span><time>July 2026</time><p>Rev 2 deployed in the field on active rural water cisterns.</p><span class="st">DONE</span></li>
+                        <li class="done"><span class="ix">03</span><time>Sept 2026</time><p>Rev 3 custom PCBA (ESP32-S3, BG95 cellular, LoRa), custom polycarbonate IP66 tooling.</p><span class="st">DONE</span></li>
+                        <li class="active"><span class="ix">04</span><time>Fall 2026</time><p>Pre-compliance and regulatory testing (ISED / FCC) at Camosun College.</p><span class="st">ACTIVE</span></li>
+                        <li class="next"><span class="ix">05</span><time>Winter 2026</time><p>Commercial release &amp; volume manufacturing.</p><span class="st">QUEUED</span></li>
+                    </ol>
+                    <div class="tl-side">
+                        <figure class="cut boot-in"><img src="../img/photo/bench-wide.jpg" alt="The LTRJ Labs bench in Victoria, BC" loading="lazy" width="2000" height="1345"><figcaption>CAM_02 // BENCH // VICTORIA</figcaption></figure>
+                        <div class="alert cut boot-in"><b>⚠ Now testing</b><span>ISED / FCC pre-compliance · Camosun College</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="events" class="s">
+            <div class="wrap">
+                <div class="s-head boot-in"><span class="num">04</span><h2>Events</h2><span class="jp" aria-hidden="true">出現</span></div>
+                <article class="ev cut boot-in">
+                    <div class="date"><span>DEC</span><b>18</b><span>2026</span></div>
+                    <div class="info"><h3>Camosun Capstone Symposium</h3><p class="ag">Final R3 Demo &amp; Presentation</p></div>
+                    <span class="where">◢ Victoria, BC</span>
+                </article>
+                <p class="note boot-in">Heads down on bench testing in Victoria, BC. Ping us to connect or talk hardware.</p>
+            </div>
+        </section>
+
+        <section id="contact" class="s">
+            <div class="wrap">
+                <div class="s-head boot-in"><span class="num">05</span><h2>Direct signal</h2><span class="jp" aria-hidden="true">連絡</span></div>
+                <div class="ct">
+                    <a class="cut boot-in" href="mailto:hello@ltrjlabs.com"><span class="lbl">General / Coffee</span><strong>hello@ltrjlabs.com</strong></a>
+                    <a class="cut boot-in" href="mailto:puritch@ltrjlabs.com"><span class="lbl">Investors &amp; Hardware Inquiries</span><strong>puritch@ltrjlabs.com</strong></a>
+                    <div class="cut boot-in"><span class="lbl">Location</span><strong>Victoria, British Columbia</strong></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="tape" aria-hidden="true"></div>
+    <footer><div class="wrap"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22"><span>© 2026 LTRJ LABS LTD.</span><a href="https://mothnode.com" target="_blank" rel="noopener">mothnode.com ↗</a></div></footer>
+
+    <script>
+        (function () {
+            var els = document.querySelectorAll('.boot-in');
+            if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+            var io = new IntersectionObserver(function (en) { en.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -8% 0px' });
+            els.forEach(function (e, i) { e.style.transitionDelay = (i % 4) * 80 + 'ms'; io.observe(e); });
+        })();
+    </script>
+</body>
+</html>
