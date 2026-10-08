@@ -14,12 +14,12 @@
     <style>
         /* Concept L — Neumorphism: one material, extruded and pressed. Light/dark via the physical switch. */
         :root {
-            --bg: #e4e8ee; --hi: #ffffff; --lo: #b8bec9; --ink: #2d3340; --ink-2: #6b7385; --ink-3: #9aa1b1;
+            --bg: #e4e8ee; --hi: #ffffff; --lo: #b8bec9; --ink: #2d3340; --ink-2: #5d6578; --ink-3: #788094;
             --orange: #ff6600; --orange-2: #ff7a1a; --glow: rgba(255,102,0,.35);
             --d: 9px; --blur: 18px;
             --sans: "Manrope", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
         }
-        :root.dark { --bg: #1e2026; --hi: #2a2d35; --lo: #121317; --ink: #eceef3; --ink-2: #a3a9b8; --ink-3: #6e7486; --glow: rgba(255,102,0,.5); }
+        :root.dark { --bg: #1e2026; --hi: #2a2d35; --lo: #121317; --ink: #eceef3; --ink-2: #a9afbe; --ink-3: #828899; --glow: rgba(255,102,0,.5); }
         *, *::before, *::after { box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body { margin: 0; background: var(--bg); color: var(--ink); font: 500 16.5px/1.6 var(--sans); overflow-x: hidden; transition: background .5s, color .5s; }
@@ -105,16 +105,18 @@
         .principle p { font-size: 15px; color: var(--ink-2); }
 
         .tl { display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px; align-items: start; }
-        .track { padding: 26px; --r: 30px; list-style: none; margin: 0; }
+        .track { padding: 26px; --r: 30px; }
         .track li { display: grid; grid-template-columns: 46px 1fr; gap: 16px; padding: 14px 0; }
         .track .k { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font: 500 13px var(--mono); }
-        .track .done .k { color: var(--orange); box-shadow: inset 4px 4px 8px var(--lo), inset -4px -4px 8px var(--hi); }
+        .track .done .k { color: var(--orange); font-weight: 700; box-shadow: inset 4px 4px 8px var(--lo), inset -4px -4px 8px var(--hi); }
         .track .active .k { background: var(--orange); color: #fff; box-shadow: 5px 5px 10px var(--lo), -5px -5px 10px var(--hi), 0 0 18px var(--glow); }
         .track .next .k { color: var(--ink-3); box-shadow: 4px 4px 8px var(--lo), -4px -4px 8px var(--hi); }
         .track time { font: 500 11.5px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
         .track p { font-weight: 600; }
         .track .next p { color: var(--ink-3); }
-        .progress { margin: 6px 0 4px; height: 14px; padding: 3px; --r: 999px; }
+        .prog-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; font: 500 11.5px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+        .prog-head b { font-weight: 500; color: var(--orange); }
+        .progress { margin: 0 0 14px; height: 14px; padding: 3px; --r: 999px; }
         .progress i { display: block; height: 100%; width: 75%; border-radius: 999px; background: linear-gradient(90deg, var(--orange-2), var(--orange)); box-shadow: 0 0 10px var(--glow); }
         .tl figure { margin: 0; padding: 14px; --r: 30px; position: sticky; top: 110px; }
         .tl figure img { border-radius: 20px; }
@@ -212,9 +214,10 @@
         <section id="timeline" class="s">
             <div class="s-head"><span class="n out sm">03</span><div><small>The lab notebook</small><h2>Milestones</h2></div></div>
             <div class="tl">
-                <div>
-                    <div class="progress in sm" role="img" aria-label="Roughly 75% of the roadmap complete"><i></i></div>
-                    <ol class="track out" style="margin-top:26px">
+                <div class="track out">
+                    <div class="prog-head"><span>Roadmap</span><b>Stage 4 of 5</b></div>
+                    <div class="progress in sm" role="img" aria-label="Stage 4 of 5 on the roadmap"><i></i></div>
+                    <ol style="list-style:none;margin:0;padding:0">
                         <li class="done"><span class="k">✓</span><div><time>May 2026</time><p>Problem identified at Willis Point Fire Dept; Rev 1 breadboard bench tests.</p></div></li>
                         <li class="done"><span class="k">✓</span><div><time>July 2026</time><p>Rev 2 deployed in the field on active rural water cisterns.</p></div></li>
                         <li class="done"><span class="k">✓</span><div><time>Sept 2026</time><p>Rev 3 custom PCBA (ESP32-S3, BG95 cellular, LoRa), custom polycarbonate IP66 tooling.</p></div></li>

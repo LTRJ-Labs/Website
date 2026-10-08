@@ -4,24 +4,11 @@
     var root = location.pathname.indexOf('/concepts/') > -1 ? '../' : '';
     var concepts = [
         ['A', 'Ethereal', 'index.html'],
-        ['B', 'Notebook', 'concepts/notebook.html'],
-        ['C', 'Console', 'concepts/console.html'],
-        ['D', 'Monolith', 'concepts/monolith.html'],
-        ['E', 'Claymorphism', 'concepts/claymorphism.html'],
-        ['F', 'Cybercore', 'concepts/cybercore.html'],
-        ['G', 'Neobrutalism', 'concepts/neobrutalism.html'],
-        ['H', 'Surrealism', 'concepts/surrealism.html'],
-        ['I', 'Pixel Art', 'concepts/pixel.html'],
-        ['J', 'Synthwave', 'concepts/synthwave.html'],
-        ['K', 'Glassmorphism', 'concepts/glassmorphism.html'],
-        ['L', 'Neumorphism', 'concepts/neumorphism.html'],
-        ['M', 'Bento Grid', 'concepts/bento.html'],
-        ['N', 'Swiss', 'concepts/swiss.html'],
-        ['O', 'Minimalism', 'concepts/minimal.html'],
-        ['P', 'Luxury Type', 'concepts/luxury.html'],
-        ['Q', 'Concept Sketch', 'concepts/sketch.html'],
-        ['R', 'Bohemian', 'concepts/bohemian.html'],
-        ['S', 'Cyberpunk', 'concepts/cyberpunk.html']
+        ['B', 'Monolith', 'concepts/monolith.html'],
+        ['C', 'Neumorphism', 'concepts/neumorphism.html'],
+        ['D', 'Bento Grid', 'concepts/bento.html'],
+        ['E', 'Swiss', 'concepts/swiss.html'],
+        ['F', 'Minimalism', 'concepts/minimal.html']
     ];
     var here = location.pathname.split('/').pop() || 'index.html';
     var idx = 0;

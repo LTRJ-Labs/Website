@@ -52,7 +52,7 @@
         .poster .meta dd { font-weight: 700; font-size: 15px; }
         .poster h1 { grid-column: 4 / 13; font: 900 clamp(52px, 9.6vw, 168px)/.86 var(--sans); letter-spacing: -.055em; }
         .poster h1 .o { color: var(--orange); }
-        .poster .circle { position: absolute; right: -8vw; top: 80px; width: 38vw; aspect-ratio: 1; border-radius: 50%; background: var(--orange); mix-blend-mode: multiply; z-index: -0; opacity: .95; }
+        .poster .circle { position: absolute; left: -9vw; top: 420px; width: 30vw; max-width: 460px; aspect-ratio: 1; border-radius: 50%; background: var(--orange); z-index: 0; }
         .poster h1, .poster .meta { position: relative; z-index: 1; }
         .poster .lede { grid-column: 4 / 10; margin-top: 48px; font-size: 22px; line-height: 1.35; font-weight: 500; }
         .poster .ctas { grid-column: 4 / 13; display: flex; gap: 0; margin-top: 40px; border-top: 2px solid var(--rule); }
@@ -61,7 +61,7 @@
         .cta.primary { background: var(--orange); color: var(--ink); padding-inline: 16px; }
         .cta.primary:hover { background: var(--ink); color: var(--orange); }
         .cta + .cta { border-left: 2px solid var(--rule); padding-left: 16px; }
-        .poster .photo { grid-column: 1 / 13; margin-top: 64px; position: relative; }
+        .poster .photo { grid-column: 1 / 13; margin-top: 64px; position: relative; z-index: 1; }
         .poster .photo img { width: 100%; aspect-ratio: 21 / 8; object-fit: cover; filter: grayscale(1) contrast(1.15); }
         .poster .photo::after { content: ""; position: absolute; inset: 0; background: var(--orange); mix-blend-mode: multiply; opacity: .0; transition: opacity .4s; }
         .poster .photo:hover::after { opacity: .7; }
@@ -123,6 +123,7 @@
         footer .g { align-items: end; row-gap: 20px; }
         footer .big { grid-column: 1 / 9; font: 900 clamp(40px, 10vw, 160px)/.8 var(--sans); letter-spacing: -.06em; color: var(--orange); }
         footer .info { grid-column: 10 / 13; display: grid; gap: 6px; }
+        @media (hover: none) { .gridhint { display: none; } }
         footer img { height: 20px; width: auto; margin-bottom: 10px; }
 
         @media (max-width: 1000px) {
@@ -139,7 +140,7 @@
             .pr, .ct { grid-template-columns: 1fr; row-gap: 24px; } .spec { grid-template-columns: 1fr 1fr; }
             .tl li { grid-template-columns: 1fr auto; } .tl time { grid-column: 1; } .tl .st { grid-column: 2; grid-row: 1; } .tl p { grid-column: 1 / -1; margin-top: 4px; }
             .ev { grid-template-columns: 1fr; row-gap: 10px; } .ev > * { grid-column: 1 !important; }
-            .poster .circle { width: 70vw; right: -30vw; top: 40px; } .poster .lede { font-size: 19px; } .top .status b { font-size: 12px; }
+            .poster .circle { display: none; } .poster .lede { font-size: 19px; } .top .status b { font-size: 12px; }
         }
         @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
     </style>
@@ -243,7 +244,7 @@
     <footer>
         <div class="g">
             <p class="big">LTRJ</p>
-            <div class="info small"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22"><span>© 2026 LTRJ Labs Ltd.</span><a href="https://mothnode.com" target="_blank" rel="noopener">mothnode.com ↗</a><span style="opacity:.5">Press G to toggle the grid.</span></div>
+            <div class="info small"><img src="../img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22"><span>© 2026 LTRJ Labs Ltd.</span><a href="https://mothnode.com" target="_blank" rel="noopener">mothnode.com ↗</a><span class="gridhint" style="opacity:.5">Press G to toggle the grid.</span></div>
         </div>
     </footer>
 

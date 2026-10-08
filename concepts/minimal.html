@@ -13,8 +13,8 @@
     <script src="../js/concepts.js"></script>
     <style>
         /* Concept O — Minimalism: one column, one weight, one colour used once per screen. Silence is the layout. */
-        :root { --bg: #fbfbfa; --ink: #141414; --ink-2: #6f6f6f; --ink-3: #a9a9a9; --line: #e8e8e6; --orange: #ff6600; --sans: "Inter", system-ui, sans-serif; }
-        @media (prefers-color-scheme: dark) { :root { --bg: #0b0b0c; --ink: #ededed; --ink-2: #9a9a9a; --ink-3: #5c5c5c; --line: #1f1f21; } }
+        :root { --bg: #fbfbfa; --ink: #141414; --ink-2: #626262; --ink-3: #8a8a8a; --line: #e8e8e6; --orange: #ff6600; --sans: "Inter", system-ui, sans-serif; }
+        @media (prefers-color-scheme: dark) { :root { --bg: #0b0b0c; --ink: #ededed; --ink-2: #a0a0a0; --ink-3: #7a7a7a; --line: #1f1f21; } }
         *, *::before, *::after { box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body { margin: 0; background: var(--bg); color: var(--ink); font: 300 17px/1.7 var(--sans); -webkit-font-smoothing: antialiased; }
@@ -46,6 +46,10 @@
         .cta .lbl::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: currentColor; transform: scaleX(.0); transform-origin: left; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
         .cta:hover .lbl::after { transform: scaleX(1); }
         .cta:hover .dot { transform: scale(1.6); }
+        .actions { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px 40px; margin-top: 48px; }
+        .actions .cta { margin-top: 0; }
+        .quiet { font-size: 15px; color: var(--ink-2); transition: color .3s; }
+        .quiet:hover { color: var(--ink); }
         .scroll { margin-top: 96px; width: 1px; height: 56px; background: linear-gradient(var(--ink-3), transparent); animation: drop 2.4s ease-in-out infinite; transform-origin: top; }
         @keyframes drop { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
 
@@ -114,7 +118,10 @@
                 <p class="k">LTRJ Labs — Victoria, BC</p>
                 <h1 style="margin-top:28px">A hard-tech startup building <span>IoT products.</span></h1>
                 <p class="lede">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p>
-                <a class="cta" href="https://mothnode.com" target="_blank" rel="noopener"><span class="dot"></span><span class="lbl">Explore Flagship System: MothNode</span> ↗</a>
+                <div class="actions">
+                    <a class="cta" href="https://mothnode.com" target="_blank" rel="noopener"><span class="dot"></span><span class="lbl">Explore Flagship System: MothNode</span> ↗</a>
+                    <a class="quiet" href="#timeline">Read the lab notebook ↓</a>
+                </div>
                 <div class="scroll" aria-hidden="true"></div>
             </div>
         </section>
