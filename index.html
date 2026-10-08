@@ -1,483 +1,203 @@
-<!-- AGENT-INFO
-=========================================================
-LTRJ LABS WEBSITE ARCHITECTURE
-- Architecture: This site uses a flat HTML structure with modular subpages (/services, /portfolio, /team, /contact).
-- Styling: Built on Bootstrap 3.3. Core overrides are in css/agency.css and css/modern-layout.css.
-- JS: Uses jQuery and vanilla JS. Custom logic (dark mode, navbar shrinking, smooth transitions) is in js/theme.js and js/agency.js.
-=========================================================
--->
-<!DOCTYPE html>
-<html lang="en" style="background-color: #222;">
-
+<!doctype html>
+<html lang="en">
 <head>
-    <meta name="color-scheme" content="dark">
-    <meta name="theme-color" content="#222222">
-    <style>html, body { background-color: #222 !important; color: #fff !important; }</style>
-
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="LTRJ Labs specializes in cost-effective electronics engineering services, custom PCB design, schematic capture, and rapid hardware prototyping in Victoria, BC.">
-    <meta name="author" content="LTRJ Labs">
-    <meta name="keywords" content="electronics design, PCB layout, prototyping, firmware, STM32, hardware engineering, Victoria BC">
-
-    <title>LTRJ Labs - Cost-Effective Electronics Design & Prototyping</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="img/SVGLogos/Small_Logo.svg">
-    <link rel="icon" type="image/png" href="img/HiResLogos/Small_Logo.png">
-
-    <!-- Social Media Preview -->
-    <meta property="og:image" content="img/HiResLogos/Full_Logo.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <title>LTRJ Labs — Hard-tech IoT, Victoria BC</title>
+    <meta name="description" content="LTRJ Labs is a hard-tech startup in Victoria, BC building IoT products. Flagship system: MothNode.">
+    <meta name="theme-color" content="#08080a">
     <meta property="og:title" content="LTRJ Labs">
-    <meta property="og:url" content="https://ltrjlabs.com">
-
-    <!-- Modern CSS Layout -->
-    <link href="css/modern-layout.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link href="css/agency.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-    <!-- Custom style for Portfolio Image Fallbacks & Captions -->
-    <style>
-                /* --- Navigation Cards (Industrial Precision) --- */
-        .nav-card {
-            display: block;
-            text-decoration: none;
-            background-color: #111;
-            border: 1px solid #333;
-            border-radius: 2px;
-            padding: 35px 30px;
-            min-height: 260px;
-            position: relative;
-            overflow: hidden;
-            transition: opacity 0.6s ease, transform 0.6s ease, background-color 0.3s ease, border-color 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .nav-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 1px;
-            background: #444;
-            transition: background 0.3s ease;
-        }
-        .nav-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .nav-card:hover {
-            border-color: #000;
-            background-color: #181818;
-            text-decoration: none;
-        }
-        /* No orange top bar on hover, keep it subtle */
-        .nav-card:hover::before {
-            background: #555;
-        }
-        .nav-card:hover .nav-card-link {
-            color: #FF6600;
-        }
-        .nav-card:hover .nav-card-link .fa-arrow-right {
-            transform: translateX(4px);
-        }
-        .nav-card-icon {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-        .nav-card-icon .fa {
-            font-size: 24px;
-            color: #aaa;
-            transition: color 0.3s ease;
-        }
-        .nav-card:hover .nav-card-icon .fa {
-            color: #ccc;
-        }
-        .nav-card-title {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 18px;
-            color: #fff;
-            margin: 0 0 12px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .nav-card-desc {
-            font-size: 14px;
-            color: #888;
-            line-height: 1.7;
-            margin-bottom: 20px;
-        }
-        .nav-card-link {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: color 0.3s ease;
-        }
-        .nav-card-link .fa-arrow-right {
-            margin-left: 6px;
-            transition: transform 0.3s ease;
-        }
-
-        /* Contact Card - Industrial Precision */
-        .nav-card-contact {
-            padding: 20px 45px;
-            background: #111;
-            border: 1px solid #FF6600;
-            border-radius: 2px;
-            color: #FF6600;
-            text-align: center;
-            display: inline-flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: background 0.3s ease, color 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            gap: 15px;
-        }
-        .nav-card-contact:hover {
-            background: #FF6600;
-            color: #fff;
-            text-decoration: none;
-        }
-        .nav-card-contact i {
-            font-size: 20px;
-        }
-        .nav-card-contact-title {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-card {
-                min-height: auto;
-            }
-        }
-    </style>
-
-    <!-- Smooth Page Transition Script -->
-    <style>
-        body { opacity: 0; transition: opacity 0.1s ease-in-out; }
-    </style>
-    <script>
-        let fadedIn = false;
-        function fadeIn() {
-            if (!fadedIn) {
-                document.body.style.opacity = "1";
-                fadedIn = true;
-            }
-        }
-        
-        // Fade in immediately as soon as the DOM starts rendering to keep it feeling ultra-fast
-        document.addEventListener("DOMContentLoaded", fadeIn);
-        setTimeout(fadeIn, 50); // Instant fallback
-
-        // Intercept link clicks to fade out BEFORE navigating
-        document.addEventListener("click", function(e) {
-            let target = e.target.closest('a');
-            if (!target) return;
-            
-            let href = target.getAttribute('href');
-            if (!href) return;
-            
-            let isInternal = target.host === window.location.host;
-            let isSamePage = target.pathname === window.location.pathname || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:');
-            let isBlank = target.target === "_blank";
-            
-            if (isInternal && !isSamePage && !isBlank) {
-                e.preventDefault(); // Stop instant navigation
-                document.body.style.opacity = "0"; // Trigger fade out
-                setTimeout(function() {
-                    window.location.href = target.href; // Navigate after fade completes
-                }, 100);
-            }
-        });
-        
-        // Handle back/forward cache restore
-        window.addEventListener("pageshow", function(e) {
-            fadedIn = false;
-            fadeIn();
-        });
-    </script>
-
-    <!-- Google Analytics Integration -->
-    <script src="js/analytics.js"></script>
+    <meta property="og:description" content="A hard-tech startup building IoT products.">
+    <meta property="og:image" content="https://www.ltrjlabs.com/img/photo/mothnode-enclosure.jpg">
+    <link rel="icon" href="img/logo/Small_Logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="img/logo/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>document.documentElement.classList.add('js')</script>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/analytics.js" defer></script>
+    <script src="js/concepts.js"></script>
 </head>
+<body>
+    <div class="ambient" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span><span class="glow g3"></span></div>
 
-<body id="page-top" class="index" style="background-color: #222;">
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header page-scroll">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand page-scroll" href="#page-top"><img src="img/SVGLogos/Full_Logo.svg" alt="LTRJ Labs Ltd Logo"></a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="hidden">
-                        <a href="#page-top"></a>
-                    </li>
-                    <li>
-                        <a href="services/">Services</a>
-                    </li>
-                    <li>
-                        <a href="portfolio/">Portfolio</a>
-                    </li>
-                    <li>
-                        <a href="team/">Team</a>
-                    </li>
-                    <li>
-                        <a href="contact/">Contact</a>
-                    </li>
-                    
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container-fluid -->
-    </nav>
-
-    <!-- Header -->
-    <header>
-        <video id="header-bg-video" autoplay loop muted playsinline>
-            <source src="img/BannerVideo-2026-07-07.mp4" type="video/mp4">
-        </video>
-        <div class="container-fluid">
-            <div class="intro-text">
-                <div class="intro-heading">LTRJ LABS Ltd</div>
-                <div class="intro-lead-in">Cost-Effective Electronics Design</div>
-                <!-- <a href="#services" class="page-scroll btn btn-xl">Tell Me More</a> -->
-            </div>
-        </div>
+    <header class="nav-wrap">
+        <nav class="nav">
+            <a href="#top" class="nav-logo" aria-label="LTRJ Labs home"><img src="img/logo/Full_Logo.svg" alt="LTRJ Labs" width="76" height="28"></a>
+            <ul class="nav-links">
+                <li><a href="#flagship">Flagship</a></li>
+                <li><a href="#principles">Principles</a></li>
+                <li><a href="#timeline">Timeline</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a class="status-pill" href="https://mothnode.com" data-track="nav_status" target="_blank" rel="noopener"><span class="dot"></span><span class="status-text">MothNode R3 in testing</span></a>
+        </nav>
     </header>
 
-    <!-- Client Experiences — quotes only, no title/subtitle -->
-    <section id="testimonials" style="padding: 60px 0;">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-10 col-md-offset-1">
-                    <div class="testimonial-carousel">
-                        <!-- Slide 1: Landon Brown (Pink Pigeon) -->
-                        <div class="testimonial-slide active">
-                            <div class="testimonial-quote">"The engineering was genuinely impressive. They caught things we'd missed and independently designed a clean solution for switching our new 5V I²C sensor rail on and off, despite our main board had already been manufactured without this in mind. If you want a custom PCB done right by people who care about the details and communicate well, talk to LTRJ."</div>
-                            <div class="testimonial-author" style="margin-top: 25px;">Landon Brown</div>
-                            <div class="testimonial-company">CTO @ Pink Pigeon / Founder @ Coding Fox Corp.</div>
-                            <div class="testimonial-project-link">Project: <a href="portfolio/aquasentry/">Aqua Sentry Breakout Board</a></div>
-                        </div>
-
-                    </div>
-
-                </div>
+    <main id="top">
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-visual" aria-hidden="true"><img src="img/photo/bench-wide.jpg" alt="" width="2000" height="1345"></div>
+            <p class="eyebrow mono reveal">LTRJ Labs Ltd. <span class="sep">/</span> R&amp;D lab <span class="sep">/</span> Victoria, BC</p>
+            <h1 class="reveal">A hard-tech startup building <span class="lit">IoT products.</span></h1>
+            <p class="lede reveal">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p>
+            <div class="hero-actions reveal">
+                <a class="btn btn-primary" href="https://mothnode.com" data-track="hero_mothnode" target="_blank" rel="noopener">Explore Flagship System: MothNode <span aria-hidden="true">↗</span></a>
+                <a class="btn btn-ghost" href="#timeline">Read the lab notebook</a>
             </div>
-        </div>
-    </section>
+            <dl class="hero-meta mono reveal">
+                <div><dt>Focus</dt><dd>Off-grid telemetry</dd></div>
+                <div><dt>Stage</dt><dd>Rev 3 · pre-compliance</dd></div>
+                <div><dt>Base</dt><dd>48.4° N, 123.4° W</dd></div>
+            </dl>
+        </section>
 
-    <!-- Navigation Cards — scroll-reveal "appear as you scroll" -->
-    <section id="nav-cards" style="padding: 80px 0;">
-        <div class="container">
-            <div class="row" style="display: flex; flex-wrap: wrap;">
-                <!-- Services Card -->
-                <div class="col-md-4 col-sm-6" style="margin-bottom: 30px;">
-                    <a href="services/" class="nav-card" id="nav-card-services">
-                        <h3 class="nav-card-title">What We Provide</h3>
-                        <p class="nav-card-desc" style="flex-grow: 1;">See what LTRJ Labs can do for you and your team, from first prototypes to full production runs.</p>
-                        <span class="nav-card-link" style="margin-top: auto;">View Services <i class="fa fa-arrow-right"></i></span>
-                    </a>
-                </div>
-                <!-- Portfolio Card -->
-                <div class="col-md-4 col-sm-6" style="margin-bottom: 30px;">
-                    <a href="portfolio/" class="nav-card" id="nav-card-portfolio">
-                        <h3 class="nav-card-title">Our Work</h3>
-                        <p class="nav-card-desc" style="flex-grow: 1;">See real-world results we've delivered, and discover our capabilities.</p>
-                        <span class="nav-card-link" style="margin-top: auto;">View Portfolio <i class="fa fa-arrow-right"></i></span>
-                    </a>
-                </div>
-                <!-- Team/About Card -->
-                <div class="col-md-4 col-sm-12" style="margin-bottom: 30px;">
-                    <a href="team/" class="nav-card" id="nav-card-about">
-                        <h3 class="nav-card-title">Who We Are</h3>
-                        <p class="nav-card-desc" style="flex-grow: 1;">Meet the team behind LTRJ Labs: four fast-moving electronics designers, teaming up to turn ideas into reality in Victoria, BC.</p>
-                        <span class="nav-card-link" style="margin-top: auto;">Meet the Team <i class="fa fa-arrow-right"></i></span>
-                    </a>
-                </div>
-            </div>
-            <!-- Contact Card — full width, distinct solid button -->
-            <div class="row" style="margin-top: 30px;">
-                <div class="col-md-12" style="display: flex; justify-content: center;">
-                    <a href="contact/" class="nav-card-contact" id="nav-card-contact">
-                        <div class="nav-card-contact-inner">
-                            <h3 class="nav-card-contact-title">Get in Touch</h3>
-                            <i class="fa fa-envelope" style="font-size: 24px; margin-top: 5px;"></i>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 text-left">
-                    <span class="copyright" style="color: #888;">Copyright &copy; LTRJ Labs 2026</span>
-                </div>
-                <div class="col-md-6 text-right">
-                    <ul class="list-inline quicklinks" style="margin-bottom: 0;">
-                        <li><a href="privacy/" style="color: #FF6600; text-decoration: none;">Privacy Policy</a></li>
+        <!-- FLAGSHIP -->
+        <section id="flagship" class="section">
+            <header class="section-head reveal">
+                <span class="mono label">01 — Flagship system</span>
+                <h2>MothNode</h2>
+            </header>
+            <article class="flagship glass reveal">
+                <figure class="flagship-media">
+                    <img src="img/photo/mothnode-enclosure.jpg" alt="MothNode Rev 3 circuit board seated in its enclosure on the bench" loading="lazy" width="2000" height="1126">
+                    <figcaption class="mono">MothNode R3 · PCBA in enclosure · bench test</figcaption>
+                </figure>
+                <div class="flagship-body">
+                    <span class="mono tag">First deployed system</span>
+                    <p class="flagship-lead">Born out of volunteer firefighting at Willis Point, BC to solve critical off-grid water supply monitoring.</p>
+                    <p>Zero-maintenance, solar-powered, multi-network telemetry (Cellular, LoRa, Bluetooth). Runs year-round in extreme Canadian weather.</p>
+                    <ul class="spec-list mono">
+                        <li><span>MCU</span>ESP32-S3</li>
+                        <li><span>Cellular</span>BG95 LTE-M / NB-IoT</li>
+                        <li><span>Mesh</span>LoRa + Bluetooth</li>
+                        <li><span>Power</span>Solar harvesting</li>
+                        <li><span>Housing</span>Polycarbonate · IP66</li>
                     </ul>
+                    <a class="btn btn-primary" href="https://mothnode.com" data-track="flagship_mothnode" target="_blank" rel="noopener">Launch MothNode Platform <span aria-hidden="true">→</span></a>
+                </div>
+            </article>
+        </section>
+
+        <!-- PRINCIPLES -->
+        <section id="principles" class="section">
+            <header class="section-head reveal">
+                <span class="mono label">02 — How we build</span>
+                <h2>Principles</h2>
+            </header>
+            <div class="principles">
+                <article class="principle glass reveal">
+                    <span class="mono num">01</span>
+                    <h3>High-Velocity Iteration</h3>
+                    <p>Fast-moving execution from breadboard rev 1 to custom fab and compliance testing in months, not years.</p>
+                </article>
+                <article class="principle glass reveal">
+                    <span class="mono num">02</span>
+                    <h3>Bespoke Feel, Global Scale</h3>
+                    <p>Hardware designed with deep domain empathy that feels purpose-built for the operator, built on a robust architecture that deploys everywhere.</p>
+                </article>
+                <article class="principle glass reveal">
+                    <span class="mono num">03</span>
+                    <h3>Resilient &amp; Local-First</h3>
+                    <p>Solar-harvesting, fault-tolerant systems designed to run 24/7—even when the cloud goes dark.</p>
+                </article>
+                <article class="principle glass reveal">
+                    <span class="mono num">04</span>
+                    <h3>Proprietary Focus</h3>
+                    <p>No agency work, no billable consulting hours. 100% of our cycles go into building systems we own and believe should exist.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- TIMELINE -->
+        <section id="timeline" class="section">
+            <header class="section-head reveal">
+                <span class="mono label">03 — The lab notebook</span>
+                <h2>Milestones</h2>
+            </header>
+            <div class="timeline-wrap">
+                <ol class="timeline">
+                    <li class="done reveal">
+                        <time class="mono">May 2026</time>
+                        <div><h3>Problem identified</h3><p>Water-supply blind spot surfaced at Willis Point Fire Dept. Rev 1 breadboard bench tests.</p></div>
+                    </li>
+                    <li class="done reveal">
+                        <time class="mono">July 2026</time>
+                        <div><h3>Rev 2 in the field</h3><p>Deployed on active rural water cisterns.</p></div>
+                    </li>
+                    <li class="done reveal">
+                        <time class="mono">Sept 2026</time>
+                        <div><h3>Rev 3 custom PCBA</h3><p>ESP32-S3, BG95 cellular, LoRa. Custom polycarbonate IP66 tooling.</p></div>
+                    </li>
+                    <li class="active reveal">
+                        <time class="mono">Fall 2026</time>
+                        <div><h3>Pre-compliance testing <span class="mono now">Now</span></h3><p>Regulatory testing (ISED / FCC) at Camosun College.</p></div>
+                    </li>
+                    <li class="next reveal">
+                        <time class="mono">Winter 2026</time>
+                        <div><h3>Commercial release</h3><p>Volume manufacturing.</p></div>
+                    </li>
+                </ol>
+                <figure class="timeline-photo glass reveal">
+                    <img src="img/photo/mothnode-pcba-bench.jpg" alt="Bare MothNode Rev 3 board on a blue silicone bench mat with tweezers" loading="lazy" width="2000" height="1126">
+                    <figcaption class="mono">Rev 3 bring-up · Victoria, BC</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <!-- EVENTS -->
+        <section id="events" class="section">
+            <header class="section-head reveal">
+                <span class="mono label">04 — Field appearances</span>
+                <h2>Events</h2>
+            </header>
+            <div class="events glass reveal">
+                <table class="mono">
+                    <thead><tr><th>Date</th><th>Event</th><th>Location</th><th>Agenda</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>Dec 18, 2026</td>
+                            <td class="ev-name">Camosun Capstone Symposium</td>
+                            <td>Victoria, BC</td>
+                            <td class="ev-note">Final R3 Demo &amp; Presentation</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="events-note">Heads down on bench testing in Victoria, BC. Ping us to connect or talk hardware.</p>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact" class="section contact">
+            <header class="section-head reveal">
+                <span class="mono label">05 — Direct signal</span>
+                <h2>Get in touch</h2>
+            </header>
+            <div class="contact-grid reveal">
+                <a class="contact-line glass" href="mailto:hello@ltrjlabs.com">
+                    <span class="mono label">General / Coffee</span>
+                    <span class="contact-value">hello@ltrjlabs.com</span>
+                </a>
+                <a class="contact-line glass" href="mailto:puritch@ltrjlabs.com">
+                    <span class="mono label">Investors &amp; Hardware Inquiries</span>
+                    <span class="contact-value">puritch@ltrjlabs.com</span>
+                </a>
+                <div class="contact-line glass">
+                    <span class="mono label">Location</span>
+                    <span class="contact-value">Victoria, British Columbia</span>
                 </div>
             </div>
-        </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <img src="img/logo/Full_Logo.svg" alt="LTRJ Labs" width="60" height="22">
+        <p class="mono">© <span data-year>2026</span> LTRJ Labs Ltd.</p>
+        <a class="mono" href="https://mothnode.com" data-track="footer_mothnode" target="_blank" rel="noopener">mothnode.com ↗</a>
     </footer>
 
-    <!-- Portfolio Modals moved to portfolio.html (if needed) -->
-
-    <!-- Native Theme & Navigation Scripts -->
-    <script src="js/theme.js"></script>
-    <script src="js/agency.js"></script>
-
-    <!-- Testimonial Carousel Controls & Auto-Rotator Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var slides = document.querySelectorAll('.testimonial-slide');
-            var indicators = document.querySelectorAll('.testimonial-indicator');
-            var prevBtn = document.querySelector('.prev-btn');
-            var nextBtn = document.querySelector('.next-btn');
-            var currentIndex = 0;
-            var autoRotateTimer = null;
-            var isTransitioning = false;
-
-            function showSlide(index) {
-                if (index === currentIndex || isTransitioning || slides.length === 0) return;
-                isTransitioning = true;
-
-                // 1. Fade out current active slide & indicator
-                slides[currentIndex].classList.remove('active');
-                if (indicators[currentIndex]) {
-                    indicators[currentIndex].classList.remove('active');
-                }
-                
-                // 2. Wait for fade-out to complete (500ms)
-                setTimeout(function() {
-                    // 3. Set the new index and fade in
-                    currentIndex = index;
-                    slides[currentIndex].classList.add('active');
-                    if (indicators[currentIndex]) {
-                        indicators[currentIndex].classList.add('active');
-                    }
-                    isTransitioning = false;
-                }, 500);
-            }
-
-            function nextSlide() {
-                var nextIndex = (currentIndex + 1) % slides.length;
-                showSlide(nextIndex);
-            }
-
-            function prevSlide() {
-                var prevIndex = (currentIndex - 1 + slides.length) % slides.length;
-                showSlide(prevIndex);
-            }
-
-            function resetTimer() {
-                if (autoRotateTimer) {
-                    clearInterval(autoRotateTimer);
-                }
-                autoRotateTimer = setInterval(nextSlide, 10000);
-            }
-
-            function stopTimer() {
-                if (autoRotateTimer) {
-                    clearInterval(autoRotateTimer);
-                    autoRotateTimer = null;
-                }
-            }
-
-            // Click Handlers
-            if (prevBtn) {
-                prevBtn.addEventListener('click', function() {
-                    prevSlide();
-                    stopTimer(); // Pause auto-rotation on manual interaction
-                });
-            }
-
-            if (nextBtn) {
-                nextBtn.addEventListener('click', function() {
-                    nextSlide();
-                    stopTimer(); // Pause auto-rotation on manual interaction
-                });
-            }
-
-            indicators.forEach(function(indicator) {
-                indicator.addEventListener('click', function() {
-                    var slideIndex = parseInt(indicator.getAttribute('data-slide'));
-                    if (!isNaN(slideIndex)) {
-                        showSlide(slideIndex);
-                        stopTimer(); // Pause auto-rotation on manual interaction
-                    }
-                });
-            });
-
-            // Start auto-rotation
-            if (slides.length > 1) {
-                resetTimer();
-            }
-
-            // --- Scroll-Reveal for Navigation Cards ---
-            var navCards = document.querySelectorAll('.nav-card');
-            if ('IntersectionObserver' in window) {
-                var cardObserver = new IntersectionObserver(function(entries) {
-                    entries.forEach(function(entry) {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                        }
-                    });
-                }, { threshold: 0.15 });
-                navCards.forEach(function(card) { cardObserver.observe(card); });
-            } else {
-                // Fallback: show all immediately
-                navCards.forEach(function(card) { card.classList.add('visible'); });
-            }
-        });
-    </script>
-
+    <script src="js/main.js" defer></script>
 </body>
-
 </html>
