@@ -1,0 +1,9 @@
+{
+  "pid": 5205,
+  "port": 35563,
+  "token": "6db9a819-8ac3-4730-85ec-e2a472d9cd2c",
+  "startedAt": "2026-10-08T23:52:05.296Z",
+  "serverPath": "/home/levibill/.claude/skills/gstack/browse/src/server.ts",
+  "mode": "launched",
+  "configHash": "303a7eeccc03078b"
+}
