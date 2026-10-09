@@ -5,7 +5,9 @@ Single-page static site for ltrjlabs.com (GitHub Pages, `CNAME` = www.ltrjlabs.c
 ## Status (as of 2026-10-09)
 - Branch `overhaul` replaces the old Bootstrap multi-page site (still on `dev`/`main` and in git history).
 - Direction chosen: **Swiss / International Typographic Style**. The whole site is `index.html` (inline CSS/JS). Press G to toggle the 12-col grid overlay.
-- No top bar / nav by design; the black logo sits at the top of the hero poster, the orange logo fills the footer.
+- No top bar / nav and no logo at the top by design; the hero is a centred, left-aligned square block. The orange logo fills the footer.
+- Light/dark theme: fixed switch bottom-right sets `data-theme="dark"` on `<html>` (remembered in localStorage `ltrj-theme`; `?theme=dark` forces dark for previews). All colours are CSS tokens in `:root` / `:root[data-theme="dark"]` — don't hard-code colours.
+- MothNode links go to **https://mothnode.net** (the brief's `mothnode.com` is outdated).
 - Events uses a calendar-leaf card (layout borrowed from the old Neumorphism concept, flattened to Swiss blocks); timeline is a vertical track with square markers.
 - All other concepts (Ethereal, Monolith, Neumorphism, Bento, Minimalism, etc.) and the concept switcher are deleted but recoverable from git history.
 

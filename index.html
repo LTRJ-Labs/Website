@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>LTRJ Labs — Hard-tech IoT, Victoria BC</title>
     <meta name="description" content="LTRJ Labs is a hard-tech startup in Victoria, BC building IoT products. Flagship system: MothNode.">
-    <meta name="theme-color" content="#f4f3ef">
+    <meta name="theme-color" content="#f4f3ef" id="tc">
+    <script>try { if (/[?&]theme=dark/.test(location.search) || localStorage.getItem('ltrj-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (e) {}</script>
     <meta property="og:title" content="LTRJ Labs">
     <meta property="og:description" content="A hard-tech startup building IoT products.">
     <meta property="og:image" content="https://www.ltrjlabs.com/img/photo/mothnode-enclosure.jpg">
@@ -13,15 +14,38 @@
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Permanent+Marker&display=swap" rel="stylesheet">
     <script src="js/analytics.js" defer></script>
     <style>
         /* Swiss / International Typographic Style. 12-col grid, flush-left, one signal colour. Press G for the grid. */
         :root {
             --paper: #f4f3ef; --ink: #0a0a0a; --ink-2: #555; --ink-3: #9a9994; --rule: #0a0a0a; --orange: #ff5a00;
             --sans: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
+            --cal: #fff; --note: #eceae4; --on-orange: #0a0a0a; --foot: #0a0a0a; --foot-ink: #f4f3ef;
             --cols: 12; --gut: 20px; --m: 40px;
         }
+        /* Dark: warm charcoal instead of black, off-white instead of white, grey structure lines, slightly calmer orange */
+        :root[data-theme="dark"] {
+            --paper: #1a1918; --ink: #e6e3dc; --ink-2: #a19e96; --ink-3: #66635d; --rule: #4a4844; --orange: #f2692a;
+            --cal: #232220; --note: #222120; --foot: #121211; --foot-ink: #cfccc4; --shadow: #090908; --line: #6f6c66;
+        }
+        :root[data-theme="dark"] h1, :root[data-theme="dark"] h2 { color: #dcd8d0; }
+        :root[data-theme="dark"] .poster h1 .o { color: var(--orange); }
+        :root[data-theme="dark"] img { filter: grayscale(1) contrast(1.05) brightness(.82); }
+        :root[data-theme="dark"] .flag-img:hover img { filter: brightness(.9); }
+        :root[data-theme="dark"] .ev, :root[data-theme="dark"] .cal, :root[data-theme="dark"] .ev .loc, :root[data-theme="dark"] .theme .track { border-color: var(--line); }
+        :root[data-theme="dark"] .cal .mo { border-bottom-color: var(--line); }
+        :root[data-theme="dark"] .ev { box-shadow: 8px 8px 0 var(--shadow); }
+        :root[data-theme="dark"] .pr li { border-top-color: var(--line); }
+        :root[data-theme="dark"] .pr li:first-child { border-top-color: var(--orange); }
+        :root[data-theme="dark"] .tl li::before { border-color: var(--line); }
+        :root[data-theme="dark"] .tl .done::before { background: var(--ink-2); border-color: var(--ink-2); }
+        :root[data-theme="dark"] .tl .active::before { border-color: var(--orange); }
+        :root[data-theme="dark"] .tl .next::before { border-color: var(--ink-3); }
+        :root[data-theme="dark"] .tl li::after { background: var(--line); }
+        :root[data-theme="dark"] .tl .active::after { background: repeating-linear-gradient(var(--line) 0 6px, transparent 6px 12px); }
+        :root[data-theme="dark"] footer .big img { filter: none; }
+        body, .ev, .cal, .ev-note, .tl li::before { transition: background-color .35s, color .35s, border-color .35s; }
         *, *::before, *::after { box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.45 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
@@ -39,20 +63,29 @@
         .caps { text-transform: uppercase; letter-spacing: .04em; }
 
         /* Hero poster */
-        .poster { position: relative; padding: 40px 0 0; overflow: hidden; }
-        .poster .mark { grid-column: 4 / 10; margin-bottom: 48px; }
-        .poster .mark img { height: 44px; width: auto; }
+        .poster { position: relative; padding: 120px 0 0; overflow: hidden; }
         .poster h1 { grid-column: 4 / 10; font: 900 clamp(44px, 6.5vw, 100px)/.88 var(--sans); letter-spacing: -.055em; }
         .poster h1 .o { color: var(--orange); }
         .poster .circle { position: absolute; right: -8vw; top: 160px; width: 26vw; max-width: 460px; aspect-ratio: 1; border-radius: 50%; background: var(--orange); z-index: 0; }
-        .poster h1, .poster .mark, .poster .lede, .poster .ctas { position: relative; z-index: 1; }
+
+        /* Scrapbook label — a torn paper strip taped across the circle's edge */
+        .scrap { position: absolute; right: 38%; top: 50%; transform: rotate(-7deg); padding: .45em .9em .4em; white-space: nowrap;
+            font: 400 clamp(20px, 2.3vw, 36px)/1 "Permanent Marker", "Marker Felt", cursive; color: #1a1816; background: #f7f1e3;
+            box-shadow: 2px 3px 0 rgba(0,0,0,.08), 6px 10px 18px -6px rgba(0,0,0,.35);
+            clip-path: polygon(0 6%, 4% 0, 12% 5%, 22% 1%, 33% 6%, 45% 0, 57% 4%, 68% 0, 80% 5%, 91% 1%, 100% 5%, 99% 52%, 100% 94%, 92% 100%, 81% 95%, 70% 100%, 58% 96%, 46% 100%, 34% 95%, 23% 100%, 12% 96%, 3% 100%, 1% 50%); }
+        .scrap b { font-weight: 400; color: var(--orange); }
+        .scrap .tape { position: absolute; left: 50%; top: -.42em; width: 2.6em; height: .8em; transform: translateX(-50%) rotate(4deg); background: rgba(255, 250, 235, .55); box-shadow: 0 0 0 1px rgba(0,0,0,.04); }
+        :root[data-theme="dark"] .scrap { background: #e9e2d2; color: #1a1816; box-shadow: 6px 10px 18px -6px rgba(0,0,0,.6); }
+        .poster h1, .poster .lede, .poster .ctas { position: relative; z-index: 1; }
         .poster .lede { grid-column: 4 / 10; margin-top: 36px; font-size: 20px; line-height: 1.35; font-weight: 500; }
         .poster .ctas { grid-column: 4 / 10; display: flex; flex-direction: column; gap: 0; margin-top: 40px; border-top: 2px solid var(--rule); }
         .cta { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex: 1; padding: 22px 0; text-decoration: none; font-weight: 700; font-size: 18px; border-bottom: 2px solid var(--rule); transition: background .2s, color .2s, padding .2s; }
         .cta:hover { background: var(--ink); color: var(--paper); padding-inline: 16px; }
-        .cta.primary { background: var(--orange); color: var(--ink); padding-inline: 16px; }
+        .cta.primary { background: var(--orange); color: var(--on-orange); padding-inline: 16px; }
         .cta.primary:hover { background: var(--ink); color: var(--orange); }
         .cta + .cta { padding-left: 16px; }
+        .cta-end { display: inline-flex; align-items: center; gap: 12px; flex: none; }
+        .mn-logo { width: 46px; height: auto; display: block; }
         .poster .photo { grid-column: 1 / 13; margin-top: 64px; position: relative; z-index: 1; }
         .poster .photo img { width: 100%; aspect-ratio: 21 / 8; object-fit: cover; filter: grayscale(1) contrast(1.15); }
         .poster .photo figcaption { margin-top: 8px; }
@@ -100,26 +133,32 @@
         .tl p { margin-top: 8px; font-size: 17px; color: var(--ink-2); max-width: 46ch; }
         .tl .st { justify-self: end; padding-top: 4px; }
         .tl .active h3 { color: var(--orange); }
-        .tl .active .st { background: var(--orange); color: var(--ink); padding: 4px 8px; align-self: start; font-weight: 700; }
+        .tl .active .st { background: var(--orange); color: var(--on-orange); padding: 4px 8px; align-self: start; font-weight: 700; }
         .tl .next time, .tl .next h3, .tl .next p, .tl .next .st { color: var(--ink-3); }
 
         /* Events — calendar leaf + details + location tag (neumorphic layout, flattened to Swiss blocks) */
         .ev { grid-column: 4 / 13; display: grid; grid-template-columns: auto 1fr auto; gap: 32px; align-items: center; padding: 24px; border: 2px solid var(--ink); background: var(--paper); box-shadow: 8px 8px 0 var(--ink); }
-        .cal { width: 128px; border: 2px solid var(--ink); text-align: center; background: #fff; }
-        .cal .mo { display: block; background: var(--orange); color: var(--ink); font-weight: 900; font-size: 14px; letter-spacing: .12em; padding: 6px 0; border-bottom: 2px solid var(--ink); }
+        .cal { width: 128px; border: 2px solid var(--ink); text-align: center; background: var(--cal); }
+        .cal .mo { display: block; background: var(--orange); color: var(--on-orange); font-weight: 900; font-size: 14px; letter-spacing: .12em; padding: 6px 0; border-bottom: 2px solid var(--ink); }
         .cal .d { display: block; font: 900 64px/1 var(--sans); letter-spacing: -.05em; padding: 12px 0 4px; }
         .cal .yr { display: block; padding: 0 0 10px; color: var(--ink-2); }
         .ev h3 { font: 700 clamp(22px, 2.4vw, 32px)/1.1 var(--sans); letter-spacing: -.02em; }
         .ev .ag { margin-top: 8px; color: var(--ink-2); font-size: 17px; }
+        .ev h3 a { text-decoration: none; } .ev h3 a:hover { color: var(--orange); }
+        .ev .role { display: inline-block; margin-bottom: 10px; padding: 3px 8px; background: var(--orange); color: var(--on-orange); font-weight: 700; }
         .ev .loc { border: 2px solid var(--ink); padding: 8px 14px; font-weight: 700; white-space: nowrap; }
-        .ev-note { grid-column: 4 / 13; margin-top: 8px; padding: 18px 22px; border-left: 6px solid var(--orange); background: #eceae4; font-size: 19px; font-weight: 500; }
+        .ev-side { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+        .ev-side .loc { text-align: center; }
+        .ev-link { display: block; padding: 8px 14px; background: var(--ink); color: var(--paper); font-weight: 700; text-align: center; text-decoration: none; white-space: nowrap; }
+        .ev-link:hover { background: var(--orange); color: var(--on-orange); }
+        .ev-note { grid-column: 4 / 13; margin-top: 8px; padding: 18px 22px; border-left: 6px solid var(--orange); background: var(--note); font-size: 19px; font-weight: 500; }
 
         .ct { grid-column: 4 / 13; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: var(--gut); }
         .ct > * { display: block; border-top: 2px solid var(--rule); padding: 14px 0 0; text-decoration: none; }
         .ct strong { display: block; margin-top: 28px; font: 700 clamp(20px, 2.2vw, 30px)/1.1 var(--sans); letter-spacing: -.025em; overflow-wrap: anywhere; }
         .ct a:hover strong { color: var(--orange); }
 
-        footer { background: var(--ink); color: var(--paper); padding: 40px 0 48px; }
+        footer { background: var(--foot); color: var(--foot-ink); padding: 40px 0 96px; border-top: 2px solid var(--rule); }
         footer .g { align-items: end; row-gap: 32px; }
         footer .big { grid-column: 1 / 9; }
         footer .big img { width: 100%; max-width: 760px; height: auto; }
@@ -127,27 +166,39 @@
         footer .info a { text-decoration: none; } footer .info a:hover { color: var(--orange); }
         @media (hover: none) { .gridhint { display: none; } }
 
+        /* Theme switch — Swiss take on the neumorphic toggle: square knob in a ruled track */
+        .theme { position: fixed; right: var(--m); bottom: 24px; z-index: 60; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 0; background: var(--paper); color: var(--ink); font: 700 12px/1 var(--sans); text-transform: uppercase; letter-spacing: .06em; cursor: pointer; }
+        .theme .lbl-l, .theme .lbl-d { transition: color .3s; }
+        .theme .lbl-d, :root[data-theme="dark"] .theme .lbl-l { color: var(--ink-3); }
+        :root[data-theme="dark"] .theme .lbl-d { color: var(--ink); }
+        .theme .track { position: relative; width: 52px; height: 26px; border: 2px solid var(--ink); background: var(--paper); transition: background-color .35s, border-color .35s; }
+        .theme .knob { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: var(--ink); transition: transform .3s cubic-bezier(.4, 1.4, .6, 1), background-color .3s; }
+        :root[data-theme="dark"] .theme .knob { transform: translateX(26px); background: var(--orange); }
+        .theme:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
+
         @media (max-width: 1000px) {
             :root { --m: 24px; --cols: 6; }
-            .poster .mark, .poster h1, .poster .lede, .poster .ctas { grid-column: 2 / 6; } .poster .photo { grid-column: 1 / 7; }
+            .poster h1, .poster .lede, .poster .ctas { grid-column: 2 / 6; } .poster .photo { grid-column: 1 / 7; }
             .poster h1 { font-size: clamp(44px, 9vw, 100px); }
             .poster .circle { width: 28vw; right: -12vw; top: -10vw; }
+            .scrap { right: 40%; top: 60%; font-size: 18px; }
             .sec .idx { grid-column: 1 / 2; } .sec .lbl { grid-column: 2 / 7; } .sec h2, .flag-img, .flag-txt, .spec, .pr, .tl, .ev, .ev-note, .ct { grid-column: 1 / 7; }
             .pr { grid-template-columns: 1fr 1fr; row-gap: 32px; } .spec { grid-template-columns: repeat(3, 1fr); }
             footer .big, footer .info { grid-column: 1 / 7; }
         }
         @media (max-width: 640px) {
             :root { --m: 16px; --gut: 12px; }
-            .poster .mark { margin-bottom: 48px; } .poster .mark img { height: 34px; }
             
             .pr, .ct { grid-template-columns: 1fr; row-gap: 24px; } .spec { grid-template-columns: 1fr 1fr; }
             .tl li { grid-template-columns: 1fr auto; padding-left: 44px; }
             .tl time { grid-column: 1; } .tl .st { grid-column: 2; grid-row: 1; } .tl li > div { grid-column: 1 / -1; margin-top: 6px; }
             .tl h3 { font-size: 22px; }
             .ev { grid-template-columns: auto 1fr; gap: 18px; padding: 18px; box-shadow: 6px 6px 0 var(--ink); }
+            :root[data-theme="dark"] .ev { box-shadow: 6px 6px 0 var(--shadow); }
             .cal { width: 92px; } .cal .d { font-size: 44px; }
             .ev .loc { grid-column: 1 / -1; justify-self: start; }
-            .poster .mark, .poster h1, .poster .lede, .poster .ctas { grid-column: 1 / 7; } .poster .lede { font-size: 19px; }
+            .ev-side { grid-column: 1 / -1; flex-direction: row; align-items: center; }
+            .poster h1, .poster .lede, .poster .ctas { grid-column: 1 / 7; } .poster .lede { font-size: 19px; }
         }
         @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
     </style>
@@ -155,15 +206,16 @@
 <body>
     <div class="gridlines g" id="gl" aria-hidden="true"></div>
 
+    <button class="theme" id="theme" type="button" role="switch" aria-checked="false" aria-label="Dark theme"><span class="lbl-l">Light</span><span class="track"><span class="knob"></span></span><span class="lbl-d">Dark</span></button>
+
     <main id="top">
         <section class="poster">
-            <span class="circle" aria-hidden="true"></span>
+            <div class="circle"><p class="scrap"><span class="tape" aria-hidden="true"></span>Letter <b>J</b> Labs</p></div>
             <div class="g">
-                <p class="mark"><img src="img/SVGLogos/Full_Logo_Black.svg" alt="LTRJ Labs" width="120" height="44"></p>
                 <h1>A hard-tech startup building<br> <span class="o">IoT products.</span></h1>
                 <p class="lede">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p>
                 <div class="ctas">
-                    <a class="cta primary" href="https://mothnode.com" data-track="hero_mothnode" target="_blank" rel="noopener">[ Explore Flagship System: MothNode ↗ ]</a>
+                    <a class="cta primary" href="https://mothnode.net" data-track="hero_mothnode" target="_blank" rel="noopener"><span>Explore Flagship System: MothNode</span><span class="cta-end"><svg class="mn-logo" viewBox="0 0 100 57.592384" role="img" aria-label="MothNode logo"><g transform="translate(0,-111.70526)"><path fill="currentColor" d="m 27.619792,165.36081 c -0.21563,-3.20366 0.443167,-4.64589 3.536719,-7.73903 2.090955,-2.0911 5.339603,-4.10938 7.219174,-4.48557 1.879582,-0.37563 3.417208,-1.02473 3.417208,-1.44193 0,-1.46616 -6.170912,-5.28243 -15.915268,-9.84376 -15.359581,-7.1899 -23.3675921,-15.13196 -25.48004127,-25.26959 -1.24150322,-5.95804 0.45524166,-6.27921 4.66012217,-0.88197 4.1530812,5.33053 15.3615271,13.4078 23.5632821,16.9801 8.641971,3.76469 14.251765,8.68335 17.16804,15.05335 1.713881,3.74363 3.312867,5.8056 4.380003,5.64917 0.924422,-0.13434 2.860918,-2.79386 4.302928,-5.90689 2.833774,-6.11603 8.584328,-11.10268 17.061406,-14.79563 8.159938,-3.55411 19.402442,-11.63917 23.502349,-16.90162 4.329533,-5.55704 5.660096,-5.43612 4.637184,0.4214 -1.797777,10.2977 -9.745461,18.32548 -25.39584,25.65168 -9.656748,4.52028 -15.915477,8.37662 -15.915477,9.80663 0,0.39719 1.893934,1.28939 4.208398,1.98277 5.620259,1.68436 9.095351,5.61686 9.834845,11.13103 0.607118,4.5267 0.607118,4.5267 -21.956384,4.5267 -22.563599,0 -22.563599,0 -22.828648,-3.93684 z m 13.927309,0.001 c 2.53314,-1.77442 3.336772,-6.44188 1.323462,-7.68612 -3.753281,-2.31967 -12.138605,3.79021 -10.622551,7.74022 0.83434,2.1747 6.161218,2.14353 9.299089,-0.0537 z m 26.081329,-0.003 c 0.984518,-2.56635 -1.005531,-5.50799 -4.786494,-7.07405 -3.949013,-1.63565 -6.695871,-0.86472 -6.672591,1.87248 0.0049,2.5079 1.074571,4.04538 3.84909,5.61851 3.176199,1.80106 6.835714,1.60049 7.609995,-0.41694 z"/></g></svg><span aria-hidden="true">↗</span></span></a>
                     <a class="cta" href="#timeline">Read the lab notebook <span aria-hidden="true">↓</span></a>
                 </div>
                 <figure class="photo"><img src="img/photo/bench-wide.jpg" alt="The LTRJ Labs bench in Victoria, BC" width="2000" height="1345"><figcaption class="small">Fig. 1 — The bench, Victoria, British Columbia, 2026.</figcaption></figure>
@@ -178,7 +230,7 @@
                 <div class="flag-txt">
                     <p class="lead">Born out of volunteer firefighting at Willis Point, BC to solve critical off-grid water supply monitoring.</p>
                     <p>Zero-maintenance, solar-powered, multi-network telemetry (Cellular, LoRa, Bluetooth). Runs year-round in extreme Canadian weather.</p>
-                    <a class="cta" href="https://mothnode.com" data-track="flagship_mothnode" target="_blank" rel="noopener">Launch MothNode Platform <span aria-hidden="true">→</span></a>
+                    <a class="cta" href="https://mothnode.net" data-track="flagship_mothnode" target="_blank" rel="noopener">Launch MothNode Platform <span aria-hidden="true">→</span></a>
                 </div>
                 <dl class="spec small"><div><dt class="caps">MCU</dt><dd>ESP32-S3</dd></div><div><dt class="caps">Cellular</dt><dd>BG95 LTE-M / NB-IoT</dd></div><div><dt class="caps">Mesh</dt><dd>LoRa + Bluetooth</dd></div><div><dt class="caps">Power</dt><dd>Solar harvesting</dd></div><div><dt class="caps">Housing</dt><dd>Polycarbonate · IP66</dd></div></dl>
             </div>
@@ -216,6 +268,15 @@
                 <span class="idx">4</span><span class="lbl small caps">Field appearances</span>
                 <h2>Events</h2>
                 <article class="ev">
+                    <p class="cal" aria-label="November 17, 2026"><span class="mo">NOV</span><span class="d">17</span><span class="yr small caps">2026 · Tue</span></p>
+                    <div>
+                        <span class="role small caps">Contestants</span>
+                        <h3><a href="https://vi.business/" data-track="event_vibe" target="_blank" rel="noopener">VIBE — Vancouver Island Business Experience</a></h3>
+                        <p class="ag">One day in Victoria. Two hundred founders, investors and operators, by application and invitation.</p>
+                    </div>
+                    <div class="ev-side"><span class="loc small caps">Victoria, BC</span><a class="ev-link small caps" href="https://vi.business/" data-track="event_vibe_site" target="_blank" rel="noopener">vi.business <span aria-hidden="true">↗</span></a></div>
+                </article>
+                <article class="ev">
                     <p class="cal" aria-label="December 18, 2026"><span class="mo">DEC</span><span class="d">18</span><span class="yr small caps">2026 · Fri</span></p>
                     <div><h3>Camosun Capstone Symposium</h3><p class="ag">Final R3 Demo &amp; Presentation</p></div>
                     <span class="loc small caps">Victoria, BC</span>
@@ -240,7 +301,7 @@
     <footer>
         <div class="g">
             <p class="big"><img src="img/SVGLogos/Full_Logo.svg" alt="LTRJ Labs" width="760" height="280"></p>
-            <div class="info small"><span>© <span data-year>2026</span> LTRJ Labs Ltd.</span><span>Victoria, British Columbia</span><a href="https://mothnode.com" data-track="footer_mothnode" target="_blank" rel="noopener">mothnode.com ↗</a><span class="gridhint" style="opacity:.5">Press G to toggle the grid.</span></div>
+            <div class="info small"><span>© <span data-year>2026</span> LTRJ Labs Ltd.</span><span>Victoria, British Columbia</span><a href="https://mothnode.net" data-track="footer_mothnode" target="_blank" rel="noopener">mothnode.net ↗</a><span class="gridhint" style="opacity:.5">Press G to toggle the grid.</span></div>
         </div>
     </footer>
 
@@ -250,6 +311,13 @@
             function build() { var n = getComputedStyle(document.documentElement).getPropertyValue('--cols').trim() | 0; gl.innerHTML = new Array(n + 1).join('<span></span>'); }
             build(); addEventListener('resize', build);
             addEventListener('keydown', function (e) { if ((e.key === 'g' || e.key === 'G') && !e.metaKey && !e.ctrlKey && !/input|textarea/i.test(e.target.tagName)) gl.classList.toggle('on'); });
+            var root = document.documentElement, sw = document.getElementById('theme'), tc = document.getElementById('tc');
+            function sync() { var d = root.dataset.theme === 'dark'; sw.setAttribute('aria-checked', d); tc.content = d ? '#1a1918' : '#f4f3ef'; }
+            sw.addEventListener('click', function () {
+                if (root.dataset.theme === 'dark') delete root.dataset.theme; else root.dataset.theme = 'dark';
+                sync(); try { localStorage.setItem('ltrj-theme', root.dataset.theme || 'light'); } catch (e) {}
+            });
+            sync();
             document.querySelectorAll('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
         })();
     </script>
