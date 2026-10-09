@@ -3,13 +3,11 @@
 Single-page site for [ltrjlabs.com](https://www.ltrjlabs.com). Static HTML/CSS/JS, no build step.
 
 ```
-index.html          Concept A — Ethereal (main page)
-css/main.css        Styles for index.html
-js/main.js          Scroll reveal, nav highlight, card glow
+index.html          The whole site (Swiss style, inline CSS/JS)
 js/analytics.js     GA4 + CTA click tracking (data-track="...")
-concepts/           Alternate design directions (B Notebook, C Console, D Monolith)
-js/concepts.js      TEMPORARY concept switcher — remove once a direction is picked
-img/logo, img/photo, img/model
+img/SVGLogos/       Logos (orange + black), plus HiResLogos/ and LowResLogos/ PNGs
+img/photo/          Web-sized photos
+docs/BRIEF.md       Original design brief
 ```
 
 Preview locally: `python3 -m http.server` then open http://localhost:8000.
