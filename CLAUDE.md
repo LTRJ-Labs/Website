@@ -7,6 +7,7 @@ Single-page static site for ltrjlabs.com (GitHub Pages, `CNAME` = www.ltrjlabs.c
 - Direction chosen: **Swiss / International Typographic Style**. The whole site is `index.html` (inline CSS/JS). Press G to toggle the 12-col grid overlay.
 - No top bar / nav and no logo at the top by design; the hero is a centred, left-aligned square block. The orange logo fills the footer.
 - Light/dark theme: fixed switch bottom-right sets `data-theme="dark"` on `<html>` (remembered in localStorage `ltrj-theme`; `?theme=dark` forces dark for previews). All colours are CSS tokens in `:root` / `:root[data-theme="dark"]` — don't hard-code colours.
+- Section 2 is **Team** (replaced Principles on 2026-10-09): compact profiles only — square grayscale headshot beside name, role, bio and LinkedIn for Levi Puritch (CEO & Designer) and Jaxon Bjornson (CTO & Designer). Bios adapted from `team/` on `main`. Headshots in `img/team/`; `img/photo/lab-portrait.jpg` is unused.
 - MothNode links go to **https://mothnode.net** (the brief's `mothnode.com` is outdated).
 - Events uses a calendar-leaf card (layout borrowed from the old Neumorphism concept, flattened to Swiss blocks); timeline is a vertical track with square markers.
 - All other concepts (Ethereal, Monolith, Neumorphism, Bento, Minimalism, etc.) and the concept switcher are deleted but recoverable from git history.
@@ -24,5 +25,4 @@ Single-page static site for ltrjlabs.com (GitHub Pages, `CNAME` = www.ltrjlabs.c
 ## Open questions
 - Investors & hardware contact is `puritch@ltrjlabs.com` (carried over from the old site) — confirm.
 - Old privacy page was removed; site still runs GA, so consider adding one back.
-- `img/photo/lab-portrait.jpg` is kept but unused.
 - Preview: `python3 -m http.server` → http://localhost:8000
