@@ -1,483 +1,367 @@
-<!-- AGENT-INFO
-=========================================================
-LTRJ LABS WEBSITE ARCHITECTURE
-- Architecture: This site uses a flat HTML structure with modular subpages (/services, /portfolio, /team, /contact).
-- Styling: Built on Bootstrap 3.3. Core overrides are in css/agency.css and css/modern-layout.css.
-- JS: Uses jQuery and vanilla JS. Custom logic (dark mode, navbar shrinking, smooth transitions) is in js/theme.js and js/agency.js.
-=========================================================
--->
-<!DOCTYPE html>
-<html lang="en" style="background-color: #222;">
-
+<!doctype html>
+<html lang="en">
 <head>
-    <meta name="color-scheme" content="dark">
-    <meta name="theme-color" content="#222222">
-    <style>html, body { background-color: #222 !important; color: #fff !important; }</style>
-
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="LTRJ Labs specializes in cost-effective electronics design services, custom PCB design, schematic capture, and rapid hardware prototyping in Victoria, BC.">
-    <meta name="author" content="LTRJ Labs">
-    <meta name="keywords" content="electronics design, PCB layout, prototyping, firmware, STM32, hardware design, Victoria BC">
-
-    <title>LTRJ Labs - Cost-Effective Electronics Design & Prototyping</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="img/SVGLogos/Small_Logo.svg">
-    <link rel="icon" type="image/png" href="img/HiResLogos/Small_Logo.png">
-
-    <!-- Social Media Preview -->
-    <meta property="og:image" content="img/HiResLogos/Full_Logo.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <title>LTRJ Labs — Hard-tech IoT, Victoria BC</title>
+    <meta name="description" content="LTRJ Labs is a hard-tech startup in Victoria, BC building IoT products. Flagship system: MothNode.">
+    <meta name="theme-color" content="#f4f3ef" id="tc">
+    <script>try { if (/[?&]theme=dark/.test(location.search) || localStorage.getItem('ltrj-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (e) {}</script>
     <meta property="og:title" content="LTRJ Labs">
-    <meta property="og:url" content="https://ltrjlabs.com">
-
-    <!-- Modern CSS Layout -->
-    <link href="css/modern-layout.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link href="css/agency.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-    <!-- Custom style for Portfolio Image Fallbacks & Captions -->
+    <meta property="og:description" content="A hard-tech startup building IoT products.">
+    <meta property="og:image" content="https://www.ltrjlabs.com/img/photo/mothnode-enclosure.jpg">
+    <link rel="icon" href="img/SVGLogos/Small_Logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Special+Elite&display=swap" rel="stylesheet">
+    <script src="js/analytics.js" defer></script>
     <style>
-                /* --- Navigation Cards (Industrial Precision) --- */
-        .nav-card {
-            display: block;
-            text-decoration: none;
-            background-color: #111;
-            border: 1px solid #333;
-            border-radius: 2px;
-            padding: 35px 30px;
-            min-height: 260px;
-            position: relative;
-            overflow: hidden;
-            transition: opacity 0.6s ease, transform 0.6s ease, background-color 0.3s ease, border-color 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+        /* Swiss / International Typographic Style. 12-col grid, flush-left, one signal colour. Press G for the grid. */
+        :root {
+            --paper: #f4f3ef; --ink: #0a0a0a; --ink-2: #555; --ink-3: #9a9994; --rule: #0a0a0a; --orange: #ff5a00;
+            --sans: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
+            --cal: #fff; --note: #eceae4; --on-orange: #0a0a0a; --foot: #0a0a0a; --foot-ink: #f4f3ef;
+            --cols: 12; --gut: 20px; --m: 40px;
         }
-        .nav-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 1px;
-            background: #444;
-            transition: background 0.3s ease;
+        /* Dark: warm charcoal instead of black, off-white instead of white, grey structure lines, slightly calmer orange */
+        :root[data-theme="dark"] {
+            --paper: #1a1918; --ink: #e6e3dc; --ink-2: #a19e96; --ink-3: #66635d; --rule: #4a4844; --orange: #f2692a;
+            --cal: #232220; --note: #222120; --foot: #121211; --foot-ink: #cfccc4; --shadow: #090908; --line: #6f6c66;
         }
-        .nav-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .nav-card:hover {
-            border-color: #000;
-            background-color: #181818;
-            text-decoration: none;
-        }
-        /* No orange top bar on hover, keep it subtle */
-        .nav-card:hover::before {
-            background: #555;
-        }
-        .nav-card:hover .nav-card-link {
-            color: #FF6600;
-        }
-        .nav-card:hover .nav-card-link .fa-arrow-right {
-            transform: translateX(4px);
-        }
-        .nav-card-icon {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-        .nav-card-icon .fa {
-            font-size: 24px;
-            color: #aaa;
-            transition: color 0.3s ease;
-        }
-        .nav-card:hover .nav-card-icon .fa {
-            color: #ccc;
-        }
-        .nav-card-title {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 18px;
-            color: #fff;
-            margin: 0 0 12px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .nav-card-desc {
-            font-size: 14px;
-            color: #888;
-            line-height: 1.7;
-            margin-bottom: 20px;
-        }
-        .nav-card-link {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: color 0.3s ease;
-        }
-        .nav-card-link .fa-arrow-right {
-            margin-left: 6px;
-            transition: transform 0.3s ease;
-        }
+        :root[data-theme="dark"] h1, :root[data-theme="dark"] h2 { color: #dcd8d0; }
+        :root[data-theme="dark"] .poster h1 .o { color: var(--orange); }
+        :root[data-theme="dark"] img { filter: brightness(.9); }
+        :root[data-theme="dark"] .ev, :root[data-theme="dark"] .cal, :root[data-theme="dark"] .ev .loc, :root[data-theme="dark"] .theme .track { border-color: var(--line); }
+        :root[data-theme="dark"] .cal .mo { border-bottom-color: var(--line); }
+        :root[data-theme="dark"] .ev { box-shadow: 8px 8px 0 var(--shadow); }
+        :root[data-theme="dark"] .crew li { border-top-color: var(--line); }
+        :root[data-theme="dark"] .crew li:first-child { border-top-color: var(--orange); }
+        :root[data-theme="dark"] .crew .in { border-color: var(--line); }
+        :root[data-theme="dark"] .tl li::before { border-color: var(--line); }
+        :root[data-theme="dark"] .tl .done::before { background: var(--ink-2); border-color: var(--ink-2); }
+        :root[data-theme="dark"] .tl .active::before { border-color: var(--orange); }
+        :root[data-theme="dark"] .tl .next::before { border-color: var(--ink-3); }
+        :root[data-theme="dark"] .tl li::after { background: var(--line); }
+        :root[data-theme="dark"] .tl .active::after { background: repeating-linear-gradient(var(--line) 0 6px, transparent 6px 12px); }
+        :root[data-theme="dark"] footer .big img { filter: none; }
+        body, .ev, .cal, .ev-note, .tl li::before { transition: background-color .35s, color .35s, border-color .35s; }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.45 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        img { display: block; max-width: 100%; height: auto; }
+        a { color: inherit; }
+        p, h1, h2, h3, ul, ol, dl, dd, figure { margin: 0; padding: 0; }
+        ul, ol { list-style: none; }
+        a:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
 
-        /* Contact Card - Industrial Precision */
-        .nav-card-contact {
-            padding: 20px 45px;
-            background: #111;
-            border: 1px solid #FF6600;
-            border-radius: 2px;
-            color: #FF6600;
-            text-align: center;
-            display: inline-flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: background 0.3s ease, color 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            gap: 15px;
-        }
-        .nav-card-contact:hover {
-            background: #FF6600;
-            color: #fff;
-            text-decoration: none;
-        }
-        .nav-card-contact i {
-            font-size: 20px;
-        }
-        .nav-card-contact-title {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .g { display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--gut); padding: 0 var(--m); max-width: 1440px; margin: 0 auto; }
+        .gridlines { position: fixed; inset: 0; z-index: 999; pointer-events: none; display: none; }
+        .gridlines.on { display: grid; }
+        .gridlines span { background: rgba(255,90,0,.08); border-inline: 1px solid rgba(255,90,0,.25); }
+        .small { font-size: 12px; line-height: 1.4; font-weight: 500; letter-spacing: .01em; }
+        .caps { text-transform: uppercase; letter-spacing: .04em; }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-card {
-                min-height: auto;
-            }
+        /* Hero poster */
+        .poster { position: relative; padding: 120px 0 0; overflow: hidden; }
+        .poster h1 { grid-column: 4 / 10; font: 900 clamp(44px, 6.5vw, 100px)/.88 var(--sans); letter-spacing: -.055em; }
+        .poster h1 .o { color: var(--orange); }
+        .poster .circle { position: absolute; right: -8vw; top: 160px; width: 26vw; max-width: 460px; aspect-ratio: 1; border-radius: 50%; background: var(--orange); z-index: 0; }
+
+        /* Scrapbook label — a torn paper strip taped across the circle's edge */
+        .scrap { position: absolute; right: 38%; top: 50%; transform: rotate(-7deg); padding: .45em .9em .4em; white-space: nowrap;
+            font: 400 clamp(20px, 2.3vw, 36px)/1 "Special Elite", "Courier New", monospace; color: #1a1816; background: #f7f1e3;
+            box-shadow: 2px 3px 0 rgba(0,0,0,.08), 6px 10px 18px -6px rgba(0,0,0,.35);
+            clip-path: polygon(0 6%, 4% 0, 12% 5%, 22% 1%, 33% 6%, 45% 0, 57% 4%, 68% 0, 80% 5%, 91% 1%, 100% 5%, 99% 52%, 100% 94%, 92% 100%, 81% 95%, 70% 100%, 58% 96%, 46% 100%, 34% 95%, 23% 100%, 12% 96%, 3% 100%, 1% 50%); }
+        .scrap b { font-weight: 400; color: var(--orange); }
+        .scrap .tape { position: absolute; left: 50%; top: -.42em; width: 2.6em; height: .8em; transform: translateX(-50%) rotate(4deg); background: rgba(255, 250, 235, .55); box-shadow: 0 0 0 1px rgba(0,0,0,.04); }
+        :root[data-theme="dark"] .scrap { background: #e9e2d2; color: #1a1816; box-shadow: 6px 10px 18px -6px rgba(0,0,0,.6); }
+        .poster h1, .poster .lede, .poster .ctas { position: relative; z-index: 1; }
+        .story-btn { width: 100%; background: none; border: 0; border-bottom: 2px solid var(--rule); color: inherit; font: inherit; font-weight: 700; font-size: 18px; cursor: pointer; text-align: left; }
+        .flag-txt .cta.story-btn { margin-top: -18px; border-top: 0; padding-left: 0; }
+        .flag-txt .cta.story-btn:hover { padding-inline: 16px; }
+        .ct svg.mail { display: block; }
+        .flag-img .r2 { margin-top: var(--gut); }
+        .story { max-width: 640px; width: calc(100% - 32px); padding: 0; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); box-shadow: 8px 8px 0 var(--orange); }
+        .story::backdrop { background: rgba(10,10,10,.55); }
+        .story .hd { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 20px; border-bottom: 2px solid var(--ink); }
+        .story h3 { font: 900 clamp(22px, 3vw, 30px)/1.05 var(--sans); letter-spacing: -.03em; }
+        .story .x { border: 2px solid var(--ink); background: none; color: inherit; font: 700 18px/1 var(--sans); width: 36px; height: 36px; cursor: pointer; flex: none; }
+        .story .x:hover { background: var(--ink); color: var(--paper); }
+        .story .bd { padding: 20px; display: grid; gap: 14px; max-height: 70vh; overflow-y: auto; color: var(--ink-2); }
+        .poster .lede { grid-column: 4 / 10; margin-top: 36px; font-size: 20px; line-height: 1.35; font-weight: 500; }
+        .poster .ctas { grid-column: 4 / 10; display: flex; flex-direction: column; gap: 0; margin-top: 40px; border-top: 2px solid var(--rule); }
+        .cta { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex: 1; padding: 22px 0; text-decoration: none; font-weight: 700; font-size: 18px; border-bottom: 2px solid var(--rule); transition: background .2s, color .2s, padding .2s; }
+        .cta:hover { background: var(--ink); color: var(--paper); padding-inline: 16px; }
+        .cta.primary { background: var(--orange); color: var(--on-orange); padding-inline: 16px; }
+        .cta.primary:hover { background: var(--ink); color: var(--orange); }
+        .cta + .cta { padding-left: 16px; }
+        .cta-end { display: inline-flex; align-items: center; gap: 12px; flex: none; }
+        .mn-logo { width: 46px; height: auto; display: block; }
+        .poster .photo { grid-column: 1 / 13; margin-top: 64px; position: relative; z-index: 1; }
+        .poster .photo img { width: 100%; aspect-ratio: 21 / 8; object-fit: cover; }
+        .poster .photo figcaption { margin-top: 8px; }
+
+        /* Sections — numbered, label in col 1-3, body in 4-12 */
+        .sec { border-top: 2px solid var(--rule); padding: 28px 0 96px; }
+        .sec .g { row-gap: 32px; }
+        .sec .idx { grid-column: 1 / 2; font: 900 48px/1 var(--sans); letter-spacing: -.04em; color: var(--orange); }
+        .sec .lbl { grid-column: 2 / 4; padding-top: 6px; }
+        .sec h2 { grid-column: 4 / 13; font: 900 clamp(40px, 6.4vw, 104px)/.9 var(--sans); letter-spacing: -.05em; }
+
+        .flag-img { grid-column: 4 / 9; }
+                .flag-img figcaption { margin-top: 8px; }
+        .flag-txt { grid-column: 9 / 13; display: flex; flex-direction: column; gap: 18px; }
+        .flag-txt .lead { font-size: 24px; line-height: 1.2; font-weight: 700; letter-spacing: -.01em; }
+        .flag-txt p:not(.lead) { color: var(--ink-2); }
+        .flag-txt .cta { flex: none; border-top: 2px solid var(--rule); margin-top: auto; }
+        .spec { grid-column: 4 / 13; display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--rule); }
+        .spec div { padding: 12px 12px 0 0; }
+        .spec dt { color: var(--ink-2); }
+        .spec dd { margin-top: 4px; font-weight: 700; }
+
+        /* Team — compact: two profiles side by side, small square headshot beside the text */
+        .sec-sm { padding-bottom: 64px; }
+        .crew { grid-column: 4 / 13; display: grid; grid-template-columns: repeat(2, 1fr); column-gap: var(--gut); row-gap: 28px; }
+        .crew li { border-top: 6px solid var(--ink); padding-top: 16px; display: grid; grid-template-columns: 132px 1fr auto; grid-template-rows: repeat(4, auto) 1fr; column-gap: 20px; align-items: start; }
+        .crew li:first-child { border-top-color: var(--orange); }
+        .crew figure { grid-row: 1 / -1; overflow: hidden; }
+        .crew figure img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+        .crew li > :not(figure):not(.in) { grid-column: 2 / 4; }
+        .crew li > .n { grid-row: 1; } .crew li > h3 { grid-row: 2; grid-column: 2; } .crew li > .role { grid-row: 3; } .crew li > .bio { grid-row: 4; }
+        .crew li > .in { grid-column: 3; grid-row: 2; align-self: center; margin-top: 4px; }
+        .crew .n { font-weight: 900; font-size: 13px; letter-spacing: 0; }
+        .crew h3 { margin-top: 4px; font: 900 clamp(22px, 2vw, 28px)/1 var(--sans); letter-spacing: -.035em; }
+        .crew .role { margin-top: 6px; font-weight: 700; color: var(--orange); }
+        .crew .bio { margin-top: 10px; font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+        .crew .in { justify-self: start; display: inline-flex; margin-top: 12px; padding: 6px; border: 2px solid var(--ink); font-weight: 700; text-decoration: none; }
+        .crew .in:hover { background: var(--ink); color: var(--paper); }
+
+        /* Timeline — vertical track: square markers, solid rule through completed work */
+        .tl { grid-column: 4 / 13; position: relative; }
+        .tl li { position: relative; display: grid; grid-template-columns: 2fr 6fr 1fr; column-gap: var(--gut); padding: 0 0 44px 56px; }
+        .tl li:last-child { padding-bottom: 0; }
+        .tl li::before { content: ""; position: absolute; left: 0; top: 2px; width: 20px; height: 20px; background: var(--paper); border: 2px solid var(--ink); z-index: 1; }
+        .tl li::after { content: ""; position: absolute; left: 9px; top: 22px; bottom: -2px; width: 2px; background: var(--ink); }
+        .tl li:last-child::after { display: none; }
+        .tl .done::before { background: var(--ink); }
+        .tl .active::before { background: var(--orange); border-color: var(--orange); width: 28px; height: 28px; left: -4px; top: -2px; }
+        .tl .active::after { background: repeating-linear-gradient(var(--ink) 0 6px, transparent 6px 12px); top: 26px; }
+        .tl .next::before { border-color: var(--ink-3); }
+        .tl time { font-weight: 700; padding-top: 4px; }
+        .tl h3 { font: 700 26px/1.1 var(--sans); letter-spacing: -.02em; }
+        .tl p { margin-top: 8px; font-size: 17px; color: var(--ink-2); max-width: 46ch; }
+        .tl .st { justify-self: end; padding-top: 4px; }
+        .tl .active h3 { color: var(--orange); }
+        .tl .active .st { background: var(--orange); color: var(--on-orange); padding: 4px 8px; align-self: start; font-weight: 700; }
+        .tl .next time, .tl .next h3, .tl .next p, .tl .next .st { color: var(--ink-3); }
+
+        /* Events — calendar leaf + details + location tag (neumorphic layout, flattened to Swiss blocks) */
+        .ev { grid-column: 4 / 13; display: grid; grid-template-columns: auto 1fr auto; gap: 32px; align-items: center; padding: 24px; border: 2px solid var(--ink); background: var(--paper); box-shadow: 8px 8px 0 var(--ink); }
+        .cal { width: 128px; border: 2px solid var(--ink); text-align: center; background: var(--cal); }
+        .cal .mo { display: block; background: var(--orange); color: var(--on-orange); font-weight: 900; font-size: 14px; letter-spacing: .12em; padding: 6px 0; border-bottom: 2px solid var(--ink); }
+        .cal .d { display: block; font: 900 64px/1 var(--sans); letter-spacing: -.05em; padding: 12px 0 4px; }
+        .cal .yr { display: block; padding: 0 0 10px; color: var(--ink-2); }
+        .ev h3 { font: 700 clamp(22px, 2.4vw, 32px)/1.1 var(--sans); letter-spacing: -.02em; }
+        .ev .ag { margin-top: 8px; color: var(--ink-2); font-size: 17px; }
+        .ev h3 a { text-decoration: none; } .ev h3 a:hover { color: var(--orange); }
+        .ev .role { display: inline-block; margin-bottom: 10px; padding: 3px 8px; background: var(--orange); color: var(--on-orange); font-weight: 700; }
+        .ev .loc { border: 2px solid var(--ink); padding: 8px 14px; font-weight: 700; white-space: nowrap; }
+        .ev-side { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+        .ev-side .loc { text-align: center; }
+        .ev-link { display: block; padding: 8px 14px; background: var(--ink); color: var(--paper); font-weight: 700; text-align: center; text-decoration: none; white-space: nowrap; }
+        .ev-link:hover { background: var(--orange); color: var(--on-orange); }
+        .ev-note { grid-column: 4 / 13; margin-top: 8px; padding: 18px 22px; border-left: 6px solid var(--orange); background: var(--note); font-size: 19px; font-weight: 500; }
+
+        .ct { grid-column: 4 / 13; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: var(--gut); }
+        .ct > * { display: block; border-top: 2px solid var(--rule); padding: 14px 0 0; text-decoration: none; }
+        .ct strong { display: block; margin-top: 28px; font: 700 clamp(20px, 2.2vw, 30px)/1.1 var(--sans); letter-spacing: -.025em; overflow-wrap: anywhere; }
+        .ct a:hover strong { color: var(--orange); }
+
+        footer { background: var(--foot); color: var(--foot-ink); padding: 40px 0 96px; border-top: 2px solid var(--rule); }
+        footer .g { align-items: end; row-gap: 32px; }
+        footer .big { grid-column: 1 / 9; }
+        footer .big img { width: 100%; max-width: 760px; height: auto; }
+        footer .info { grid-column: 10 / 13; display: grid; gap: 6px; }
+        footer .info a { text-decoration: none; } footer .info a:hover { color: var(--orange); }
+        @media (hover: none) { .gridhint { display: none; } }
+
+        /* Theme switch — Swiss take on the neumorphic toggle: square knob in a ruled track */
+        .theme { position: fixed; right: var(--m); bottom: 24px; z-index: 60; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 0; background: var(--paper); color: var(--ink); font: 700 12px/1 var(--sans); text-transform: uppercase; letter-spacing: .06em; cursor: pointer; }
+        .theme .lbl-l, .theme .lbl-d { transition: color .3s; }
+        .theme .lbl-d, :root[data-theme="dark"] .theme .lbl-l { color: var(--ink-3); }
+        :root[data-theme="dark"] .theme .lbl-d { color: var(--ink); }
+        .theme .track { position: relative; width: 52px; height: 26px; border: 2px solid var(--ink); background: var(--paper); transition: background-color .35s, border-color .35s; }
+        .theme .knob { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: var(--ink); transition: transform .3s cubic-bezier(.4, 1.4, .6, 1), background-color .3s; }
+        :root[data-theme="dark"] .theme .knob { transform: translateX(26px); background: var(--orange); }
+        .theme:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
+
+        @media (max-width: 1000px) {
+            :root { --m: 24px; --cols: 6; }
+            .poster h1, .poster .lede, .poster .ctas { grid-column: 2 / 6; } .poster .photo { grid-column: 1 / 7; }
+            .poster h1 { font-size: clamp(44px, 9vw, 100px); }
+            .poster .circle { width: 28vw; right: -12vw; top: -10vw; }
+            .scrap { right: 40%; top: 60%; font-size: 18px; }
+            .sec .idx { grid-column: 1 / 2; } .sec .lbl { grid-column: 2 / 7; } .sec h2, .flag-img, .flag-txt, .spec, .crew, .tl, .ev, .ev-note, .ct { grid-column: 1 / 7; }
+            .spec { grid-template-columns: repeat(3, 1fr); }
+            footer .big, footer .info { grid-column: 1 / 7; }
         }
+        @media (max-width: 640px) {
+            :root { --m: 16px; --gut: 12px; }
+            
+            .ct, .crew { grid-template-columns: 1fr; row-gap: 28px; } .crew li { grid-template-columns: 96px 1fr auto; column-gap: 14px; } .spec { grid-template-columns: 1fr 1fr; }
+            .tl li { grid-template-columns: 1fr auto; padding-left: 44px; }
+            .tl time { grid-column: 1; } .tl .st { grid-column: 2; grid-row: 1; } .tl li > div { grid-column: 1 / -1; margin-top: 6px; }
+            .tl h3 { font-size: 22px; }
+            .ev { grid-template-columns: auto 1fr; gap: 18px; padding: 18px; box-shadow: 6px 6px 0 var(--ink); }
+            :root[data-theme="dark"] .ev { box-shadow: 6px 6px 0 var(--shadow); }
+            .cal { width: 92px; } .cal .d { font-size: 44px; }
+            .ev .loc { grid-column: 1 / -1; justify-self: start; }
+            .ev-side { grid-column: 1 / -1; flex-direction: row; align-items: center; }
+            .poster h1, .poster .lede, .poster .ctas { grid-column: 1 / 7; } .poster .lede { font-size: 19px; }
+        }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
     </style>
-
-    <!-- Smooth Page Transition Script -->
-    <style>
-        body { opacity: 0; transition: opacity 0.1s ease-in-out; }
-    </style>
-    <script>
-        let fadedIn = false;
-        function fadeIn() {
-            if (!fadedIn) {
-                document.body.style.opacity = "1";
-                fadedIn = true;
-            }
-        }
-        
-        // Fade in immediately as soon as the DOM starts rendering to keep it feeling ultra-fast
-        document.addEventListener("DOMContentLoaded", fadeIn);
-        setTimeout(fadeIn, 50); // Instant fallback
-
-        // Intercept link clicks to fade out BEFORE navigating
-        document.addEventListener("click", function(e) {
-            let target = e.target.closest('a');
-            if (!target) return;
-            
-            let href = target.getAttribute('href');
-            if (!href) return;
-            
-            let isInternal = target.host === window.location.host;
-            let isSamePage = target.pathname === window.location.pathname || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:');
-            let isBlank = target.target === "_blank";
-            
-            if (isInternal && !isSamePage && !isBlank) {
-                e.preventDefault(); // Stop instant navigation
-                document.body.style.opacity = "0"; // Trigger fade out
-                setTimeout(function() {
-                    window.location.href = target.href; // Navigate after fade completes
-                }, 100);
-            }
-        });
-        
-        // Handle back/forward cache restore
-        window.addEventListener("pageshow", function(e) {
-            fadedIn = false;
-            fadeIn();
-        });
-    </script>
-
-    <!-- Google Analytics Integration -->
-    <script src="js/analytics.js"></script>
 </head>
+<body>
+    <div class="gridlines g" id="gl" aria-hidden="true"></div>
 
-<body id="page-top" class="index" style="background-color: #222;">
+    <button class="theme" id="theme" type="button" role="switch" aria-checked="false" aria-label="Dark theme"><span class="lbl-l">Light</span><span class="track"><span class="knob"></span></span><span class="lbl-d">Dark</span></button>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header page-scroll">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand page-scroll" href="#page-top"><img src="img/SVGLogos/Full_Logo.svg" alt="LTRJ Labs Ltd Logo"></a>
+    <main id="top">
+        <section class="poster">
+            <div class="circle"><p class="scrap"><span class="tape" aria-hidden="true"></span>Letter <b>J</b> Labs</p></div>
+            <div class="g">
+                <h1>A hard-tech startup building<br> <span class="o">IoT products.</span></h1>
+                <p class="lede">We envision IoT infrastructure that feels completely custom, yet deploys at scale across industries. A system that advances operations, builds community, and is always online. Regardless of the project, we design with a focus on this vision.</p>
+                <div class="ctas">
+                    <a class="cta primary" href="https://mothnode.net" data-track="hero_mothnode" target="_blank" rel="noopener"><span>Explore Flagship System: MothNode</span><span class="cta-end"><svg class="mn-logo" viewBox="0 0 100 57.592384" role="img" aria-label="MothNode logo"><g transform="translate(0,-111.70526)"><path fill="currentColor" d="m 27.619792,165.36081 c -0.21563,-3.20366 0.443167,-4.64589 3.536719,-7.73903 2.090955,-2.0911 5.339603,-4.10938 7.219174,-4.48557 1.879582,-0.37563 3.417208,-1.02473 3.417208,-1.44193 0,-1.46616 -6.170912,-5.28243 -15.915268,-9.84376 -15.359581,-7.1899 -23.3675921,-15.13196 -25.48004127,-25.26959 -1.24150322,-5.95804 0.45524166,-6.27921 4.66012217,-0.88197 4.1530812,5.33053 15.3615271,13.4078 23.5632821,16.9801 8.641971,3.76469 14.251765,8.68335 17.16804,15.05335 1.713881,3.74363 3.312867,5.8056 4.380003,5.64917 0.924422,-0.13434 2.860918,-2.79386 4.302928,-5.90689 2.833774,-6.11603 8.584328,-11.10268 17.061406,-14.79563 8.159938,-3.55411 19.402442,-11.63917 23.502349,-16.90162 4.329533,-5.55704 5.660096,-5.43612 4.637184,0.4214 -1.797777,10.2977 -9.745461,18.32548 -25.39584,25.65168 -9.656748,4.52028 -15.915477,8.37662 -15.915477,9.80663 0,0.39719 1.893934,1.28939 4.208398,1.98277 5.620259,1.68436 9.095351,5.61686 9.834845,11.13103 0.607118,4.5267 0.607118,4.5267 -21.956384,4.5267 -22.563599,0 -22.563599,0 -22.828648,-3.93684 z m 13.927309,0.001 c 2.53314,-1.77442 3.336772,-6.44188 1.323462,-7.68612 -3.753281,-2.31967 -12.138605,3.79021 -10.622551,7.74022 0.83434,2.1747 6.161218,2.14353 9.299089,-0.0537 z m 26.081329,-0.003 c 0.984518,-2.56635 -1.005531,-5.50799 -4.786494,-7.07405 -3.949013,-1.63565 -6.695871,-0.86472 -6.672591,1.87248 0.0049,2.5079 1.074571,4.04538 3.84909,5.61851 3.176199,1.80106 6.835714,1.60049 7.609995,-0.41694 z"/></g></svg><span aria-hidden="true">↗</span></span></a>
+                    <a class="cta" href="#timeline">Read the lab notebook <span aria-hidden="true">↓</span></a>
+                </div>
+                <figure class="photo"><img src="img/photo/bench-wide.jpg" alt="The LTRJ Labs bench in Victoria, BC" width="2000" height="1345"><figcaption class="small">Fig. 1 — The bench, Victoria, British Columbia, 2026.</figcaption></figure>
             </div>
+        </section>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="hidden">
-                        <a href="#page-top"></a>
-                    </li>
-                    <li>
-                        <a href="services/">Services</a>
-                    </li>
-                    <li>
-                        <a href="portfolio/">Portfolio</a>
-                    </li>
-                    <li>
-                        <a href="team/">Team</a>
-                    </li>
-                    <li>
-                        <a href="contact/">Contact</a>
-                    </li>
-                    
-                </ul>
+        <section id="flagship" class="sec">
+            <div class="g">
+                <span class="idx">1</span><span class="lbl small caps">Flagship system<br>First deployed system</span>
+                <h2>MothNode</h2>
+                <figure class="flag-img"><img src="img/Rev_3.0_Render_1.png" alt="Render of MothNode Rev 3.0, view 1" loading="lazy"><img class="r2" src="img/Rev_3.0_Render_2.png" alt="Render of MothNode Rev 3.0, view 2" loading="lazy"><figcaption class="small">Fig. 2 — MothNode Rev 3.0, renders.</figcaption></figure>
+                <div class="flag-txt">
+                    <p class="lead">Remote Tank Monitor inspired by volunteer firefighting.</p>
+                    <p>Zero-maintenance, solar-powered, multi-network telemetry. Runs year-round in all weather conditions.</p>
+                    <a class="cta" href="https://mothnode.net" data-track="flagship_mothnode" target="_blank" rel="noopener">Launch MothNode Platform <span aria-hidden="true">→</span></a>
+                    <button class="cta story-btn" type="button" id="story-open" data-track="flagship_story">Story <span aria-hidden="true">+</span></button>
+                </div>
             </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container-fluid -->
-    </nav>
+        </section>
 
-    <!-- Header -->
-    <header>
-        <video id="header-bg-video" autoplay loop muted playsinline>
-            <source src="img/BannerVideo-2026-07-07.mp4" type="video/mp4">
-        </video>
-        <div class="container-fluid">
-            <div class="intro-text">
-                <div class="intro-heading">LTRJ LABS Ltd</div>
-                <div class="intro-lead-in">Cost-Effective Electronics Design</div>
-                <!-- <a href="#services" class="page-scroll btn btn-xl">Tell Me More</a> -->
+        <section id="timeline" class="sec">
+            <div class="g">
+                <span class="idx">2</span><span class="lbl small caps">The lab notebook<br>Milestones</span>
+                <h2>Timeline</h2>
+                <ol class="tl">
+                    <li class="done"><time class="small caps">May 2026</time><div><h3>Concept</h3><p>Water-supply blind spot surfaced at Willis Point Fire Dept.</p></div><span class="st small caps">Done</span></li>
+                    <li class="done"><time class="small caps">June 2026</time><div><h3>R1 arrival</h3><p>Rev 1 on the bench for first tests.</p></div><span class="st small caps">Done</span></li>
+                    <li class="done"><time class="small caps">July 2026</time><div><h3>R2 arrival</h3><p>Rev 2 deployed on active rural water cisterns.</p></div><span class="st small caps">Done</span></li>
+                    <li class="done"><time class="small caps">Sept 2026</time><div><h3>R3 arrival</h3><p>Custom PCBA (ESP32-S3, BG95 cellular, LoRa) and polycarbonate IP66 tooling.</p></div><span class="st small caps">Done</span></li>
+                    <li class="active"><time class="small caps">Fall 2026</time><div><h3>Pre-compliance &amp; design finalization</h3><p>Regulatory testing (ISED / FCC) at Camosun College while the production design is locked.</p></div><span class="st small caps">Now</span></li>
+                    <li class="next"><time class="small caps">Winter 2026</time><div><h3>Release</h3><p>Commercial release and volume manufacturing.</p></div><span class="st small caps">Next</span></li>
+                </ol>
             </div>
-        </div>
-    </header>
+        </section>
 
-    <!-- Client Experiences — quotes only, no title/subtitle -->
-    <section id="testimonials" style="padding: 60px 0;">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-10 col-md-offset-1">
-                    <div class="testimonial-carousel">
-                        <!-- Slide 1: Landon Brown (Pink Pigeon) -->
-                        <div class="testimonial-slide active">
-                            <div class="testimonial-quote">"The engineering was genuinely impressive. They caught things we'd missed and independently designed a clean solution for switching our new 5V I²C sensor rail on and off, despite our main board had already been manufactured without this in mind. If you want a custom PCB done right by people who care about the details and communicate well, talk to LTRJ."</div>
-                            <div class="testimonial-author" style="margin-top: 25px;">Landon Brown</div>
-                            <div class="testimonial-company">CTO @ Pink Pigeon / Founder @ Coding Fox Corp.</div>
-                            <div class="testimonial-project-link">Project: <a href="portfolio/aquasentry/">Aqua Sentry Breakout Board</a></div>
-                        </div>
-
+        <section id="events" class="sec">
+            <div class="g">
+                <span class="idx">3</span><span class="lbl small caps">Field appearances</span>
+                <h2>Events</h2>
+                <article class="ev">
+                    <p class="cal" aria-label="November 17, 2026"><span class="mo">NOV</span><span class="d">17</span><span class="yr small caps">2026 · Tue</span></p>
+                    <div>
+                        <h3><a href="https://vi.business/" data-track="event_vibe" target="_blank" rel="noopener">VIBE — Vancouver Island Business Experience</a></h3>
+                        <p class="ag">One day in Victoria. Two hundred founders, investors and operators, by application and invitation.</p>
                     </div>
+                    <div class="ev-side"><span class="loc small caps">Victoria, BC</span><a class="ev-link small caps" href="https://vi.business/" data-track="event_vibe_site" target="_blank" rel="noopener">vi.business <span aria-hidden="true">↗</span></a></div>
+                </article>
+                <article class="ev">
+                    <p class="cal" aria-label="December 18, 2026"><span class="mo">DEC</span><span class="d">18</span><span class="yr small caps">2026 · Fri</span></p>
+                    <div><h3>Camosun Capstone Symposium</h3><p class="ag">Final R3 Demo &amp; Presentation</p></div>
+                    <span class="loc small caps">Victoria, BC</span>
+                </article>
+            </div>
+        </section>
 
-                </div>
+        <section id="team" class="sec sec-sm">
+            <div class="g">
+                <span class="idx">4</span><span class="lbl small caps">Who we are</span>
+                <h2>Team</h2>
+                <ol class="crew">
+                    <li>
+                        <figure><img src="img/team/levi.jpg" alt="Portrait of Levi Puritch" loading="lazy" width="900" height="900"></figure>
+                        <span class="n small caps">A.</span>
+                        <h3>Levi Puritch</h3>
+                        <p class="role small caps">CEO &amp; Designer</p>
+                        <p class="bio">Owns project coordination and communications, translates complex engineering problems into clear technical solutions.</p>
+                        <a class="in small caps" href="https://www.linkedin.com/in/levi-puritch-a8471a335/" data-track="team_levi" target="_blank" rel="noopener" aria-label="Levi Puritch on LinkedIn"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+                    </li>
+                    <li>
+                        <figure><img src="img/team/jaxon.jpg" alt="Portrait of Jaxon Bjornson" loading="lazy" width="900" height="900"></figure>
+                        <span class="n small caps">B.</span>
+                        <h3>Jaxon Bjornson</h3>
+                        <p class="role small caps">CTO &amp; Designer</p>
+                        <p class="bio">Reviews hardware design and specializes in custom firmware, microcontroller peripherals, and automation.</p>
+                        <a class="in small caps" href="https://www.linkedin.com/in/jaxonbjornson/" data-track="team_jaxon" target="_blank" rel="noopener" aria-label="Jaxon Bjornson on LinkedIn"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+                    </li>
+                </ol>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Navigation Cards — scroll-reveal "appear as you scroll" -->
-    <section id="nav-cards" style="padding: 80px 0;">
-        <div class="container">
-            <div class="row" style="display: flex; flex-wrap: wrap;">
-                <!-- Services Card -->
-                <div class="col-md-4 col-sm-6" style="margin-bottom: 30px;">
-                    <a href="services/" class="nav-card" id="nav-card-services">
-                        <h3 class="nav-card-title">What We Provide</h3>
-                        <p class="nav-card-desc" style="flex-grow: 1;">See what LTRJ Labs can do for you and your team, from first prototypes to full production runs.</p>
-                        <span class="nav-card-link" style="margin-top: auto;">View Services <i class="fa fa-arrow-right"></i></span>
-                    </a>
-                </div>
-                <!-- Portfolio Card -->
-                <div class="col-md-4 col-sm-6" style="margin-bottom: 30px;">
-                    <a href="portfolio/" class="nav-card" id="nav-card-portfolio">
-                        <h3 class="nav-card-title">Our Work</h3>
-                        <p class="nav-card-desc" style="flex-grow: 1;">See real-world results we've delivered, and discover our capabilities.</p>
-                        <span class="nav-card-link" style="margin-top: auto;">View Portfolio <i class="fa fa-arrow-right"></i></span>
-                    </a>
-                </div>
-                <!-- Team/About Card -->
-                <div class="col-md-4 col-sm-12" style="margin-bottom: 30px;">
-                    <a href="team/" class="nav-card" id="nav-card-about">
-                        <h3 class="nav-card-title">Who We Are</h3>
-                        <p class="nav-card-desc" style="flex-grow: 1;">Meet the team behind LTRJ Labs: four fast-moving electronics designers, teaming up to turn ideas into reality in Victoria, BC.</p>
-                        <span class="nav-card-link" style="margin-top: auto;">Meet the Team <i class="fa fa-arrow-right"></i></span>
-                    </a>
+        <section id="contact" class="sec">
+            <div class="g">
+                <span class="idx">5</span><span class="lbl small caps">Direct signal</span>
+                <h2>Get in touch</h2>
+                <div class="ct">
+                    <a href="mailto:hello@ltrjlabs.com" data-track="contact_email" aria-label="Email LTRJ Labs"><span class="small caps">Email</span><strong><svg class="mail" viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16"/><path d="M2 5l10 8 10-8"/></svg></strong></a>
+                    <div><span class="small caps">Location</span><strong>Victoria, British Columbia</strong></div>
                 </div>
             </div>
-            <!-- Contact Card — full width, distinct solid button -->
-            <div class="row" style="margin-top: 30px;">
-                <div class="col-md-12" style="display: flex; justify-content: center;">
-                    <a href="contact/" class="nav-card-contact" id="nav-card-contact">
-                        <div class="nav-card-contact-inner">
-                            <h3 class="nav-card-contact-title">Get in Touch</h3>
-                            <i class="fa fa-envelope" style="font-size: 24px; margin-top: 5px;"></i>
-                        </div>
-                    </a>
-                </div>
-            </div>
+        </section>
+    </main>
+
+    <dialog class="story" id="story" aria-labelledby="story-t">
+        <div class="hd"><h3 id="story-t">Project Origin and Motivation</h3><button class="x" type="button" id="story-close" aria-label="Close">×</button></div>
+        <div class="bd">
+            <p>Levi Puritch, the Co-Founder and CEO of LTRJ Labs is a volunteer fire fighter at Willis Point Volunteer Fire Dept. MothNode’s development began in May of 2026, following an ongoing issue with the department’s water tanks in Willis Point being brought to his attention. Their main issues were tanks leaking only up to a certain level, then stopping, as well as tanks struggling to stay maintained due to crews only dedicating 2 hours a week for maintaining all the department’s equipment, alongside training.</p>
+            <p>The use of these water tanks is critical in this industry for effective firefighting. A good benchmark of reliability and function for these tanks is to compare it to a regular fire hydrant in an urban area. What is expected of it? A short list being, near infinite supply of water, any department can use them, uniform interface, and it’s location to be known and documented. Fire Protection Infrastructure specifically qualifies new functionality to be brought to the table for tank monitoring for this reason.</p>
         </div>
-    </section>
+    </dialog>
 
     <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 text-left">
-                    <span class="copyright" style="color: #888;">Copyright &copy; LTRJ Labs 2026</span>
-                </div>
-                <div class="col-md-6 text-right">
-                    <ul class="list-inline quicklinks" style="margin-bottom: 0;">
-                        <li><a href="privacy/" style="color: #FF6600; text-decoration: none;">Privacy Policy</a></li>
-                    </ul>
-                </div>
-            </div>
+        <div class="g">
+            <p class="big"><img src="img/SVGLogos/Full_Logo.svg" alt="LTRJ Labs" width="760" height="280"></p>
+            <div class="info small"><span>© <span data-year>2026</span> LTRJ Labs Ltd.</span><span>Victoria, British Columbia</span><a href="https://mothnode.net" data-track="footer_mothnode" target="_blank" rel="noopener">mothnode.net ↗</a></div>
         </div>
     </footer>
 
-    <!-- Portfolio Modals moved to portfolio.html (if needed) -->
-
-    <!-- Native Theme & Navigation Scripts -->
-    <script src="js/theme.js"></script>
-    <script src="js/agency.js"></script>
-
-    <!-- Testimonial Carousel Controls & Auto-Rotator Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var slides = document.querySelectorAll('.testimonial-slide');
-            var indicators = document.querySelectorAll('.testimonial-indicator');
-            var prevBtn = document.querySelector('.prev-btn');
-            var nextBtn = document.querySelector('.next-btn');
-            var currentIndex = 0;
-            var autoRotateTimer = null;
-            var isTransitioning = false;
-
-            function showSlide(index) {
-                if (index === currentIndex || isTransitioning || slides.length === 0) return;
-                isTransitioning = true;
-
-                // 1. Fade out current active slide & indicator
-                slides[currentIndex].classList.remove('active');
-                if (indicators[currentIndex]) {
-                    indicators[currentIndex].classList.remove('active');
-                }
-                
-                // 2. Wait for fade-out to complete (500ms)
-                setTimeout(function() {
-                    // 3. Set the new index and fade in
-                    currentIndex = index;
-                    slides[currentIndex].classList.add('active');
-                    if (indicators[currentIndex]) {
-                        indicators[currentIndex].classList.add('active');
-                    }
-                    isTransitioning = false;
-                }, 500);
-            }
-
-            function nextSlide() {
-                var nextIndex = (currentIndex + 1) % slides.length;
-                showSlide(nextIndex);
-            }
-
-            function prevSlide() {
-                var prevIndex = (currentIndex - 1 + slides.length) % slides.length;
-                showSlide(prevIndex);
-            }
-
-            function resetTimer() {
-                if (autoRotateTimer) {
-                    clearInterval(autoRotateTimer);
-                }
-                autoRotateTimer = setInterval(nextSlide, 10000);
-            }
-
-            function stopTimer() {
-                if (autoRotateTimer) {
-                    clearInterval(autoRotateTimer);
-                    autoRotateTimer = null;
-                }
-            }
-
-            // Click Handlers
-            if (prevBtn) {
-                prevBtn.addEventListener('click', function() {
-                    prevSlide();
-                    stopTimer(); // Pause auto-rotation on manual interaction
-                });
-            }
-
-            if (nextBtn) {
-                nextBtn.addEventListener('click', function() {
-                    nextSlide();
-                    stopTimer(); // Pause auto-rotation on manual interaction
-                });
-            }
-
-            indicators.forEach(function(indicator) {
-                indicator.addEventListener('click', function() {
-                    var slideIndex = parseInt(indicator.getAttribute('data-slide'));
-                    if (!isNaN(slideIndex)) {
-                        showSlide(slideIndex);
-                        stopTimer(); // Pause auto-rotation on manual interaction
-                    }
-                });
+        (function () {
+            var gl = document.getElementById('gl');
+            function build() { var n = getComputedStyle(document.documentElement).getPropertyValue('--cols').trim() | 0; gl.innerHTML = new Array(n + 1).join('<span></span>'); }
+            build(); addEventListener('resize', build);
+            addEventListener('keydown', function (e) { if ((e.key === 'g' || e.key === 'G') && !e.metaKey && !e.ctrlKey && !/input|textarea/i.test(e.target.tagName)) gl.classList.toggle('on'); });
+            var root = document.documentElement, sw = document.getElementById('theme'), tc = document.getElementById('tc');
+            function sync() { var d = root.dataset.theme === 'dark'; sw.setAttribute('aria-checked', d); tc.content = d ? '#1a1918' : '#f4f3ef'; }
+            sw.addEventListener('click', function () {
+                if (root.dataset.theme === 'dark') delete root.dataset.theme; else root.dataset.theme = 'dark';
+                sync(); try { localStorage.setItem('ltrj-theme', root.dataset.theme || 'light'); } catch (e) {}
             });
-
-            // Start auto-rotation
-            if (slides.length > 1) {
-                resetTimer();
-            }
-
-            // --- Scroll-Reveal for Navigation Cards ---
-            var navCards = document.querySelectorAll('.nav-card');
-            if ('IntersectionObserver' in window) {
-                var cardObserver = new IntersectionObserver(function(entries) {
-                    entries.forEach(function(entry) {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                        }
-                    });
-                }, { threshold: 0.15 });
-                navCards.forEach(function(card) { cardObserver.observe(card); });
-            } else {
-                // Fallback: show all immediately
-                navCards.forEach(function(card) { card.classList.add('visible'); });
-            }
-        });
+            sync();
+            var dlg = document.getElementById('story');
+            document.getElementById('story-open').addEventListener('click', function () { dlg.showModal(); });
+            document.getElementById('story-close').addEventListener('click', function () { dlg.close(); });
+            dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+            document.querySelectorAll('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
+        })();
     </script>
-
 </body>
-
 </html>
